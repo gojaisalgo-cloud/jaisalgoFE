@@ -3,6 +3,7 @@ import type {EditorialEntry} from '@/types';
 export const searchPages:Record<string,{title:string;description:string;image?:string;noindex?:boolean}>={
   '/':{title:'Jaisalmer Trips, Desert Safaris & Travel Guide',description:'Plan your Jaisalmer trip with city and desert itineraries, safari and camping options, clear package estimates and practical travel guides.',image:'khuri'},
   '/packages':{title:'Jaisalmer Tour Packages · Itineraries & Prices',description:'Compare Jaisalmer tour packages, desert stays and safari options. See duration, room sharing, meals, transport and provisional price estimates before booking.',image:'sam'},
+  '/jaisalmer-travel-from':{title:'Jaisalmer Trips from Indian Cities · Travel Planning',description:'Plan how to reach Jaisalmer from Delhi, Gujarat, Jaipur or Bengaluru. Compare connection choices, arrival plans and local packages with origin travel kept separate.',image:'khuri'},
   '/places':{title:'Places to Visit in Jaisalmer',description:'Explore Jaisalmer Fort, Gadisar Lake, carved havelis, Sam and Khuri. Find practical visiting notes and plan realistic city and desert routes.'},
   '/experiences':{title:'Things to Do in Jaisalmer · City & Desert',description:'Discover heritage walks, desert evenings, overnight stays, local food and folk culture. Understand the experience and what to check before choosing a package.',image:'sam'},
   '/itineraries':{title:'Jaisalmer Itineraries · 1 to 4 Days',description:'Plan one day, a weekend or a longer Jaisalmer trip with suggested city and desert itineraries, practical timing notes and room for your own pace.',image:'lake'},
@@ -54,9 +55,11 @@ export function guideLinks(desert=false):{path:string;title:string}[] {
     {path:'/places/sam-sand-dunes',title:'Sam Sand Dunes visiting guide'},
     {path:'/travel-guide/desert-camp-checklist',title:'What to check before booking a camp'},
     {path:'/travel-guide/camel-or-jeep',title:'Camel safari or jeep safari?'},
+    {path:'/jaisalmer-travel-from',title:'Plan your journey from your city'},
   ]:[
     {path:'/travel-guide/first-time-jaisalmer',title:'Plan your first Jaisalmer trip'},
     {path:'/itineraries/2-day-jaisalmer',title:'A suggested 2-day itinerary'},
     {path:'/travel-guide/budget-planning',title:'Build your full trip budget'},
+    {path:'/jaisalmer-travel-from',title:'Plan your journey from your city'},
   ];
 }

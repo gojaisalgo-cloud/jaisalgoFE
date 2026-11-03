@@ -254,6 +254,14 @@ def main():
                 fail(path, 'Article headline does not match rendered content')
         if path.startswith('/packages/') and not any(node.get('@type') == 'TouristTrip' for node in nodes):
             fail(path, 'Missing package trip schema')
+        if path.startswith('/jaisalmer-travel-from/'):
+            if not any(node.get('@type') == 'Article' for node in nodes) or not any(node.get('@type') == 'BreadcrumbList' for node in nodes):
+                fail(path, 'Missing city guide article or breadcrumb')
+            for anchor in ['travel-options', 'local-itinerary', 'your-group', 'trip-budget', 'arrival', 'questions', 'local-packages']:
+                if anchor not in doc.ids:
+                    fail(path, f'Incomplete city guide section: {anchor}')
+            if 'separate' not in body_text.lower():
+                fail(path, 'City guide does not explain separate origin travel')
         for href in doc.links:
             target = local_path(href, path)
             if target and not target.startswith('/api/'):
@@ -298,10 +306,19 @@ def main():
         noindex = 'noindex' in ' '.join(doc.meta.get('robots', [])).lower()
         if status != 200 or noindex != (args.preview or not should_index) or doc.canonicals != [origin+path.split('?')[0]]:
             fail(path, 'Incorrect variant/tracking canonical or indexing policy')
-    for path in ['/packages/seo-audit-nonexistent', '/travel-guide/seo-audit-nonexistent', '/seo-audit-nonexistent']:
+    for path in ['/packages/seo-audit-nonexistent', '/travel-guide/seo-audit-nonexistent', '/seo-audit-nonexistent', '/jaisalmer-travel-from/mumbai', '/jaisalmer-travel-from/noida', '/jaisalmer-travel-from/jaiselmer', '/jaisalmer-travel-from/unknown']:
         _, status, _, body, _ = request(path)
         if status != 404 or 'noindex' not in ' '.join(Document(body.decode(errors='replace')).meta.get('robots', [])).lower():
             fail(path, 'Unknown content must return HTTP 404 and noindex')
+    for alias, canonical in [('new-delhi', 'delhi'), ('delhi-ncr', 'delhi'), ('baroda', 'vadodara'), ('bangalore', 'bengaluru')]:
+        path = '/jaisalmer-travel-from/' + alias
+        _, status, _, body, final = request(path)
+        doc = Document(body.decode(errors='replace'))
+        target = '/jaisalmer-travel-from/' + canonical
+        if status != 200 or urllib.parse.urlsplit(final).path != target or doc.canonicals != [origin + target]:
+            fail(path, 'City alias did not resolve to its canonical guide')
+        if origin + path in urls:
+            fail(path, 'Duplicate city alias in sitemap')
     for path in ['/packages/', package_path+'/']:
         _, status, _, _, final = request(path)
         if status != 200 or urllib.parse.urlsplit(final).path.endswith('/'):

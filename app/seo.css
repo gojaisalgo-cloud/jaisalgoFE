@@ -13,4 +13,44 @@
 .related-packages{margin:3rem 0}
 .related-packages>h2{font-size:clamp(1.8rem,4vw,2.65rem);margin-bottom:1.5rem}
 .standalone-package .breadcrumbs{flex-wrap:wrap}
+.city-discovery{margin:3rem 0;padding:2rem 0;border-block:1px solid var(--line,#e5e8e4)}
+.city-discovery-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:1.5rem;margin-bottom:1.5rem}
+.city-discovery-heading h2{max-width:680px;font-size:clamp(1.9rem,4vw,3rem);margin:.5rem 0}
+.city-discovery-heading p{max-width:680px;font-size:.95rem;color:var(--muted,#626b65);line-height:1.8;margin:.5rem 0 0}
+.city-discovery-heading>.underlink{flex-shrink:0}
+.city-region-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem}
+.city-region-grid>section{background:#fff;border:1px solid var(--line,#e5e8e4);border-radius:18px;padding:1.25rem}
+.city-region-grid h3{font-family:var(--font-body),sans-serif;font-size:.78rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted,#626b65);margin:0 0 .75rem}
+.city-region-grid ul{list-style:none;padding:0;margin:0}
+.city-region-grid li+li{margin-top:.5rem}
+.city-region-grid a{width:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:.75rem;min-height:52px;padding:.6rem 0;color:var(--green,#29473c);font-size:1rem;font-weight:600}
+.city-region-grid a small{display:block;font-size:.75rem;font-weight:400;color:var(--muted,#626b65);line-height:1.6;margin-top:.25rem}
+.city-region-grid a:hover{color:#111e17}
+.city-region-grid a:focus-visible{outline:2px solid var(--green,#29473c);outline-offset:4px;border-radius:8px}
+.city-guide-hero{display:grid;grid-template-columns:1.15fr 1fr;gap:clamp(1.5rem,4vw,4rem);align-items:center;margin:2.5rem 0 1.5rem}
+.city-guide-hero h1{font-size:clamp(2.75rem,5.5vw,5rem);line-height:1.06;margin:1rem 0 1.5rem}
+.city-guide-hero p{font-size:1rem;line-height:1.9;color:var(--muted,#626b65);max-width:660px}
+.city-guide-hero>.photo{height:100%;min-height:380px;max-height:510px;border-radius:22px;overflow:hidden}
+.city-reading{margin-top:3rem}
+.city-guide .breadcrumbs{flex-wrap:wrap;line-height:1.8}
+.city-guide section[id]{scroll-margin-top:7rem}
+.city-guide .prose>section{margin-bottom:2.5rem}
+.city-guide .prose h3{font-family:var(--font-body),sans-serif;font-size:1.05rem;line-height:1.6;font-weight:600;letter-spacing:-.015em;margin:1.5rem 0 .5rem}
+.city-transport-options>section{border:1px solid var(--line,#e5e8e4);border-radius:16px;padding:1.25rem;margin:1rem 0;background:white}
+.city-transport-options h3{display:flex;align-items:flex-start;gap:.75rem;margin:0!important}
+.city-transport-options h3 svg{flex-shrink:0;margin-top:.25rem;color:var(--green,#29473c)}
+.city-transport-options p{margin:.75rem 0}
+.city-transport-options .city-timing{font-size:.85rem;line-height:1.75;background:#f4f6f3;border-radius:8px;padding:.75rem;color:#46564b}
+.city-guide .prose a{color:var(--green,#29473c);text-decoration:underline;text-decoration-color:#bac8bf;text-underline-offset:4px}
+.city-transport-options a{font-size:.85rem;line-height:1.8}
+.city-arrival-list{list-style:none;padding:0!important}
+.city-arrival-list li{display:flex;align-items:flex-start;gap:.75rem;margin:1rem 0;line-height:1.9}
+.city-arrival-list svg{flex-shrink:0;margin-top:.4rem;color:var(--green,#29473c)}
+.city-guide .source-note h2{font-size:1.5rem}
+.city-guide .source-note ul{padding-left:1.25rem}
+.city-guide .source-note li p{font-size:.82rem;margin:.25rem 0 1rem}
+.city-guide .related-packages>p{max-width:750px;color:var(--muted,#626b65);font-size:.95rem;line-height:1.9;margin-bottom:1.5rem}
+@media(max-width:1000px){.city-region-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.city-discovery-heading{align-items:flex-start;flex-direction:column}.city-guide-hero>.photo{min-height:320px}}
+@media(max-width:800px){.city-guide-hero{grid-template-columns:1fr;margin-top:1.75rem}.city-guide-hero>.photo{height:270px;min-height:0;order:2}.city-reading{margin-top:2rem}}
+@media(max-width:480px){.city-region-grid{grid-template-columns:1fr}.city-region-grid>section{padding:1rem 1.25rem}.city-discovery{padding:1.5rem 0;margin:2rem 0}.city-guide-hero p{font-size:.95rem}.city-transport-options>section{padding:1rem}.city-guide .source-note{padding:1rem}.city-guide .prose h3{font-size:1rem}}
 @media(max-width:700px){.search-context-links{gap:.5rem 1.25rem}.search-context-links a{min-height:44px;display:inline-flex;align-items:center}.article-toc{padding:1.1rem}.article-toc a{padding:.25rem 0}.article-byline{justify-content:flex-start}.related-packages{margin-top:2rem}}

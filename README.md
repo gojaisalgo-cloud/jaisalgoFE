@@ -80,3 +80,7 @@ npm run audit:seo -- --base-url http://127.0.0.1:3001 --json /tmp/jaisalgo-seo-a
 Start a production preview before the HTTP audit; it uses Python 3 with no additional packages. See [implementation and verification](docs/SEO-IMPLEMENTATION.md), [the prioritized audit](docs/SEO-AUDIT.md), [keyword-to-page mapping](docs/SEO-KEYWORDS.md), and [Search Console setup, analytics and the 30/60/90-day plan](docs/SEO-OPERATIONS.md).
 
 Search Console verification/submission and real field metrics remain operator steps. Repository-wide lint currently reports 13 pre-existing errors and 9 warnings; comparison with the preceding commit found no new diagnostics from this change. They are documented separately from successful SEO/build/booking checks.
+
+### Pan-India travel discovery
+
+Six source-reviewed origin guides live under `/jaisalmer-travel-from`, with a region-grouped directory, canonical alias redirects and a shared publication gate. The 103-market research backlog never generates public pages automatically. See [implementation and 90-day plan](docs/PAN-INDIA-SEO.md), [keyword candidates](docs/PAN-INDIA-KEYWORDS.csv) and [verification](docs/PAN-INDIA-VERIFICATION.md). Local package booking and live payment gates remain unchanged.

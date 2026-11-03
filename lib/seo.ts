@@ -14,7 +14,7 @@ export function hasSelection(query:Query):boolean {
   return Object.keys(query).some(key => selectionParams.has(key) && query[key] !== undefined && query[key] !== '');
 }
 
-export function pageMetadata({title,description,path,image='fort',noindex=false,article}:{title:string;description:string;path:string;image?:string;noindex?:boolean;article?:EditorialEntry}):Metadata {
+export function pageMetadata({title,description,path,image='fort',noindex=false,article}:{title:string;description:string;path:string;image?:string;noindex?:boolean;article?:Pick<EditorialEntry,'updated'>}):Metadata {
   const url=canonicalUrl(path,config.url),asset=imageAsset(image),fullTitle=`${title} | ${config.name}`;
   const preview={url:canonicalUrl(asset.src,config.url),alt:asset.alt};
   return {
