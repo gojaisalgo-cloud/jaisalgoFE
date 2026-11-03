@@ -1,0 +1,64 @@
+/* Deliberate, finite motion; page scrolling stays native. */
+@media(prefers-reduced-motion:no-preference){
+  .cinematic-hero .hero-photo{inset:-55px -20px;transform:translate3d(0,var(--hero-drift,0px),0)}
+  .cinematic-hero .hero-photo img{animation:golden-opening 2.4s cubic-bezier(.2,.65,.25,1) both}
+  .cinematic-hero h1{animation:none}
+  .hero-line{display:block;overflow:clip;padding:.08em .06em;margin:-.08em -.06em}
+  .hero-line>span,.hero-line>em{display:block;animation:golden-title 1.15s var(--ease) both}
+  .hero-line:nth-child(2)>em{animation-delay:.16s}
+  .cinematic-hero .hero-eyebrow{animation:golden-fade .85s var(--ease) .1s both}
+  .cinematic-hero p{animation:golden-fade .85s var(--ease) .36s both}
+  .cinematic-hero .hero-actions{animation:golden-fade .85s var(--ease) .5s both}
+  .cinematic-hero .hero-bottom{animation:golden-fade .85s var(--ease) .65s both}
+  .hero-bottom a svg{animation:golden-scroll-cue 1.6s var(--ease) 1.4s 3}
+  .reveal-ready{opacity:.08;transform:translate3d(0,35px,0);transition:opacity .95s var(--ease),transform .95s var(--ease)}
+  .reveal-ready.is-revealed{opacity:1;transform:translate3d(0,0,0)}
+  .booking-card-2.reveal-ready{transition-delay:.12s}
+  .booking-card-3.reveal-ready{transition-delay:.24s}
+  .booking-card{transition:translate .45s var(--ease),box-shadow .45s var(--ease),border-color .45s var(--ease)}
+  .booking-card.reveal-ready{transition-property:opacity,transform,translate,box-shadow,border-color;transition-duration:.95s,.95s,.45s,.45s,.45s}
+  .booking-card:focus-within{translate:0 -7px;border-color:rgba(212,188,140,.65);box-shadow:0 26px 55px #0005}
+  .booking-card>.photo img{transition:transform 1s var(--ease)}
+  .booking-button{position:relative;overflow:hidden;isolation:isolate}
+  .booking-button::after{content:'';position:absolute;inset:-30% auto -30% -45%;width:30%;background:linear-gradient(90deg,transparent,#fff9,transparent);transform:skewX(-20deg);pointer-events:none;z-index:-1;transition:left .7s var(--ease)}
+  .booking-button:hover::after,.booking-button:focus-visible::after{left:120%}
+  .booking-button svg,.booking-detail svg,.underlink svg{transition:transform .35s var(--ease)}
+  .booking-button:hover svg{transform:translateX(5px)}
+  .booking-detail:hover svg,.underlink:hover svg{transform:translate(3px,-3px)}
+  .postcard-stack{--postcard-rise:0px}
+  .postcard-stack>div{translate:0 var(--postcard-rise);transition:translate 1.1s var(--ease),rotate .65s var(--ease)}
+  .postcard-stack.reveal-ready:not(.is-revealed){--postcard-rise:24px}
+  .postcard-stack>div:nth-child(2){transition-delay:.12s}
+  .postcard-stack>div:nth-child(3){transition-delay:.22s}
+  .collection-copy{animation:golden-fade .6s var(--ease) both}
+  .collection-visual>.photo img{animation:golden-opening 1.15s var(--ease) both}
+  .destination-slide{transition:transform .85s cubic-bezier(.22,.68,.2,1),opacity .7s var(--ease),box-shadow .7s var(--ease)}
+  .destination-slide.is-active{box-shadow:0 28px 70px #0007}
+  .destination-slide.is-active .destination-slide-copy{animation:golden-fade .65s var(--ease) .12s both}
+  .destination-tabs>button,.deck-arrow{transition:background .25s,color .25s,border-color .25s,translate .3s var(--ease)}
+  .deck-arrow:hover{translate:0 -3px}
+  .navlinks>a{position:relative}
+  .navlinks>a::after{content:'';position:absolute;left:0;right:0;bottom:-5px;height:1px;background:var(--sand);transform:scaleX(0);transform-origin:left;transition:transform .3s var(--ease)}
+  .navlinks>a:hover::after,.navlinks>a[aria-current]::after{transform:scaleX(1)}
+}
+@media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+  .booking-card:hover{translate:0 -9px;border-color:rgba(212,188,140,.65);box-shadow:0 26px 55px #0005}
+  .booking-card:hover>.photo img{transform:scale(1.065)}
+  .postcard-stack:hover>div{rotate:-3deg}
+  .postcard-stack:hover>div:nth-child(2){rotate:3deg}
+  .postcard-stack:hover>div:nth-child(3){rotate:-5deg}
+}
+@media(max-width:700px) and (prefers-reduced-motion:no-preference){
+  .booking-card-2.reveal-ready,.booking-card-3.reveal-ready{transition-delay:0s}
+  .navlinks>a::after{bottom:7px;right:auto;width:25px}
+}
+@keyframes golden-opening{from{transform:scale(1.13)}to{transform:scale(1)}}
+@keyframes golden-title{from{opacity:.1;transform:translate3d(0,105%,0) rotate(1.5deg)}to{opacity:1;transform:translate3d(0,0,0) rotate(0)}}
+@keyframes golden-fade{from{opacity:.15;transform:translate3d(0,17px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes golden-scroll-cue{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+/* Keep the headline layout when entrance animation is disabled. */
+.hero-line{display:block}
+@media(prefers-reduced-motion:reduce){
+  .cinematic-hero .hero-photo{transform:none!important}
+  .booking-card,.postcard-stack>div,.deck-arrow{translate:none!important;rotate:none!important}
+}

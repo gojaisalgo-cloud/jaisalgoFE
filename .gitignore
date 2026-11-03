@@ -1,0 +1,20 @@
+node_modules/
+.next/
+.env*
+!.env.example
+test-results/
+playwright-report/
+*.tsbuildinfo
+.data/
+
+# Local artifacts and runtime files
+.DS_Store
+*.log
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+*.zip
+__pycache__/
+.cache/

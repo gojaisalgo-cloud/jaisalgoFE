@@ -1,0 +1,14 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {packages} from '../data/packages';
+import {collections} from '../data/editorial';
+import {defaults,filterPackages} from '../lib/filter';
+import {enquirySchema,makeSummary} from '../lib/enquiry';
+test('combined filters match trip facts and never mutate inventory',()=>{const before=packages.map(p=>p.slug);const found=filterPackages(packages,{...defaults,days:'3',style:'Couples',category:'Premium',area:'Both',tour:'Private'});assert.ok(found.length);assert.ok(found.every(p=>p.days===3&&p.styles.includes('Couples')&&p.category==='Premium'&&p.area==='Both'&&p.tour==='Private'));filterPackages(packages,{...defaults,sort:'duration-desc'});assert.deepEqual(packages.map(p=>p.slug),before)});
+test('search, empty and duration sorting produce meaningful results',()=>{assert.ok(filterPackages(packages,{...defaults,q:'khuri'}).some(p=>p.slug==='khuri-slow'));assert.equal(filterPackages(packages,{...defaults,q:'thisisnotajourney'}).length,0);const sorted=filterPackages(packages,{...defaults,sort:'duration-desc'});assert.ok(sorted.every((p,i)=>i===0||sorted[i-1].days>=p.days))});
+const valid={name:'Test Traveler',phone:'+919999999999',period:'November 2026',travelers:2,duration:3,budget:'Comfort',accommodation:'Both',interests:['Heritage','Desert'],transport:'Please include',package:'',message:'',consent:true,website:''};
+test('enquiry rejects missing consent, bad mobile number, excessive group and spam',()=>{assert.ok(enquirySchema.safeParse(valid).success);for(const patch of [{consent:false},{phone:'wrong'},{travelers:100},{website:'spam'},{duration:0},{interests:['unknown']}])assert.equal(enquirySchema.safeParse({...valid,...patch}).success,false)});
+test('brief remains an enquiry with no invented confirmation',()=>{const summary=makeSummary(valid);assert.ok(summary.includes('not a reservation'));assert.ok(summary.includes('November 2026'));assert.ok(!summary.includes('consent:'))});
+test('all editorial slugs are unique and lead to substantive content',()=>{for(const entries of Object.values(collections)){assert.equal(new Set(entries.map(i=>i.slug)).size,entries.length);assert.ok(entries.every(i=>i.sections.length>=2&&i.sections.every(s=>s.body.length>100)))}});
+
+test('traveler collections resolve to existing relevant inventory',async()=>{const {travelCollections,collectionPackages}=await import('../data/travel-collections');assert.equal(travelCollections.length,9);assert.equal(new Set(travelCollections.map(c=>c.id)).size,9);for(const c of travelCollections){const results=collectionPackages(c,packages);assert.equal(results.length,c.slugs.length);assert.ok(c.questions.length>=2);assert.ok(results.every(p=>p.pricing.amount===null&&p.highlights.length>=2));}const family=travelCollections.find(c=>c.id==='family')!;assert.ok(collectionPackages(family,packages).every(p=>p.styles.includes('Families')))});

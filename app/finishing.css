@@ -1,0 +1,534 @@
+/* Active design system: ivory, sandstone and deep forest; editorial display + clear UI type. */
+:root{
+ --canvas:#fbfaf7;
+ --surface:#fff;
+ --surface-soft:#f5f2eb;
+ --text:#4f5852;
+ --quiet:#686b63;
+ --accent:#2f4a3d;
+ --accent-hover:#223b2e;
+ --gold-soft:#f3eadb;
+ --gold-border:#d5b98c;
+ --ivory:var(--canvas);
+ --paper:var(--surface-soft);
+ --white:var(--surface);
+ --ink:#252c28;
+ --muted:#626760;
+ --gold:#8c673a;
+ --sand:#8c673a;
+ --terracotta:var(--accent);
+ --orange:var(--accent);
+ --booking-teal:var(--accent);
+ --indigo:var(--accent);
+ --olive:#66725f;
+ --line:#e3e3db;
+ --serif:var(--font-body),Arial,sans-serif;
+ --sans:var(--font-body),Arial,sans-serif;
+ --type-caption:12px;
+ --type-label:13px;
+ --type-ui:14px;
+ --type-body:16px;
+ color-scheme:light;
+}
+body{background:var(--canvas);color:var(--ink);font-family:var(--sans);font-size:var(--type-body);line-height:1.75}
+h1,h2,h3,h4{font-family:var(--sans)}
+p{color:var(--muted)}
+input,select,textarea,button{font-family:var(--sans)}
+button,.button,.underlink{font-weight:600}
+.overline{font-size:11px;font-weight:650;letter-spacing:.14em;color:var(--gold);line-height:1.65}
+.fine,.source-note{font-size:12px;line-height:1.85;color:var(--quiet)}
+.breadcrumbs{font-size:12px;color:var(--muted);line-height:1.8}
+.breadcrumbs a:hover{color:var(--gold)}
+a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+::selection{color:var(--ink);background:#e9d8bc}
+.button,.escape-hero-actions .button,.tour-card-actions .button,.info-booking-footer .button{
+ background:var(--accent);border-color:var(--accent);color:#fff;font-size:14px;line-height:1.45;min-height:50px;border-radius:11px;transition:background-color .16s,box-shadow .16s,transform .16s;
+}
+.button:hover,.escape-hero-actions .button:hover,.tour-card-actions .button:hover,.info-booking-footer .button:hover{background:var(--accent-hover);border-color:var(--accent-hover);color:#fff}
+.button.secondary{color:var(--accent);background:var(--surface);border-color:#cdd6cc}
+.button.secondary:hover{color:var(--accent);background:#f0f4ee;border-color:#b9c8b7}
+.button:disabled{opacity:.55}
+.underlink,.text-button{font-size:14px;color:var(--accent)}
+.underlink:hover,.text-button:hover{color:var(--gold)}
+/* Navigation and brand. */
+.site-header,.site-header.header-home,.site-header.is-scrolled,.site-header.menu-open{background:#fbfaf7f5;border-color:var(--line);color:var(--ink)}
+.site-header .logo,.footer-top .logo{font-family:var(--font-display),Georgia,serif;color:var(--ink)}
+.site-header .logo .accent,.site-header .logo>svg,.header-home:not(.is-scrolled):not(.menu-open) .logo>svg,.header-home:not(.is-scrolled):not(.menu-open) .accent{color:var(--gold)}
+.logo i{font-size:6px;color:var(--muted);font-weight:600}
+.navlinks{font-size:14px;gap:30px}
+.navlinks>a,.header-home:not(.is-scrolled):not(.menu-open) .navlinks>a{color:var(--text);font-weight:550}
+.navlinks>a[aria-current],.navlinks>a:hover,.header-home:not(.is-scrolled):not(.menu-open) .navlinks>a:hover{color:var(--gold)}
+.navlinks>a[aria-current]:after{background:var(--gold)}
+.site-header .nav-cta,.site-header.header-home:not(.is-scrolled):not(.menu-open) .nav-cta{font-size:13px;color:var(--accent);background:var(--surface);border-color:#d8ddd4;min-height:46px}
+.site-header .nav-cta:hover{background:var(--surface-soft);color:var(--accent);border-color:var(--gold-border)}
+/* Warm editorial hierarchy, reserved for discovery and storytelling. */
+.escape-hero{background:#f5f1e8;border:1px solid #e9e2d5;border-radius:24px}
+.escape-hero-copy{padding:42px 38px}
+.escape-hero-copy .overline{color:var(--gold);font-size:11px;letter-spacing:.13em;margin-bottom:22px}
+.escape-hero h1{font-family:var(--font-display),Georgia,serif;font-size:clamp(58px,5.4vw,80px);font-weight:500;line-height:.99;letter-spacing:-.035em;color:var(--ink);margin-bottom:24px}
+.escape-hero h1 em{font-family:inherit;font-weight:500;font-style:italic;color:var(--gold)}
+.escape-hero-copy>p{font-size:17px;line-height:1.75;color:#555d54;margin-bottom:25px}
+.hero-token{color:var(--ink);gap:13px;margin-bottom:25px}
+.hero-token>span{background:var(--gold-soft);border:1px solid var(--gold-border);color:#765329;font-size:28px;font-weight:750;border-radius:12px;padding:8px 11px}
+.hero-token>div{font-size:14px;font-weight:600;line-height:1.65}
+.hero-token small{font-size:13px;color:var(--muted);font-weight:400;line-height:1.6}
+.escape-hero-actions{gap:24px}
+.escape-hero-actions .button,.escape-hero-actions .underlink{font-size:14px;min-height:50px}
+.destination-location span{font-size:11px;color:#fff;letter-spacing:.11em}
+.destination-location strong{font-size:16px;color:#fff;font-weight:550;letter-spacing:0}
+.trust-strip{padding-block:20px;gap:18px;border-color:var(--line)}
+.trust-strip>span,.trust-strip>span:last-child{font-size:13px;line-height:1.7;color:var(--text);gap:8px}
+.trust-strip svg{color:var(--gold);flex-shrink:0}
+.package-section-title h2,.travel-pass-section h2,.gallery-section h2,.booking-how>h2,.package-guide>h2{font-family:var(--font-display),Georgia,serif;font-size:clamp(38px,3.8vw,55px);font-weight:500;line-height:1.08;letter-spacing:-.025em;color:var(--ink)}
+.package-section-title .overline,.booking-how>.overline,.section-top .overline{font-size:11px;color:var(--gold)}
+.package-section-title>.underlink{font-size:14px}
+.travel-pass-section h2 em{font-style:italic;color:var(--gold)}
+.travel-pass-section>div>p{font-size:16px;line-height:1.85;color:var(--muted);max-width:480px}
+.travel-pass{background:var(--surface);border-color:#e4d8c4;box-shadow:0 12px 35px #46351d06}
+.travel-pass-head{color:var(--gold);font-size:11px}
+.travel-pass .pass-destination h3{font-family:var(--font-display),Georgia,serif;font-size:46px;color:var(--ink)}
+.travel-pass p,.pass-facts span{font-size:14px;color:var(--text)}
+.pass-destination>div>span,.pass-payment small{font-size:11px;color:var(--muted)}
+.pass-facts svg{color:var(--gold)}
+.pass-payment strong{font-size:36px;font-weight:750;color:var(--ink)}
+.pass-payment>span{font-size:13px;color:var(--muted)}
+.travel-pass .fine{font-size:12px;color:var(--quiet)}
+.pass-tear{border-color:#ddcfb8}
+.gallery-section{background:var(--surface-soft);border-color:var(--line)}
+.destination-tabs button{font-size:13px;color:var(--text);border-color:#d9d9cf;min-height:45px;background:var(--surface)}
+.destination-tabs button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+.destination-slide-copy h3{font-family:var(--font-display),Georgia,serif;font-size:36px;font-weight:500;line-height:1.05;color:#fff}
+.destination-slide-copy p{font-size:14px;line-height:1.8;color:#fff}
+.destination-slide-copy>span{font-size:11px;color:#fff}
+.destination-slide-copy .underlink{color:#fff;font-size:13px;border-color:#ffffff70}
+.destination-current strong,.rail-hint{font-size:13px;color:var(--muted)}
+.destination-current>span{font-size:12px;color:var(--gold)}
+.booking-how article h3{font-size:23px;font-weight:650;line-height:1.3;color:var(--ink)}
+.booking-how article p{font-size:15px;line-height:1.8;color:var(--muted)}
+.booking-how article>span{font-size:13px;color:var(--gold)}
+/* Package marketplace. */
+.booking-list-page>h1{font-family:var(--font-display),Georgia,serif;font-size:clamp(42px,4.1vw,60px);font-weight:500;letter-spacing:-.025em;line-height:1.05;color:var(--ink)}
+.booking-list-page>h1 em{font-style:italic;color:var(--gold)}
+.booking-list-page>.overline{font-size:11px;color:var(--gold)}
+.booking-list-page>p{font-size:16px;line-height:1.8;color:var(--muted)}
+.booking-list-page>.booking-mode-note{font-size:13px;line-height:1.8;color:#755b35;background:#f5efe3;border-color:#e7d8c0}
+.marketplace-categories>button{flex:0 0 auto;min-width:max-content;font-size:14px;font-weight:550;color:var(--text);background:var(--surface);border-color:#dedfd6;min-height:46px;gap:8px}
+.marketplace-categories>button[aria-pressed=true]{color:#fff;background:var(--accent);border-color:var(--accent)}
+.marketplace-categories>button svg{color:currentColor}
+.marketplace-categories>button[aria-pressed=true] svg{color:#fff}
+.catalog-tools.marketplace-tools{background:var(--surface-soft);border-color:var(--line)}
+.marketplace-tools .catalog-search{border-color:#dddfd6;background:var(--surface)}
+.marketplace-tools .catalog-search input{font-size:14px;color:var(--ink)}
+.marketplace-tools .jg-dropdown-trigger{font-size:13px;gap:8px;padding-inline:10px;min-height:48px}
+.marketplace-results,.marketplace-results p{font-size:13px;color:var(--muted)}
+.marketplace-results>span{color:var(--ink);font-weight:650}
+.marketplace-results button{color:var(--gold)}
+.catalog-continue{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:21px 0 6px;border-bottom:1px solid var(--line);margin-top:8px}
+.catalog-continue>span{font-size:13px;color:var(--muted)}
+.catalog-continue>a{font-size:14px;min-height:44px;display:inline-flex;align-items:center;gap:9px}
+.catalog-price-note{font-size:13px;line-height:1.85;color:var(--muted);max-width:1050px}
+.compact-tour-card{background:var(--surface);border-color:#e0e1d8;box-shadow:0 6px 22px #3a321e05;transition:border-color .18s,box-shadow .18s}
+.compact-tour-card:hover{border-color:#c7cbbd;box-shadow:0 12px 28px #3a321e0b}
+.compact-tour-card .tour-card-kicker{font-size:11px;color:var(--gold);letter-spacing:.09em;font-weight:650;line-height:1.6}
+.compact-tour-card h3{font-family:var(--sans);font-size:23px;font-weight:650;line-height:1.24;letter-spacing:-.035em;color:var(--ink)}
+.compact-tour-card .tour-card-description{font-size:15px;line-height:1.7;color:var(--muted);margin-bottom:18px}
+.compact-tour-card .tour-service-strip{border-color:var(--line);gap:5px}
+.compact-tour-card .tour-service-strip>span{font-size:12px;color:var(--text);gap:6px}
+.compact-tour-card .tour-service-strip>span+span{border-color:var(--line)}
+.tour-service-strip svg{color:var(--gold)}
+.compact-tour-card .tour-card-price>div>small{font-size:13px;line-height:1.6;color:var(--muted)}
+.compact-tour-card .tour-card-price>div>strong{font-size:32px;line-height:1.3;font-weight:750;letter-spacing:-.04em;color:var(--ink)}
+.compact-tour-card .tour-price-basis{font-size:12px;line-height:1.75;color:var(--quiet);margin-bottom:16px}
+.compact-tour-card .estimate-tag{font-size:12px;line-height:1.75;color:var(--quiet);margin-top:13px}
+.compact-tour-card .tour-card-price .token-chip{background:var(--gold-soft);color:#765329;border:1px solid var(--gold-border);min-width:109px;padding:10px 11px;box-shadow:none}
+.compact-tour-card .token-chip>b{font-size:24px;line-height:1.25;font-weight:750;color:#765329}
+.compact-tour-card .token-chip>b>span{font-size:12px;color:#765329;font-weight:600}
+.compact-tour-card .tour-card-price .token-chip>small{font-size:11px;color:#775a34;line-height:1.5}
+.compact-tour-card .tour-detail-link{font-size:14px;color:var(--accent);font-weight:600;min-height:48px}
+.compact-tour-card .tour-card-actions{gap:12px}
+.compact-tour-card .tour-card-actions .button{font-size:14px;min-height:49px;padding:12px 16px;background:var(--accent);border-color:var(--accent);color:#fff;gap:10px}
+.compact-tour-card .tour-card-actions .button:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+.compact-tour-card .tour-duration{font-size:12px;line-height:1.4;color:#59472e;background:#fffdf8;border:1px solid #e8ddc9;min-height:36px;gap:6px}
+.tour-duration svg{color:#81633c}
+.package-info-button{font-size:12px;font-weight:650;background:#fffefb;color:var(--accent);border-color:#e8e2d4;min-height:44px}
+.package-info-button:hover{background:var(--gold-soft)}
+/* Shared selection menus. */
+.jg-dropdown-trigger{font-size:15px;line-height:1.5;color:var(--ink);border-color:#d9ddd3;background:var(--surface);min-height:52px}
+.jg-dropdown-trigger:hover{border-color:#b5c1b0;background:#fdfdfa}
+.jg-dropdown-trigger[data-state=open]{border-color:#a1b39c;background:var(--surface);box-shadow:0 0 0 3px #edf1e8}
+.jg-dropdown-trigger:focus-visible{outline-color:var(--gold)}
+.jg-dropdown-chevron{color:var(--muted)}
+.jg-dropdown-menu{color:var(--ink);background:var(--surface);border-color:#e0e1d6;box-shadow:0 18px 45px #3328191c}
+.jg-dropdown-item{font-size:14px;line-height:1.5;color:var(--text);min-height:50px}
+.jg-dropdown-item[data-highlighted],.jg-dropdown-item[data-state=checked]{background:#f1f3ec;color:var(--accent)}
+.jg-dropdown-option-icon{background:var(--surface-soft);color:var(--gold)}
+.jg-dropdown-item[data-state=checked] .jg-dropdown-option-icon{background:#e8eee2;color:var(--accent)}
+.jg-dropdown-option-note{font-size:12px;color:var(--muted)}
+.jg-dropdown-check{color:var(--accent)}
+/* Information sheet and full package details. */
+.package-dialog,.package-information{background:var(--surface);color:var(--ink)}
+.package-dialog{border-color:var(--line)}
+.package-dialog-top{background:var(--surface);border-color:var(--line)}
+.package-dialog-top>span{font-size:11px;color:var(--gold);letter-spacing:.12em;font-weight:650}
+.package-close{width:44px;height:44px;min-width:44px;min-height:44px;color:var(--accent);background:var(--surface-soft)}
+.info-hero>span{font-size:11px;line-height:1.6;background:#252c28bd;color:#fff}
+.info-heading .overline{font-size:11px;color:var(--gold)}
+.info-heading h1,.info-heading h2{font-family:var(--sans);font-size:32px;line-height:1.18;font-weight:650;color:var(--ink);letter-spacing:-.035em}
+.information-page .info-heading h1{font-family:var(--sans);font-size:38px;font-weight:650;line-height:1.15}
+.info-heading>p{font-size:16px;line-height:1.75;color:var(--muted)}
+.info-meta{font-size:13px;line-height:1.7;color:var(--text)}
+.info-meta svg{color:var(--gold)}
+.info-status{font-size:12px;line-height:1.75;color:#785c32}
+.status-dot{background:var(--gold)}
+.info-tabs{background:var(--surface);border-color:var(--line)}
+.info-tabs button{flex:0 0 auto;font-size:14px;font-weight:600;line-height:1.5;color:var(--muted);min-height:50px}
+.info-tabs button[aria-pressed=true]{color:var(--accent)}
+.info-tabs button[aria-pressed=true]:after{background:var(--accent)}
+.info-section{scroll-margin-top:136px}
+.info-section h3{font-family:var(--sans);font-size:24px;font-weight:650;line-height:1.25;color:var(--ink)}
+.info-section h4{font-family:var(--sans);font-size:16px;font-weight:650;line-height:1.5;color:var(--ink)}
+.info-section p{font-size:15px;line-height:1.85;color:var(--muted)}
+.info-section .fine,.info-section p.fine{font-size:13px;line-height:1.8;color:var(--quiet)}
+.info-facts>div{background:#f7f6f0;border-color:#e8e7dd;padding:17px;gap:12px}
+.info-facts span{font-size:11px;font-weight:550;letter-spacing:.08em;line-height:1.5;color:var(--quiet)}
+.info-facts strong{font-size:14px;font-weight:600;letter-spacing:0;line-height:1.6;color:var(--ink)}
+.info-facts svg{color:var(--gold)}
+.info-inclusions li{font-size:14px;line-height:1.8;color:var(--text)}
+.info-inclusions li svg{color:var(--accent)}
+.info-inclusions section+section li:before{color:var(--gold)}
+.route-pills>span{font-size:12px;line-height:1.6;color:var(--text);background:var(--surface-soft);border-color:#e4dfd2}
+.info-accordion{border-color:var(--line)}
+.info-accordion summary{font-size:14px;font-weight:600;min-height:54px;color:var(--ink)}
+.information-timeline section>span{font-size:12px;background:var(--gold-soft);color:#765329;border-color:#e1ca9f}
+.information-timeline section:not(:last-child):before{border-color:#e0d7c5}
+.venue-card{background:#f8f3e9;border-color:#e7d8be}
+.venue-card>.overline{font-size:11px;color:var(--gold)}
+.venue-card a{font-size:13px;color:var(--accent)}
+.amenity-list>div{font-size:14px;line-height:1.85;border-color:var(--line);padding:14px 0}
+.amenity-list dt{color:var(--ink);font-weight:600}
+.amenity-list dd{color:var(--muted)}
+.venue-photo-pending{border-color:#d8dace;color:var(--gold);background:#fcfbf7}
+.venue-photo-pending p{font-size:13px;color:var(--muted)}
+.info-travelers,.trip-preferences label{font-size:14px;line-height:1.65;color:var(--ink)}
+.trip-preferences .jg-dropdown-trigger{font-size:15px;min-height:52px}
+.trip-preferences .sharing-preview{font-size:14px;line-height:1.75;background:#f0f3eb;color:#38513c;border:1px solid #dfe6d7}
+.trip-preferences .field-hint,.trip-preferences .checkout-options small{font-size:13px;line-height:1.75;color:var(--muted)}
+.trip-preferences .checkout-options>label{font-size:14px;line-height:1.7;min-height:36px}
+.trip-preferences input[type=checkbox]{width:19px;height:19px;min-height:19px;accent-color:var(--accent)}
+.extra-requests{border-color:var(--line)}
+.extra-requests summary{font-size:14px;min-height:54px;color:var(--ink)}
+.extra-requests summary>span{font-size:12px;color:var(--quiet)}
+.extra-options>label{background:var(--surface);border-color:#dee2d5;min-height:70px;gap:10px}
+.extra-options>label:has(input:checked){background:#f2f5ed;border-color:#9caf91}
+.extra-options strong{font-size:13px;font-weight:600;line-height:1.6;color:var(--ink)}
+.extra-options small{font-size:12px;line-height:1.6;color:var(--muted)}
+.info-costs{border-color:var(--line)}
+.info-costs>div{font-size:14px;line-height:1.75;color:var(--text)}
+.info-costs strong{color:var(--ink);font-weight:650}
+.info-costs .info-grand-total{font-size:15px;color:var(--ink);border-color:var(--line)}
+.info-costs .info-grand-total strong{font-size:27px;color:var(--ink)}
+.info-grand-total small{font-size:12px;color:var(--muted)}
+.info-section .request-note,.request-note{font-size:13px;line-height:1.85;color:#77572c;background:#faf2e5;border-color:#e7d0ac}
+.market-reference{background:var(--surface-soft);border-color:var(--line);font-size:13px}
+.market-reference>strong,.market-reference p,.market-reference a{font-size:13px;line-height:1.8}
+.market-reference>strong{color:var(--ink)}
+.market-reference a{color:var(--accent)}
+.info-booking-footer{background:var(--surface);border-color:var(--line)}
+.info-booking-footer>div>span{font-size:13px;color:var(--muted)}
+.info-booking-footer strong{font-size:28px;color:var(--ink);font-weight:750}
+.info-booking-footer strong small{font-size:12px;letter-spacing:0;color:#7b5c31}
+.info-booking-footer>p{font-size:11px;line-height:1.7;color:var(--quiet)}
+/* Supporting discovery libraries. */
+.package-guide>.overline{font-size:11px;color:var(--gold)}
+.package-guide>p,.stay-library p{font-size:15px;line-height:1.8;color:var(--muted)}
+.package-guide>details{border-color:var(--line)}
+.package-guide>details>summary{font-size:15px;line-height:1.6;color:var(--ink);min-height:64px}
+.stay-library h3{font-size:16px;font-weight:650;line-height:1.5;color:var(--ink)}
+.package-guide .fine{font-size:13px;line-height:1.85;color:var(--quiet)}
+.attraction-library span{font-size:15px;color:var(--ink)}
+.attraction-library small{font-size:12px;line-height:1.7;color:var(--muted)}
+.group-simulator{background:var(--surface-soft);border-color:var(--line)}
+.group-simulator .overline{font-size:11px;color:var(--gold)}
+.group-simulator h3{font-size:23px;font-weight:650;line-height:1.3;color:var(--ink)}
+.group-simulator p,.group-simulator label{font-size:14px;line-height:1.8;color:var(--text)}
+.simulator-controls button{font-size:13px;color:var(--accent);border-color:#ccd5c5}
+.simulator-controls button[aria-pressed=true]{background:var(--accent);color:#fff;border-color:var(--accent)}
+.simulator-costs>div{font-size:14px;color:var(--muted)}
+.simulator-costs strong{color:var(--ink)}
+.simulator-costs>div:last-child{font-size:18px;color:var(--ink)}
+.custom-trip-link h3{font-size:21px;font-weight:650;line-height:1.35;color:var(--ink)}
+.custom-trip-link p{font-size:14px;line-height:1.8;color:var(--muted)}
+.custom-trip-link .button{font-size:14px}
+/* Checkout, planner, tickets and account-free retrieval. */
+.checkout-intro .overline,.my-bookings-heading .overline{font-size:11px;color:var(--gold)}
+.checkout-intro h1,.my-bookings-heading h1,.ticket-page-intro h1{font-family:var(--sans);font-size:36px;line-height:1.15;font-weight:650;letter-spacing:-.035em;color:var(--ink)}
+.checkout-intro>p,.my-bookings-heading p,.ticket-page-intro>p{font-size:16px;line-height:1.8;color:var(--muted)}
+.checkout-back{font-size:13px;color:var(--accent)}
+.checkout-trip-chip{border-color:var(--line);background:var(--surface)}
+.checkout-trip-chip strong{font-size:16px;font-weight:650;color:var(--ink)}
+.checkout-trip-chip span{font-size:13px;color:var(--muted)}
+.checkout-mode,.booking-mode-note{font-size:13px;line-height:1.75;color:#775b34;background:#f5efe3;border-color:#e7d8c0}
+.simple-checkout .booking-form-section h2{font-family:var(--sans);font-size:23px;font-weight:650;line-height:1.3;color:var(--ink)}
+.simple-checkout .form-grid label,.minimal-planner .form-grid label{font-size:14px;line-height:1.65;color:var(--ink)}
+.simple-checkout input,.enquiry-form input,.enquiry-form textarea,.ticket-unlock input,.import-ticket input{font-size:16px;color:var(--ink);background:var(--surface);border-color:#d9ddd3}
+input::placeholder,textarea::placeholder{color:#72776c;opacity:1}
+.simple-checkout .jg-dropdown-trigger,.minimal-planner .jg-dropdown-trigger{font-size:16px;min-height:52px}
+.simple-checkout .field-hint,.simple-checkout .fine,.checkout-estimate-note{font-size:13px;line-height:1.8;color:var(--muted)}
+.optional-extras{border-color:var(--line)}
+.optional-extras>summary{font-size:14px;color:var(--ink)}
+.optional-extras>summary small{font-size:13px;color:var(--muted)}
+.checkout-terms>summary,.checkout-consent{font-size:14px;line-height:1.75;color:var(--text)}
+.simple-checkout .checkout-consent,.simple-checkout .checkout-terms summary{font-size:14px;line-height:1.8;color:var(--text)}
+.simple-checkout .request-note{font-size:13px;line-height:1.85}
+.checkout-terms p,.checkout-terms a{font-size:14px;line-height:1.8}
+.checkout-inline-total>div,.checkout-price-summary>div{font-size:14px;line-height:1.65;color:var(--text)}
+.checkout-inline-total strong,.checkout-price-summary strong{font-size:18px;color:var(--ink);font-weight:700}
+.checkout-inline-total .due-now strong,.checkout-price-summary .due-now strong{font-size:26px;color:var(--accent)}
+.checkout-inline-total small,.checkout-price-summary small{font-size:12px;color:var(--muted)}
+.checkout-paybar{background:#fffefbf5;border-color:var(--line)}
+.checkout-paybar>div>span{font-size:12px;color:var(--muted)}
+.checkout-paybar>div>strong{font-size:26px;color:var(--ink)}
+.checkout-paybar strong small{font-size:12px;color:var(--muted)}
+.checkout-paybar .button{font-size:14px;min-height:50px}
+.checkout-summary{border-color:var(--line);background:var(--surface)}
+.checkout-summary h3{font-family:var(--sans);font-size:25px;line-height:1.3;font-weight:650;color:var(--ink)}
+.checkout-summary p,.checkout-summary summary,.cost-line{font-size:14px;line-height:1.8;color:var(--muted)}
+.simple-checkout .booking-error{font-size:14px;line-height:1.8;border-radius:12px;padding:14px 16px;margin-top:18px;scroll-margin-top:100px;scroll-margin-bottom:130px}
+.error,.simple-checkout .booking-error{color:#963e2d;background:#fff1ec;border-color:#e5bbaa}
+.success{color:#2f5238;background:#eef5ec;border-color:#cddfc5}
+.minimal-planner .enquiry-form,.minimal-planner .brief-panel{background:var(--surface);border-color:var(--line)}
+.minimal-planner .enquiry-form h2,.minimal-planner .brief-panel h2{font-family:var(--sans);font-size:32px;line-height:1.2;font-weight:650;color:var(--ink)}
+.minimal-planner .enquiry-form>p,.minimal-planner .brief-panel p{font-size:15px;line-height:1.8;color:var(--muted)}
+.planner-preferences>summary,.minimal-planner label,.minimal-planner .consent{font-size:14px;color:var(--ink);line-height:1.75}
+.planner-preferences>summary>span,.optional-label{font-size:12px;color:var(--muted)}
+.planner-preferences .interest-options label{font-size:14px}
+.brief-link{font-size:14px;color:var(--accent)}
+.ticket-success{font-size:13px;background:#edf4eb;color:#36543c;border-color:#d0dfc7}
+.digital-ticket{background:var(--surface);border-color:#dce1d4}
+.ticket-topline{font-size:11px;color:var(--accent);font-weight:650}
+.ticket-topline>span:first-child{font-size:10px;letter-spacing:.08em}
+.ticket-environment{font-size:11px;background:var(--gold-soft);color:#765329}
+.ticket-body>h2{font-family:var(--sans);font-size:28px;line-height:1.2;font-weight:650;color:var(--ink)}
+.ticket-facts span{font-size:11px;line-height:1.6;color:var(--muted);letter-spacing:.08em}
+.ticket-facts strong{font-size:15px;font-weight:600;line-height:1.6;color:var(--ink)}
+.ticket-facts .ticket-reference{font-size:13px;color:var(--ink)}
+.ticket-payment{background:#f2f5ee;border-color:#dce5d1}
+.ticket-payment>span{font-size:12px;color:var(--accent);font-weight:650}
+.ticket-payment>p{font-size:13px;color:var(--text)}
+.ticket-payment>p strong{font-size:18px;color:var(--ink)}
+.ticket-payment>p small{font-size:12px;color:var(--muted)}
+.ticket-stub{background:#f8f6f0;border-color:#d9cfba}
+.ticket-stub-logo{color:var(--ink)}
+.ticket-stub-logo>span{color:var(--gold);font-size:9px}
+.ticket-stub>strong{font-size:15px;color:var(--ink);line-height:1.5}
+.ticket-stub>p{font-size:13px;color:var(--muted);line-height:1.8}
+.stub-reference{font-size:11px;color:var(--muted)}
+.ticket-actions .button{font-size:14px;min-height:50px}
+.ticket-privacy-note,.ticket-action-feedback{font-size:12px;line-height:1.8;color:var(--muted)}
+.ticket-details>details{border-color:var(--line)}
+.ticket-details>details>summary{font-size:15px;min-height:58px;color:var(--ink)}
+.ticket-details p,.ticket-details section>p,.ticket-payment-details>div{font-size:14px;line-height:1.85;color:var(--text)}
+.ticket-details h3{font-size:21px;line-height:1.35;font-weight:650}
+.ticket-help,.ticket-help .underlink{font-size:14px;color:var(--accent)}
+.saved-ticket-card,.bookings-empty{background:var(--surface);border-color:var(--line)}
+.saved-ticket-card h2{font-family:var(--sans);font-size:23px;font-weight:650;line-height:1.3;color:var(--ink)}
+.saved-ticket-card p{font-size:14px;line-height:1.7;color:var(--muted)}
+.saved-ticket-state{font-size:12px;color:var(--accent);background:#f0f4ec}
+.saved-ticket-id{font-size:12px;color:var(--quiet)}
+.saved-ticket-open{font-size:14px;color:var(--accent)}
+.import-ticket summary,.saved-pending summary{font-size:15px;color:var(--ink)}
+.import-ticket>p,.import-ticket label,.saved-pending a{font-size:14px;line-height:1.8;color:var(--muted)}
+.bookings-empty h2{font-family:var(--sans);font-size:30px;font-weight:650;line-height:1.2}
+.bookings-empty p{font-size:15px}
+/* Editorial routes and operator views use the same readable palette. */
+.listing-header h1,.article-header h1,.detail-heading h1,.prose>h1{font-family:var(--font-display),Georgia,serif;font-size:clamp(44px,4.5vw,66px);font-weight:500;line-height:1.05;letter-spacing:-.025em;color:var(--ink)}
+.listing-header>p,.article-header>p,.detail-heading>p{font-size:17px;line-height:1.85;color:var(--muted)}
+.prose p,.prose li,.prose-section p,.article-layout article p,.article-layout article li{font-size:16px;line-height:1.9;color:var(--text)}
+.prose h2,.article-layout article h2{font-family:var(--font-display),Georgia,serif;font-size:38px;font-weight:500;line-height:1.15;color:var(--ink)}
+.prose h3,.article-layout article h3{font-size:24px;font-weight:650;line-height:1.3}
+.detail-meta{font-size:13px;line-height:1.8;color:var(--muted)}
+.quote-panel p,.quote-panel .fine,.source-note p{font-size:13px;line-height:1.85;color:var(--muted)}
+.quote-panel .button,.quote-panel>.underlink{font-size:14px}
+.editorial-card .overline{font-size:11px;color:var(--gold)}
+.editorial-card h3{font-family:var(--sans);font-size:23px;font-weight:650;line-height:1.25;letter-spacing:-.03em;color:var(--ink)}
+.editorial-card p,.editorial-card .card-meta{font-size:14px;line-height:1.8;color:var(--muted)}
+.editorial-card small{font-size:12px;line-height:1.8;color:var(--quiet)}
+.admin-workspace>h1{font-family:var(--sans);font-size:38px;font-weight:650;line-height:1.2;color:var(--ink)}
+.admin-workspace h2{font-family:var(--sans);font-size:28px;font-weight:650;line-height:1.25;color:var(--ink)}
+.admin-workspace h3{font-family:var(--sans);font-size:23px;font-weight:650;line-height:1.3;color:var(--ink)}
+.admin-workspace p,.admin-workspace label,.admin-workspace button,.admin-workspace summary,.admin-table table{font-size:14px;line-height:1.8;color:var(--text)}
+.admin-workspace input,.admin-workspace .jg-dropdown-trigger{font-size:15px;color:var(--ink)}
+.admin-workspace .button{color:#fff}
+.admin-workspace .button.secondary{color:var(--accent)}
+.admin-workspace .fine,.admin-metrics small{font-size:12px;color:var(--muted)}
+.admin-json textarea{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:13px;line-height:1.7}
+.admin-metrics strong{color:var(--ink)}
+footer{background:var(--surface-soft);border-color:var(--line)}
+.footer-top h3{font-family:var(--sans);font-size:14px;font-weight:650;color:var(--ink)}
+.footer-top p,.footer-top>div>a:not(.logo){font-size:14px;line-height:1.85;color:var(--text)}
+.footer-top .overline{font-size:10px;color:var(--gold)}
+.footer-bottom,.footer-bottom a{font-size:12px;color:var(--muted);line-height:1.8}
+@media(hover:hover) and (pointer:fine){
+ .escape-hero-actions .button:hover,.tour-card-actions .button:hover,.info-booking-footer .button:hover{transform:translateY(-1px);box-shadow:0 6px 15px #263c351a}
+}
+@media(max-width:1100px) and (min-width:701px){
+ .escape-hero-copy{padding:34px 26px}
+ .escape-hero h1{font-size:clamp(51px,5.7vw,64px)}
+ .compact-tour-card .tour-service-strip>span{font-size:11px;gap:5px}
+ .compact-tour-card .tour-card-actions .button{font-size:13px;padding-inline:13px}
+ .compact-tour-card .tour-detail-link{font-size:13px}
+}
+@media(max-width:700px){
+ .site-header .logo{font-size:34px}
+ .site-header .nav-cta,.site-header.header-home:not(.is-scrolled):not(.menu-open) .nav-cta{font-size:12px;min-height:44px}
+ .navlinks{font-size:15px;background:var(--surface)}
+ .navlinks.is-open>a{font-size:15px}
+ .escape-hero-copy{padding:29px 24px 27px}
+ .escape-hero-copy .overline{font-size:10px;line-height:1.8;margin-bottom:20px;letter-spacing:.11em}
+ .escape-hero h1{font-size:clamp(47px,12.8vw,62px);line-height:1.01;margin-bottom:20px;max-width:470px}
+ .escape-hero-copy>p{font-size:16px;line-height:1.75}
+ .hero-token{gap:10px;margin-bottom:24px}.hero-token>span{font-size:25px;padding:8px 10px}
+ .hero-token>div{font-size:13px}.hero-token small{font-size:12px}
+ .escape-hero-actions{gap:17px}.escape-hero-actions .button,.escape-hero-actions .underlink{font-size:13px;min-height:48px;gap:10px}
+ .escape-hero-actions .button{padding:13px 17px}
+ .destination-location span{font-size:10px}.destination-location strong{font-size:14px}
+ .trust-strip{gap:12px}.trust-strip>span,.trust-strip>span:last-child{font-size:12px;line-height:1.7}
+ .package-section-title h2{font-size:38px;line-height:1.1;max-width:290px}
+ .package-section-title .overline{font-size:10px;line-height:1.7}
+ .package-section-title>.underlink{font-size:12px;min-height:44px;gap:6px}
+ .travel-pass-section h2,.gallery-section h2,.booking-how>h2,.package-guide>h2{font-size:39px;line-height:1.1}
+ .travel-pass-section>div>p{font-size:16px;line-height:1.8}
+ .travel-pass .pass-destination h3{font-size:43px}
+ .travel-pass-head{font-size:10px}.pass-facts span{font-size:13px}
+ .destination-slide-copy h3{font-size:33px}.destination-slide-copy p{font-size:14px}
+ .destination-current strong,.rail-hint{font-size:12px}
+ .booking-how article h3{font-size:22px}.booking-how article p{font-size:15px}
+ .booking-list-page>h1{font-size:43px;line-height:1.07;max-width:500px}
+ .booking-list-page>p{font-size:15px;line-height:1.8}
+ .booking-list-page>.booking-mode-note{font-size:12px;line-height:1.8}
+ .marketplace-categories{margin-inline:-20px;padding-inline:20px}
+ .marketplace-categories>button{font-size:13px;min-height:46px;gap:7px;padding:10px 14px}
+ .marketplace-tools .catalog-search input{font-size:16px}
+ .marketplace-tools .jg-dropdown-trigger{font-size:13px;min-height:49px}
+ .marketplace-results,.marketplace-results p{font-size:12px;line-height:1.75}
+ .catalog-continue{align-items:flex-start;gap:8px;padding-top:16px;flex-direction:column}
+ .catalog-continue>span{font-size:12px}.catalog-continue>a{font-size:14px}
+ .catalog-price-note{font-size:12px;line-height:1.85}
+ .compact-tour-card .tour-card-kicker{font-size:10px}
+ .compact-tour-card h3{font-size:24px}
+ .compact-tour-card .tour-card-description{font-size:15px;line-height:1.75}
+ .compact-tour-card .tour-service-strip>span{font-size:12px;gap:5px}
+ .compact-tour-card .tour-card-price>div>small{font-size:13px}
+ .compact-tour-card .tour-card-price>div>strong{font-size:32px}
+ .compact-tour-card .tour-price-basis{font-size:12px}
+ .compact-tour-card .tour-card-actions .button,.compact-tour-card .tour-detail-link{font-size:14px;min-height:49px}
+ .compact-tour-card .estimate-tag{font-size:12px;line-height:1.75}
+ .compact-tour-card .tour-duration{font-size:11px;min-height:36px}
+ .package-info-button{font-size:12px}
+ .jg-dropdown-trigger,.simple-checkout .jg-dropdown-trigger,.minimal-planner .jg-dropdown-trigger{font-size:16px;min-height:52px}
+ .jg-dropdown-item{font-size:14px;min-height:51px}.jg-dropdown-option-note{font-size:12px}
+ .package-dialog-top>span{font-size:10px}.package-dialog-top{min-height:56px}
+ .info-hero>span{font-size:10px;left:14px;right:14px;width:max-content;max-width:calc(100% - 28px)}
+ .info-heading{padding:23px 20px 20px}
+ .info-heading h2{font-size:29px}.information-page .info-heading h1{font-size:32px}
+ .info-heading>p{font-size:15px}.info-meta{font-size:12px;gap:8px 14px}.info-status{font-size:12px}
+ .info-tabs{gap:18px}.info-tabs button{font-size:13px;min-height:50px}
+ .info-section{padding:25px 20px 32px}.info-section h3{font-size:23px}
+ .info-section p{font-size:15px}.info-section h4{font-size:16px}
+ .info-section .fine,.info-section p.fine{font-size:13px}
+ .info-facts>div{padding:13px;gap:8px}.info-facts span{font-size:10px}.info-facts strong{font-size:14px}
+ .info-inclusions{grid-template-columns:1fr;gap:24px}.info-inclusions li{font-size:14px}
+ .amenity-list>div{font-size:14px;grid-template-columns:92px 1fr;gap:12px}
+ .info-accordion summary{font-size:14px;line-height:1.7;gap:12px}
+ .info-booking-footer{padding:14px 20px max(12px,env(safe-area-inset-bottom));gap:5px 12px}
+ .info-booking-footer>div>span{font-size:12px}.info-booking-footer strong{font-size:26px}
+ .info-booking-footer strong small{font-size:11px}
+ .info-booking-footer .button{font-size:13px;min-height:49px;padding:12px 16px;gap:9px}
+ .info-booking-footer>p{font-size:11px;line-height:1.7}
+ .info-costs>div{font-size:14px;gap:12px}.info-costs .info-grand-total{font-size:14px}.info-costs .info-grand-total strong{font-size:25px}
+ .info-grand-total small{font-size:12px}
+ .trip-preferences .jg-dropdown-trigger,.simple-checkout .trip-preferences .jg-dropdown-trigger{font-size:16px;min-height:52px}
+ .extra-options strong{font-size:13px}.extra-options small{font-size:12px}
+ .extra-options{grid-template-columns:1fr}
+ .package-guide>p,.stay-library p{font-size:14px}.stay-library h3{font-size:15px}
+ .package-guide>details>summary{font-size:14px;line-height:1.75;padding-block:12px}
+ .package-guide .fine{font-size:13px}.attraction-library span{font-size:14px}.attraction-library small{font-size:12px}
+ .group-simulator p,.group-simulator label{font-size:14px}
+ .simulator-controls button{font-size:12px;padding-inline:10px}
+ .custom-trip-link h3{font-size:21px}.custom-trip-link p{font-size:14px}
+ .checkout-intro h1,.my-bookings-heading h1,.ticket-page-intro h1{font-size:32px;line-height:1.2}
+ .checkout-intro>p,.my-bookings-heading p,.ticket-page-intro>p{font-size:15px;line-height:1.8}
+ .checkout-trip-chip strong{font-size:15px}.checkout-trip-chip span{font-size:13px;line-height:1.65}
+ .checkout-mode{font-size:12px;line-height:1.8}
+ .simple-checkout .form-grid label,.minimal-planner .form-grid label{font-size:14px}
+ .simple-checkout .booking-form-section h2{font-size:22px}
+ .simple-checkout .field-hint,.simple-checkout .fine,.checkout-estimate-note{font-size:13px}
+ .checkout-paybar .button{font-size:14px;gap:10px;padding-inline:16px;min-height:50px}
+ .checkout-paybar>div>strong{font-size:25px}.checkout-paybar strong small{font-size:11px}
+ .checkout-terms>summary,.checkout-consent{font-size:14px;line-height:1.8}
+ .minimal-planner .enquiry-form h2,.minimal-planner .brief-panel h2{font-size:29px}
+ .minimal-planner .enquiry-form>p,.minimal-planner .brief-panel p{font-size:15px}
+ .minimal-planner label,.minimal-planner .consent,.planner-preferences>summary{font-size:14px}
+ .ticket-body>h2{font-size:26px}.ticket-facts span{font-size:10px}.ticket-facts strong{font-size:14px}.ticket-facts .ticket-reference{font-size:12px}
+ .ticket-payment>span{font-size:11px}.ticket-payment>p{font-size:12px}.ticket-payment>p strong{font-size:16px}.ticket-payment>p small{font-size:11px}
+ .ticket-stub>strong{font-size:14px}.ticket-stub>p{font-size:12px;line-height:1.7}.stub-reference{font-size:10px}
+ .ticket-actions .button{font-size:14px;min-height:50px}
+ .ticket-privacy-note,.ticket-action-feedback{font-size:12px;line-height:1.8}
+ .ticket-details>details>summary{font-size:14px;min-height:58px}
+ .saved-ticket-card h2{font-size:20px}.saved-ticket-card p{font-size:13px}.saved-ticket-state{font-size:11px;line-height:1.7}.saved-ticket-id{font-size:11px}.saved-ticket-open{font-size:14px;line-height:1.7}
+ .my-bookings-heading p{max-width:none}
+ .import-ticket summary,.saved-pending summary{font-size:14px}.import-ticket>p,.import-ticket label{font-size:14px}
+ .bookings-empty h2{font-size:28px}.bookings-empty p{font-size:15px}
+ .listing-header h1,.article-header h1,.detail-heading h1,.prose>h1{font-size:44px;line-height:1.1}
+ .listing-header>p,.article-header>p,.detail-heading>p{font-size:16px}
+ .prose p,.prose li,.prose-section p,.article-layout article p,.article-layout article li{font-size:16px;line-height:1.85}
+ .prose h2,.article-layout article h2{font-size:34px}
+ .admin-workspace>h1{font-size:33px}.admin-workspace h2{font-size:26px}.admin-workspace h3{font-size:21px}
+ .admin-workspace p,.admin-workspace label,.admin-workspace button,.admin-workspace summary,.admin-table table{font-size:13px}
+ .admin-workspace input,.admin-workspace .jg-dropdown-trigger{font-size:16px}
+ .footer-top p,.footer-top>div>a:not(.logo){font-size:14px}.footer-top h3{font-size:14px}.footer-bottom,.footer-bottom a{font-size:12px}
+}
+@media(max-width:370px){
+ .site-header .logo{font-size:30px}.site-header .nav-cta,.site-header.header-home:not(.is-scrolled):not(.menu-open) .nav-cta{font-size:11px;padding-inline:10px;gap:6px}
+ .marketplace-categories{margin-inline:-17px;padding-inline:17px}
+ .escape-hero-copy{padding:27px 20px 25px}.escape-hero h1{font-size:46px}
+ .escape-hero-actions{gap:12px}.escape-hero-actions .button,.escape-hero-actions .underlink{font-size:12px;gap:8px}
+ .escape-hero-actions .button{padding-inline:13px}
+ .hero-token>div{font-size:12px}.hero-token small{font-size:11px}
+ .package-section-title{flex-direction:column;gap:8px}.package-section-title h2{font-size:36px;max-width:none}.package-section-title>.underlink{margin-top:0}
+ .compact-tour-card .tour-service-strip>span{font-size:11px;gap:4px}
+ .compact-tour-card .tour-card-actions{display:grid;grid-template-columns:1fr;gap:5px}
+ .compact-tour-card .tour-card-actions .button{order:0;width:100%;font-size:14px;min-height:49px}
+ .compact-tour-card .tour-detail-link{order:1;justify-content:center;font-size:13px;min-height:44px}
+ .compact-tour-card .tour-card-price .token-chip{min-width:102px;padding-inline:9px}
+ .compact-tour-card .tour-card-price>div>strong{font-size:29px}
+ .compact-tour-card .tour-duration{font-size:10px}
+ .info-tabs{gap:14px}.info-tabs button{font-size:12px}
+ .info-facts{grid-template-columns:1fr}
+ .info-booking-footer{padding-inline:17px;gap:5px 8px}.info-booking-footer>div>span{font-size:11px}.info-booking-footer strong{font-size:24px}.info-booking-footer strong small{display:block;margin:2px 0 0;font-size:11px}.info-booking-footer .button{font-size:12px;padding-inline:12px}
+ .checkout-paybar .button{font-size:12px;padding-inline:12px;gap:8px}
+ .checkout-paybar strong small{display:none}
+ .stay-library,.attraction-library{grid-template-columns:1fr}
+ .ticket-payment{align-items:flex-start;flex-direction:column;gap:10px}.ticket-payment>span{font-size:11px;line-height:1.7}.ticket-payment>p{font-size:12px;text-align:left}
+ .ticket-stub{grid-template-columns:104px minmax(0,1fr);padding-inline:17px;gap:9px 13px}.ticket-qr{width:104px;height:104px}.ticket-stub>strong{font-size:12px}.ticket-stub>p{font-size:11px}.stub-reference{font-size:9px}
+ .ticket-actions .button{font-size:12px;padding-inline:10px;gap:7px}
+}
+@media(prefers-reduced-motion:reduce){
+ .compact-tour-card,.escape-hero-actions .button,.tour-card-actions .button,.info-booking-footer .button{transition:none}
+}
+/* Booking audit: status appears beside the controls it explains. */
+.checkout-availability{font-size:13px;line-height:1.75;color:var(--accent);margin:14px 0 6px;min-height:23px}
+.checkout-availability.unavailable{color:#963e2d}
+.checkout-availability .text-button{font-size:13px;display:block;padding:5px 0}
+.checkout-mobile-breakdown{display:none}
+.payment-panel[aria-busy=true]{cursor:progress}
+.payment-panel>p{font-size:14px;line-height:1.8;color:var(--muted)}
+.ticket-status-note{padding:14px 18px;background:var(--gold-soft);border:1px solid var(--gold-border);border-radius:12px;font-size:14px;line-height:1.8;color:#765329;margin:18px auto;max-width:980px}
+@media(max-width:700px){
+ .checkout-mobile-breakdown{display:block;border-top:1px solid var(--line);margin:6px 0 18px}
+ .checkout-mobile-breakdown>summary{font-size:14px;padding:16px 0;min-height:52px;cursor:pointer;color:var(--ink)}
+ .checkout-mobile-breakdown .cost-line{font-size:13px;line-height:1.8;color:var(--text);gap:14px}
+ .checkout-mobile-breakdown .cost-line strong{white-space:nowrap;color:var(--ink)}
+ .checkout-availability{font-size:13px}
+}
+.extra-requests[open]>summary>span{transform:none;color:var(--muted)}

@@ -1,0 +1,12 @@
+export type TravelerCategory='Couples'|'Families'|'Friends'|'Solo'|'Culture'|'Adventure';
+export type PricingBasis='person'|'couple'|'group'|'room'|'enquiry';
+export type FAQ={question:string;answer:string};
+export type ImageAsset={id:string;src:string;alt:string;author:string;source:string;license:string;licenseUrl:string;width:number;height:number;focus?:string;mobileFocus?:string;placement?:string};
+export type ItineraryDay={title:string;body:string};
+export type Package={slug:string;title:string;subtitle:string;days:number;nights:number;image:string;styles:TravelerCategory[];category:'Budget'|'Comfort'|'Premium';safari:'None'|'Camel'|'Jeep'|'Optional';area:'City'|'Desert'|'Both';tour:'Private'|'Shared'|'Flexible';highlights:string[];stayLabel:string;inclusions:string[];exclusions:string[];itinerary:ItineraryDay[];accommodation:string;transport:string;meals:string;notes:string[];pricing:{amount:null;basis:PricingBasis;status:'Request current price'};faq:FAQ[]};
+export type ContentSection={heading:string;body:string};
+export type EditorialEntry={slug:string;title:string;eyebrow:string;description:string;image:string;location:string;duration:string;sections:ContentSection[];source:string;updated:string};
+export type Attraction=EditorialEntry;
+export type Experience=EditorialEntry;
+export type TravelArticle=EditorialEntry;
+export type Enquiry={name:string;phone:string;period:string;travelers:number;duration:number;budget:string;accommodation:string;interests:string[];transport:string;package:string;message:string;consent:boolean;website:string};

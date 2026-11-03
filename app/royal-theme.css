@@ -1,0 +1,219 @@
+/* Current identity: sunlit sandstone, ivory plaster, maroon textiles and antique gold. */
+:root{
+  --ivory:#fcf8ef;
+  --paper:#f4ebdc;
+  --white:#fffdf8;
+  --ink:#3e2923;
+  --muted:#75665b;
+  --line:#e1d0b7;
+  --terracotta:#803b37;
+  --orange:var(--terracotta);
+  --sand:#977236;
+  --gold:#ba9355;
+  --olive:#657460;
+  --indigo:#733c39;
+}
+body{background:var(--ivory);color:var(--ink)}
+::selection{background:#e9d4ad;color:#4d2825}
+h1,h2,h3,h4{color:var(--ink)}
+h1 em,h2 em,.places-lead h2 em{color:var(--terracotta)}
+.overline{color:#8b642d;letter-spacing:.18em}
+.button,.booking-button{background:var(--terracotta);border-color:var(--terracotta);color:var(--white);border-radius:6px}
+.button:hover,.booking-button:hover{background:#642c2a;border-color:#642c2a;color:var(--white)}
+.button.secondary{color:var(--terracotta);border-color:#b79c75;background:transparent}
+.button.secondary:hover{background:var(--terracotta);color:var(--white)}
+.button.ivory{color:var(--terracotta);background:var(--ivory);border-color:var(--ivory)}
+.underlink{color:var(--terracotta);border-color:#bda17a}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex="0"]:focus-visible{outline-color:var(--terracotta)}
+/* A light, composed navigation stays legible above the photographic arch. */
+.site-header,.site-header.header-home,.site-header.is-scrolled,.site-header.menu-open{
+  background:rgba(252,248,239,.97);color:var(--ink);border-color:var(--line);backdrop-filter:blur(14px)
+}
+.site-header .logo,.footer-top .logo{color:#642f2c}
+.site-header .logo>svg,.site-header .logo .accent,.header-home:not(.is-scrolled):not(.menu-open) .accent,.header-home:not(.is-scrolled):not(.menu-open) .logo>svg{color:#9d793c}
+.site-header.header-home:not(.is-scrolled):not(.menu-open) .nav-cta,.site-header .nav-cta{background:var(--terracotta);border-color:var(--terracotta);color:var(--white)}
+.site-header .nav-cta:hover{background:#642c2a}
+.navlinks,.navlinks.is-open{background:var(--ivory);color:var(--ink)}
+.navlinks>a:hover,.navlinks>a[aria-current],.header-home:not(.is-scrolled):not(.menu-open) .navlinks>a:hover{color:var(--terracotta)}
+/* Sunlit opening with a sandstone jharokha-like portrait and a fine inner frame. */
+.hero{
+  margin:106px 24px 0;width:calc(100% - 48px);height:min(740px,calc(100svh - 130px));min-height:625px;
+  border:1px solid var(--line);border-radius:4px;background:#f8efdf;color:var(--ink);overflow:hidden
+}
+.hero::before{content:'';position:absolute;inset:0;z-index:-1;background:url('/ornaments/jaali.svg') repeat;background-size:96px;opacity:.11;pointer-events:none}
+.cinematic-hero .hero-photo{
+  inset:50px 60px 50px auto;width:43%;height:auto;z-index:0;border-radius:48% 48% 5px 5px;border:1px solid #bb9458;
+  box-shadow:0 0 0 7px #f8efdf,0 0 0 8px #ccb18b,0 20px 45px #6f4b1f12;transform:translate3d(0,calc(var(--hero-drift,0px)*.35),0)
+}
+.hero-photo::after{content:'';position:absolute;inset:12px;border:1px solid #fff5d99c;border-radius:inherit;pointer-events:none;z-index:2}
+.hero-photo img{object-position:52% 56%}
+.hero-shade{display:none}
+.hero-content{z-index:1;align-items:flex-start;justify-content:center;text-align:left;padding-top:40px;padding-bottom:70px}
+.royal-crest{display:flex;align-items:center;gap:14px;color:#a48042;width:175px;margin-bottom:23px}
+.royal-crest>span{height:1px;flex:1;background:linear-gradient(90deg,transparent,#b28a4c)}
+.royal-crest>span:last-child{rotate:180deg}
+.hero h1{font-size:clamp(70px,6.6vw,102px);line-height:1.02;max-width:52%;margin-bottom:25px;color:#542e2a}
+.hero h1 em{color:#946f38}
+.hero p{font-size:13px;line-height:1.9;color:#75604f;max-width:42%;margin-bottom:28px}
+.hero-eyebrow{font-size:8px;color:#8b642d;letter-spacing:1.7px;margin-bottom:24px}
+.hero-actions{justify-content:flex-start;gap:25px}
+.hero-actions .button{background:var(--terracotta);color:var(--white);border-color:var(--terracotta);min-width:170px}
+.hero-actions .button:hover{background:#642c2a;border-color:#642c2a}
+.hero-text-link{color:#743e35;border-color:#bca17d}
+.hero-bottom{color:#8b7358;left:64px;right:auto;width:41%;bottom:34px;font-size:6px;letter-spacing:1px}
+.hero-bottom a{font-size:7px;gap:12px;color:#743e35}
+/* Ivory booking cards keep the destination photography bright and unobscured. */
+.booking-collection{padding-top:76px}
+.booking-collection .section-top>.booking-intro{max-width:290px}
+.booking-card{display:flex;flex-direction:column;min-height:0;background:var(--white);border:1px solid #d8c19c;border-radius:180px 180px 9px 9px;box-shadow:0 12px 30px #85602c0d}
+.booking-card>.photo{position:relative;inset:auto;height:260px;min-height:260px;z-index:0;border-radius:inherit;border-bottom-left-radius:0;border-bottom-right-radius:0}
+.booking-card>.photo img{object-position:50% 54%}
+.booking-card-2>.photo img{object-position:50% 44%}
+.booking-shade{display:none}
+.booking-number{top:215px;left:25px;right:auto;background:#fffaf0eb;color:#6c4729;border:1px solid #d5bd94;font-size:7px;letter-spacing:1px;padding:5px 10px;text-shadow:none;z-index:1}
+.booking-card-content{position:relative;padding:27px 26px 25px;color:var(--ink);display:flex;flex-direction:column;flex:1}
+.booking-label{color:#8b642d;font-size:7px;letter-spacing:1.5px}
+.booking-title-row{min-height:90px;margin-top:13px}
+.booking-title-row h3{color:#63332c;font-size:36px;line-height:1.02;margin-bottom:13px}
+.booking-detail{border-color:#cfb78f;color:#8b642d;border-radius:50%;margin-top:2px}
+.booking-card-content>p{color:var(--muted);font-size:11px;min-height:42px;max-width:100%;margin-bottom:18px}
+.booking-tags{margin-bottom:19px;gap:6px}
+.booking-tags>span{background:#f6efdf;color:#6c533c;border:1px solid #e6d7bf;border-radius:3px;padding:4px 7px}
+.booking-price{border-color:var(--line);padding-top:16px;margin-top:auto;margin-bottom:18px}
+.booking-price strong{color:#71442f}
+.booking-price small{color:var(--muted)}
+.booking-button{min-height:47px;color:var(--white);font-weight:600;border-radius:5px}
+.booking-disclosure{color:#7e6c5b}
+@media(prefers-reduced-motion:no-preference){
+  .booking-card:focus-within{border-color:#a67b3e;box-shadow:0 22px 40px #85602c1c}
+}
+@media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+  .booking-card:hover{border-color:#a67b3e;box-shadow:0 22px 40px #85602c1c}
+}
+/* Heritage details: gold fillets, paper-like surfaces and architectural arches. */
+.editorial-intro{border-top:1px solid var(--line)}
+.postcard-stack>div{background:#fffdf6;border:1px solid #ddc9a7;box-shadow:0 12px 25px #75532b20}
+.postcard-stack span{color:#866238}
+.quick-planner{background:#f5ecdd;border:1px solid #dfccb0;padding:25px 28px;border-radius:5px}
+.planner-intro>svg{color:#9b7439}
+.quick-planner select{background:transparent}
+.collection-tabs button{border-radius:4px}
+.collection-tabs button[aria-selected=true],.destination-tabs>button[aria-pressed=true]{background:var(--terracotta);border-color:var(--terracotta);color:var(--white)}
+.collection-visual{border:1px solid #b8945e;box-shadow:0 0 0 6px var(--ivory),0 0 0 7px #ddc9aa;border-radius:47% 47% 5px 5px}
+.collection-caption{color:#fff9e8}
+.collection-index{color:#fff9e8;text-shadow:0 1px 8px #302014}
+.collection-copy h3,.collection-trip h4{color:#63332c}
+.gallery-section{background:#f3e8d6;background-image:linear-gradient(#f3e8d6ed,#f3e8d6ed),url('/ornaments/jaali.svg');border-color:#dcc6a4}
+.destination-slide{border-color:#d6b780;border-radius:160px 160px 9px 9px;box-shadow:0 18px 35px #65421f24;background:var(--white)}
+.destination-slide>.photo{border-radius:inherit}
+.destination-slide-shade{background:linear-gradient(180deg,transparent 20%,#4b302511 37%,#42271ef2)}
+.destination-slide h3{color:#fff9e9}
+.destination-slide p{color:#ede1d0}
+.destination-slide-copy>span{color:#f2d8a4}
+.destination-slide .underlink{color:#fff9e9;border-color:#bd9b6a}
+.select-scene{border-radius:inherit}
+.destination-slide.is-active{box-shadow:0 25px 50px #65421f30}
+.destination-tabs>button{border-radius:4px;background:#fcf8efaa;border-color:#d9c3a2;color:#705a43}
+.deck-arrow{background:#fcf8ef;border-color:#c9ae83;color:#754831}
+.deck-arrow:hover{background:#e8d4b3}
+.destination-current>span{color:#8b642d}
+.place-feature>.photo,.desert-portrait>.photo{border:1px solid #b99459;border-radius:48% 48% 5px 5px}
+.place-small>.photo,.editorial-card .photo{border-radius:5px}
+.desert-chapter{background:#f2e4d1;color:var(--ink);border-block:1px solid #dfc6a2}
+.desert-chapter-copy h2{color:#63332c}
+.desert-chapter-copy h2 em{color:#946f38}
+.desert-chapter-copy p{color:#75604f}
+.desert-chapter-copy .underlink{color:#743e35;border-color:#bda17a}
+.desert-chapter-copy .overline,.desert-portrait>span{color:#8b642d}
+.desert-footnote{color:#8b642d;border-color:#d4b991}
+.package-card{background:var(--white);border-color:#ddc8a7;border-radius:8px;box-shadow:0 6px 20px #85602c08}
+.card-body h3{color:#63332c}
+.image-tag,.round-arrow{background:#fff9ecef;color:#754831;border:1px solid #dfc6a2}
+.image-tag{border-radius:3px}
+.planning-section{background:#f4eddf;border-block:1px solid var(--line)}
+.final-cta{background:#f2e3cb;background-image:linear-gradient(#f2e3cbdf,#f2e3cbdf),url('/ornaments/jaali.svg');border-block:1px solid #d8ba8e}
+.final-cta h2{color:#63332c}
+.final-cta .button{color:var(--white)}
+footer{background:#f8f0e1;border-top:1px solid #dcc4a0}
+.footer-top>div>.footer-cta{color:var(--terracotta)!important}
+/* All planning and detail pages share the lighter palette. */
+.filter-panel,.quote-panel,.brief-panel,.notice,.source-note{background:#f5ecde;border:1px solid #dfceb4;border-radius:6px}
+.filters select,.results-bar select,input:not([type=checkbox]),select,textarea{background:#fffdf7;color:var(--ink);border-color:#d8c3a3;border-radius:4px}
+input[type=checkbox]{accent-color:var(--terracotta)}
+.search-field input{background:transparent}
+.search-field{border-color:#c7ac81}
+.quote-panel .button{color:var(--white)}
+.credits a,.prose a,.source-note a,.consent a{color:var(--terracotta)}
+.source-note>strong{color:#63332c}
+.detail-highlights li{background:#f1e5d0;color:#72543c;border-radius:4px}
+.interest-options label,.listing-collections a{border-radius:4px}
+.listing-collections a:hover{background:#f1e5d0}
+.mobile-trip-action{background:var(--ivory)}
+.success{background:#e7eddf;color:#405335}
+.error{background:#f7e3da;color:#833a2c}
+/* Tablet and mobile retain the same warm palette and fine architectural frames. */
+@media(max-width:1200px){
+  .hero{margin-inline:18px;width:calc(100% - 36px)}
+  .cinematic-hero .hero-photo{right:38px;width:43%}
+  .hero h1{font-size:clamp(72px,7.4vw,93px);max-width:52%}
+  .hero-bottom{left:40px;width:45%}
+  .booking-card-content{padding:24px 21px}
+  .booking-title-row h3{font-size:32px}
+}
+@media(max-width:960px){
+  .hero{min-height:600px;height:650px}
+  .hero h1{font-size:73px;max-width:52%}
+  .hero p{max-width:45%;font-size:12px}
+  .hero-eyebrow{font-size:6px;letter-spacing:1px}
+  .hero-actions{gap:18px;flex-wrap:wrap;max-width:45%}
+  .hero-actions .button{min-width:160px}
+  .hero-text-link{font-size:9px}
+  .hero-bottom{display:none}
+  .cinematic-hero .hero-photo{inset:65px 27px 55px auto;width:41%}
+  .booking-card>.photo{height:225px;min-height:225px}
+  .booking-number{top:184px;left:15px;font-size:6px;padding:4px 7px}
+  .booking-card-content{padding:22px 18px}
+  .booking-title-row{min-height:94px}
+  .booking-title-row h3{font-size:29px}
+  .booking-tags>span{font-size:7px}
+  .booking-card-content>p{min-height:60px}
+}
+@media(max-width:700px){
+  .hero{display:flex;flex-direction:column;margin:88px 12px 0;width:calc(100% - 24px);height:auto;max-height:none;min-height:0;border-radius:3px}
+  .hero-content{order:0;height:auto;padding:34px 24px 8px;align-items:center;text-align:center}
+  .royal-crest{width:130px;margin-bottom:20px;gap:12px}
+  .royal-crest svg{width:25px}
+  .hero-eyebrow{font-size:6px;letter-spacing:1.1px;margin-bottom:20px}
+  .hero h1{font-size:clamp(47px,8.8vw,65px);width:100%;max-width:100%;line-height:1.02;margin-bottom:20px}
+  .hero p{font-size:11px;max-width:100%;margin-bottom:23px}
+  .hero-actions{gap:20px;max-width:100%;justify-content:center;flex-wrap:nowrap}
+  .hero-actions .button{min-width:0;font-size:9px;gap:11px;padding:13px 18px;min-height:46px}
+  .hero-text-link{font-size:8px;gap:9px}
+  .cinematic-hero .hero-photo{position:relative;inset:auto;order:1;width:calc(100% - 64px);height:340px;min-height:340px;margin:30px auto 27px;transform:none;border-radius:47% 47% 4px 4px;box-shadow:0 0 0 6px #f8efdf,0 0 0 7px #ccb18b}
+  .hero-photo::after{inset:10px}
+  .hero-photo img{object-position:50% 55%}
+  .booking-collection{padding-top:57px}
+  .booking-grid{gap:28px;max-width:440px}
+  .booking-card{border-radius:170px 170px 7px 7px;min-height:0}
+  .booking-card>.photo{height:255px;min-height:255px}
+  .booking-number{top:213px;left:24px;font-size:7px}
+  .booking-card-content{padding:25px}
+  .booking-title-row{min-height:0}
+  .booking-title-row h3{font-size:37px;line-height:1.02}
+  .booking-card-content>p{font-size:12px;min-height:0}
+  .booking-tags>span{font-size:8px}
+  .booking-button{font-size:11px;min-height:47px}
+  .quick-planner{padding:22px 20px}
+  .collection-visual{border-radius:150px 150px 4px 4px}
+  .destination-slide{border-radius:140px 140px 7px 7px}
+  .final-cta .button{color:var(--white)}
+}
+@media(max-width:420px){
+  .hero-content{padding-inline:20px}
+  .hero h1{font-size:clamp(46px,12.7vw,54px)}
+  .hero-actions{gap:17px}
+  .hero-actions .button{padding-inline:15px}
+  .cinematic-hero .hero-photo{width:calc(100% - 52px);height:310px;min-height:310px}
+  .booking-card-content{padding:24px 22px}
+  .booking-title-row h3{font-size:35px}
+}

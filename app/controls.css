@@ -1,0 +1,92 @@
+/* One directional language. The enclosing link/button owns the action and focus. */
+.direction-icon{
+ display:inline-flex;align-items:center;justify-content:center;flex:0 0 28px;
+ width:28px;height:28px;min-width:28px;padding:0;border:1px solid #dce3da;
+ border-radius:9px;background:#f1f4ee;color:var(--accent);vertical-align:middle;
+ transition:background-color .16s,border-color .16s,color .16s;
+}
+.direction-icon>svg.lucide{display:block;width:18px;height:18px;flex:none;margin:0;stroke-width:1.75;transform:none}
+:is(a,button):hover .direction-icon>svg{transform:none}
+:is(a,button):hover .direction-icon{background:#e8eee3;border-color:#c4d0be}
+
+/* Label and arrow form one calm surface, replacing disconnected underlines. */
+:is(.underlink,.tour-detail-link,.checkout-back,.footer-cta):has(>.direction-icon),
+a:has(>.direction-icon):not(.button,.booking-button,.collection-trip,.tour-card-photo){
+ display:inline-flex;align-items:center;justify-content:space-between;gap:12px;
+ min-height:44px;padding:7px 10px 7px 14px;border:1px solid var(--line);
+ border-radius:11px;background:var(--surface);color:var(--accent);line-height:1.5;
+ text-decoration:none;transition:background-color .16s,border-color .16s,box-shadow .16s;
+}
+:is(.underlink,.tour-detail-link,.checkout-back,.footer-cta):has(>.direction-icon):hover,
+a:has(>.direction-icon):not(.button,.booking-button,.collection-trip,.tour-card-photo):hover{
+ background:#f4f6f0;border-color:#c9d3c3;color:var(--accent);
+}
+:is(.button,.booking-button):has(>.direction-icon){padding-block:10px}
+.escape-hero-actions .underlink:has(>.direction-icon){min-height:50px}
+:is(.button,.booking-button)>.direction-icon{
+ flex-basis:26px;width:26px;height:26px;min-width:26px;border-color:#ffffff30;
+ background:#ffffff12;color:inherit;border-radius:8px;
+}
+:is(.button,.booking-button):hover>.direction-icon{background:#ffffff22;border-color:#ffffff50}
+.button.secondary>.direction-icon{background:#f1f4ee;border-color:#dce3da;color:var(--accent)}
+.button:disabled>.direction-icon{background:transparent;border-color:currentColor;opacity:.65}
+
+/* Real icon-only buttons have a full touch target; the inner cue has no second border. */
+.icon-button{
+ display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;
+ width:44px;height:44px;min-width:44px;min-height:44px;padding:0;
+ border:1px solid #d7dfd2;border-radius:12px;background:var(--surface);
+ color:var(--accent);box-shadow:0 2px 5px #25392a04;
+ transition:background-color .16s,border-color .16s,box-shadow .16s;
+}
+.icon-button>svg{width:20px;height:20px;stroke-width:1.75;display:block}
+.icon-button>.direction-icon{border:0;background:transparent;color:inherit}
+.icon-button:hover{background:#eef3e9;border-color:#bfcdb8;box-shadow:0 3px 8px #25392a0a}
+.icon-button:hover>.direction-icon{background:transparent;border:0}
+:is(.icon-button,a:has(>.direction-icon),button:has(>.direction-icon)):active:not(:disabled){background-color:#e7eddf}
+.button:has(>.direction-icon):active:not(:disabled){background-color:var(--accent-hover)}
+.button.secondary:has(>.direction-icon):active:not(:disabled){background-color:#e7eddf;color:var(--accent)}
+:is(.icon-button,a:has(>.direction-icon),button:has(>.direction-icon)):focus-visible{outline:2px solid var(--gold);outline-offset:4px;box-shadow:0 0 0 3px var(--canvas)}
+.icon-button:disabled,.icon-button[aria-disabled=true]{opacity:.4;cursor:not-allowed;box-shadow:none;background:var(--surface-soft);border-color:var(--line)}
+.icon-button:disabled>.direction-icon{background:transparent}
+.site-header .menu-toggle{display:none}
+
+/* Decorative cues in an already clickable card stay part of that single target. */
+.tour-photo-arrow.direction-icon{position:absolute;right:14px;bottom:14px;flex-basis:36px;width:36px;height:36px;min-width:36px;border-radius:11px;border-color:#fff8;background:#fffc;color:var(--accent);box-shadow:0 2px 10px #15271c12}
+.tour-card-photo:hover .tour-photo-arrow.direction-icon{background:#fff;border-color:#fff}
+.editorial-card h3>.direction-icon{margin-left:auto;align-self:flex-start;margin-top:0}
+.editorial-card>a{display:block;border-radius:14px}
+.editorial-card h3 .direction-icon>svg{margin:0}
+.collection-trip>.direction-icon{flex:0 0 36px;width:36px;height:36px;min-width:36px;border-radius:11px}
+.saved-ticket-open{display:inline-flex;align-items:center;gap:10px;flex-shrink:0}
+.brief-link:has(>.direction-icon){width:100%;margin-top:8px}
+.compact-tour-card .tour-detail-link:has(>.direction-icon){gap:8px;padding-inline:12px 8px;min-height:48px}
+.compact-tour-card .tour-card-actions .button,.compact-tour-card .tour-detail-link:has(>.direction-icon){min-height:48px;padding-block:8px}
+.compact-tour-card .tour-card-actions .button{gap:10px}
+.booking-detail:has(>.direction-icon){width:44px;min-width:44px;height:44px;padding:0;justify-content:center;background:#ffffff15;border-color:#ffffff50;color:#fff}
+.booking-detail>.direction-icon{border:0;background:transparent;color:inherit}
+
+/* Photo overlays retain contrast; disclosures keep their single, generous target. */
+.destination-slide-copy .underlink:has(>.direction-icon){color:#fff;background:#ffffff12;border-color:#ffffff50;padding-left:12px;gap:10px}
+.destination-slide-copy .underlink:has(>.direction-icon):hover{background:#ffffff22;border-color:#ffffff80;color:#fff}
+.destination-slide-copy .direction-icon{background:#ffffff15;border-color:#ffffff40;color:#fff}
+.destination-slide-copy a:hover .direction-icon{background:#ffffff22;border-color:#ffffff60}
+.jg-dropdown-chevron{width:26px;height:26px;border-radius:8px;background:#f1f4ee;color:var(--accent)}
+.jg-dropdown-chevron>svg,.jg-dropdown-scroll>svg,summary>svg{stroke-width:1.75;flex-shrink:0}
+.jg-dropdown-scroll{min-height:44px}
+.package-close.icon-button{position:static}
+
+@media(max-width:1000px){.site-header .menu-toggle{display:inline-flex}}
+@media(max-width:700px){
+ .escape-hero-actions{flex-wrap:wrap}
+ .escape-hero-actions .underlink:has(>.direction-icon){min-height:48px}
+ .site-header .nav>nav{gap:8px}
+ .package-section-title>.underlink:has(>.direction-icon){padding-inline:12px 8px}
+ .saved-ticket-open{align-self:flex-start}
+}
+@media(max-width:374px){
+ .compact-tour-card .tour-detail-link:has(>.direction-icon){min-height:44px}
+ .site-header .nav-cta{padding-inline:10px}
+ .simple-checkout .form-grid{grid-template-columns:minmax(0,1fr)}
+}
+@media(prefers-reduced-motion:reduce){.direction-icon,.icon-button,a:has(>.direction-icon){transition:none}}
