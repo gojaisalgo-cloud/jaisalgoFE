@@ -66,3 +66,5 @@ Read [docs/BOOKING-SYSTEM.md](docs/BOOKING-SYSTEM.md) for source-linked research
 ## Conversion analytics
 
 Open Travel desk → Analytics after administrator sign-in. See [metric definitions, privacy, configuration and rollout](docs/ANALYTICS.md). Analytics is first-party and optional; verified deposit, full payment and actual trip completion remain distinct. No third-party vendor or new email collection is installed.
+
+For Vercel, follow [persistent database setup](docs/VERCEL-DEPLOYMENT.md). The site remains browsable before connection; online booking requires shared durable libSQL storage.

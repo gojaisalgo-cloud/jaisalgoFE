@@ -145,3 +145,13 @@ Production build and TypeScript passed. In-app browser checks at 1440 and 390 pi
 - Responsive checks: dashboard at 1440px and 390px; narrow mobile review identified and fixed admin tab/footer overflow. Final homepage at 320px has document width 320px. The preview is running on port 3001.
 - Screenshots: outputs/jaisalgo-analytics-desktop.png and outputs/jaisalgo-analytics-mobile.png (outside the source archive).
 - Limits: traffic covers consenting anonymous sessions, no historical baseline is invented, no test has measured real conversion lift, and geography / true customer CAC / accounting recognition require actual business data. No A/B experiment is active; targets are goals.
+
+
+## Vercel database failure — 3 November 2026
+
+- Reproduced production HTTP 500 on home/packages and `ENOENT: no such file or directory, mkdir '.data'` from the availability API. Editorial routes still returned HTTP 200. No hosted database was configured.
+- Added read-only catalogue rendering for unconfigured hosted storage; checkout requires durable remote storage and returns a clear unavailable state / HTTP 503 before any provider request. Vercel uses the HTTP libSQL client; local SQLite remains intact. No temporary filesystem database or financial logic replacement.
+- All 51 tests pass, including missing/unsafe storage, hosted seed reads and no-provider-call guards in demo/live modes. Production build and TypeScript pass.
+- Existing isolated authenticated admin HTTP integration still passes: catalogue, departures, token capture, offline balance, expenses, refund reconciliation, analytics, auth and CSRF.
+- VERCEL=1 with explicitly blank database variables: home, package list, package details, booking-unavailable page, sitemap, about and admin returned HTTP 200. Availability returned expected HTTP 503 / STORAGE_UNAVAILABLE without filesystem details.
+- A real shared libSQL database, database token and hosted persistence checks remain required before online booking can operate on Vercel. Setup instructions are in docs/VERCEL-DEPLOYMENT.md. No paid service, real database or payment was created during this fix.
