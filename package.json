@@ -11,7 +11,8 @@
     "test": "node scripts/run.mjs test",
     "test:browser": "node scripts/run.mjs test:browser",
     "admin:setup": "node scripts/admin-setup.mjs",
-    "test:admin": "node scripts/admin-http-check.mjs"
+    "test:admin": "node scripts/admin-http-check.mjs",
+    "audit:seo": "python3 scripts/seo-audit.py"
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",

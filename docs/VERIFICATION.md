@@ -155,3 +155,12 @@ Production build and TypeScript passed. In-app browser checks at 1440 and 390 pi
 - Existing isolated authenticated admin HTTP integration still passes: catalogue, departures, token capture, offline balance, expenses, refund reconciliation, analytics, auth and CSRF.
 - VERCEL=1 with explicitly blank database variables: home, package list, package details, booking-unavailable page, sitemap, about and admin returned HTTP 200. Availability returned expected HTTP 503 / STORAGE_UNAVAILABLE without filesystem details.
 - A real shared libSQL database, database token and hosted persistence checks remain required before online booking can operate on Vercel. Setup instructions are in docs/VERCEL-DEPLOYMENT.md. No paid service, real database or payment was created during this fix.
+
+## Technical SEO — 3 November 2026
+
+- All 60 Node tests, TypeScript and the optimized Next.js build passed. The authenticated temporary-database HTTP integration also passed, including the new meaningful-content date and published/private sitemap checks.
+- The read-only HTTP SEO audit passed against the final production build on port 3006: 66 indexable URLs, 128 internal targets, 17 image/preview assets, zero critical issues. All 24 published package itineraries were present in initial HTML, without requiring a tab click.
+- Indexing checks covered www canonicals, page-specific metadata and social cards, JSON-LD invariants, sitemap dates/discovery, private noindex headers/meta, filter versus tracking parameters, slash redirects, unknown-page 404s and crawlable links.
+- Browser QA verified package tabs, a four-traveller price update and propagated booking choices; the 390×844 layout had one visible panel and no horizontal overflow. The guide at 1440×1000 had one H1, eight table-of-contents links, loaded visible images and no horizontal overflow.
+- Current repository-wide lint has 13 pre-existing errors and 9 warnings. Comparison against the preceding commit found no new diagnostics; earlier passing lint entries in this file describe earlier snapshots, not the current repository state.
+- Search Console verification/submission, Google indexing, rankings, real-user Core Web Vitals, Lighthouse and full Playwright/axe results were not fabricated. See `SEO-IMPLEMENTATION.md`, `SEO-KEYWORDS.md` and `SEO-OPERATIONS.md` for files, verified scope, manual setup and the 30/60/90-day plan.

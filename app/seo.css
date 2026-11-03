@@ -1,0 +1,16 @@
+/* Small additions to the existing reading layout, without a second visual system. */
+.info-section[hidden]{display:none!important}
+.search-context-links{margin:2.5rem 0;padding:1.5rem 0;border-top:1px solid var(--line,#e5e8e4);border-bottom:1px solid var(--line,#e5e8e4);display:flex;flex-wrap:wrap;gap:.75rem 1.5rem;align-items:center}
+.search-context-links h2{flex-basis:100%;margin:0 0 .5rem;font-size:clamp(1.55rem,3.5vw,2.2rem)}
+.search-context-links a{color:var(--green,#29473c);text-decoration:underline;text-decoration-color:#bac8bf;text-underline-offset:5px;line-height:1.65;padding:.4rem 0;font-size:.92rem}
+.search-context-links a:hover{text-decoration-color:currentColor}
+.article-byline{display:flex;flex-wrap:wrap;justify-content:flex-start;gap:.5rem 1.25rem;font-size:.82rem!important;color:var(--muted,#626b65)}
+.article-byline a{color:inherit;text-decoration:underline;text-underline-offset:4px}
+.article-toc{padding:1.25rem 1.5rem;border:1px solid var(--line,#e5e8e4);border-radius:16px;margin:0 0 2rem;display:grid;gap:.6rem;font-size:.9rem}
+.article-toc strong{font-weight:600;margin-bottom:.25rem}
+.article-toc a{color:var(--green,#29473c);text-underline-offset:4px;line-height:1.7}
+.prose section[id]{scroll-margin-top:7rem}
+.related-packages{margin:3rem 0}
+.related-packages>h2{font-size:clamp(1.8rem,4vw,2.65rem);margin-bottom:1.5rem}
+.standalone-package .breadcrumbs{flex-wrap:wrap}
+@media(max-width:700px){.search-context-links{gap:.5rem 1.25rem}.search-context-links a{min-height:44px;display:inline-flex;align-items:center}.article-toc{padding:1.1rem}.article-toc a{padding:.25rem 0}.article-byline{justify-content:flex-start}.related-packages{margin-top:2rem}}

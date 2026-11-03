@@ -2,5 +2,15 @@ import type {MetadataRoute} from 'next';
 import {tours} from '@/lib/booking/db';
 import {collections} from '@/data/editorial';
 import {config} from '@/lib/config';
+import {publicStaticPaths} from '@/data/search-pages';
+import {canonicalUrl} from '@/lib/site-url';
+import {imageAsset} from '@/data/images';
 export const dynamic='force-dynamic';
-export default async function sitemap():Promise<MetadataRoute.Sitemap>{const packages=await tours();const paths=['','packages','experiences','places','itineraries','travel-guide','about','contact','plan-your-trip','privacy-policy','terms','cancellation-policy','photo-credits',...packages.map(p=>'packages/'+p.slug),...Object.entries(collections).flatMap(([k,v])=>v.map(i=>k+'/'+i.slug))];return paths.map(path=>({url:config.url+'/'+path,lastModified:new Date('2026-11-02'),changeFrequency:'monthly',priority:path?0.7:1}))}
+export default async function sitemap():Promise<MetadataRoute.Sitemap>{
+  const packages=await tours();
+  return [
+    ...publicStaticPaths.map(path=>({url:canonicalUrl(path,config.url)})),
+    ...packages.filter(p=>p.published).map(p=>({url:canonicalUrl('/packages/'+p.slug,config.url),...(p.contentModifiedAt?{lastModified:p.contentModifiedAt}:{}),images:[canonicalUrl(imageAsset(p.image).src,config.url)]})),
+    ...Object.entries(collections).flatMap(([name,items])=>items.map(item=>({url:canonicalUrl(`/${name}/${item.slug}`,config.url),lastModified:item.updated,images:[canonicalUrl(imageAsset(item.image).src,config.url)]}))),
+  ];
+}

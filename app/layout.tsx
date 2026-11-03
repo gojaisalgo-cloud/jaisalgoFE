@@ -7,6 +7,7 @@ import localFont from 'next/font/local';
 import {Navigation} from '@/components/navigation';
 import {Footer} from '@/components/footer';
 import {config} from '@/lib/config';
+import {searchIndexable} from '@/lib/seo';
 import './globals.css';
 import './gallery-theme.css';
 import './motion.css';
@@ -18,7 +19,8 @@ import './marketplace.css';
 import './finishing.css';
 import './controls.css';
 import './package-clarity.css';
+import './seo.css';
 const display=localFont({src:[{path:'../public/fonts/cormorant.woff2',weight:'300 700',style:'normal'},{path:'../public/fonts/cormorant-italic.woff2',weight:'300 700',style:'italic'}],variable:'--font-display',display:'swap',fallback:['Georgia'],adjustFontFallback:'Times New Roman'});
 const body=localFont({src:'../public/fonts/manrope.woff2',weight:'200 800',variable:'--font-body',display:'swap',fallback:['Arial'],adjustFontFallback:'Arial'});
-export const metadata:Metadata={metadataBase:new URL(config.url),title:{default:'JaisalGo — The Golden City, your way',template:'%s | JaisalGo'},description:'Explore Jaisalmer tour packages, desert safaris and royal stays. Compare transparent provisional estimates and discover the ₹99 reservation experience.',alternates:{canonical:'/'},openGraph:{type:'website',locale:'en_IN',siteName:'JaisalGo',title:'JaisalGo — The Golden City, your way',description:'A little wonder. A better-planned adventure.',images:[{url:'/images/fort.webp',width:1536,height:1024,alt:'Jaisalmer Fort at dusk'}]}};
+export const metadata:Metadata={metadataBase:new URL(config.url),title:{default:'JaisalGo · Jaisalmer Travel',template:'%s | JaisalGo'},description:'Thoughtful Jaisalmer travel planning, package information and destination guides.',robots:{index:searchIndexable(),follow:true},verification:process.env.GOOGLE_SITE_VERIFICATION?{google:process.env.GOOGLE_SITE_VERIFICATION}:undefined};
 export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en" data-scroll-behavior="auto" className={`${display.variable} ${body.variable}`}><body><a className="skip-link" href="#main">Skip to content</a><Navigation/><main id="main">{children}</main><Footer/><AnalyticsProvider enabled={process.env.ANALYTICS_ENABLED!=='false'&&databaseConfigured()} campaigns={[...configuredCampaigns()]}/></body></html>}

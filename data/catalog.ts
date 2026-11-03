@@ -3,7 +3,7 @@ import type {Package} from '@/types';
 import type {PackageDetails} from '@/types/marketplace';
 import {discoveryTours} from './discovery-tours';
 import type {Costs} from '@/lib/booking/pricing';
-export type Tour=Omit<Package,'pricing'> & {published:boolean;confirmed:boolean;taxReviewed:boolean;policy:string;costs:Costs;revision:number;sourceNote:string;details?:PackageDetails};
+export type Tour=Omit<Package,'pricing'> & {published:boolean;confirmed:boolean;taxReviewed:boolean;policy:string;costs:Costs;revision:number;sourceNote:string;details?:PackageDetails;contentModifiedAt?:string};
 const descriptions:Record<number,string[]>={
  1:['Arrival & the Golden City|Allow 30–45 minutes for arrival formalities and local transfer. Walk the public fort lanes, then choose haveli interiors; allow 2–3 hours for the fort and 1–2 hours for a haveli. Finish at Gadisar if your departure permits.'],
  2:['Fort lanes to desert skies|Arrive in the morning, store luggage and allow 2–3 hours in the living fort. After lunch, drive toward Sam or Khuri; allow 60–90 minutes each way as a planning estimate. Check in, then an optional short camel walk, folk programme and Rajasthani dinner, subject to operator confirmation.','A slow morning & the city|Breakfast and camp checkout around the supplier’s confirmed time. Return to the city with a 60–90 minute driving allowance; visit Patwon Ki Haveli (allow 1–2 hours) or Gadisar before departure. Leave a separate buffer for your train or flight.'],

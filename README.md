@@ -57,7 +57,7 @@ npm run build
 npm run test:admin
 ```
 
-Twenty-five domain/payment/privacy/ticket/marketplace tests and the isolated HTTP admin integration passed. `test:admin` requires Python 3 and a completed build; it uses a temporary DB and private generated test credentials. The full Playwright suite includes additional UI/axe scenarios, but the prior browser-launch limitation means those assertions are not claimed as passing. Real browser checks used the in-app browser.
+Sixty domain/payment/privacy/ticket/marketplace/SEO tests and the isolated HTTP admin integration passed in the latest SEO verification. `test:admin` requires Python 3 and a completed build; it uses a temporary DB and private generated test credentials. The full Playwright suite includes additional UI/axe scenarios, but the prior browser-launch limitation means those assertions are not claimed as passing. Real browser checks used the in-app browser.
 
 Read [docs/UI-REFINEMENT.md](docs/UI-REFINEMENT.md) for the current input, ticket and private-access design.
 
@@ -68,3 +68,15 @@ Read [docs/BOOKING-SYSTEM.md](docs/BOOKING-SYSTEM.md) for source-linked research
 Open Travel desk → Analytics after administrator sign-in. See [metric definitions, privacy, configuration and rollout](docs/ANALYTICS.md). Analytics is first-party and optional; verified deposit, full payment and actual trip completion remain distinct. No third-party vendor or new email collection is installed.
 
 For Vercel, follow [persistent database setup](docs/VERCEL-DEPLOYMENT.md). The site remains browsable before connection; online booking requires shared durable libSQL storage.
+
+## Search discovery and SEO
+
+The canonical production origin is `https://www.jaisalgo.com`. Public pages have individual titles, descriptions, social cards and safe JSON-LD; package details are server-rendered behind the existing tabs. Dynamic sitemaps include published packages and source-dated guides. Private pages remain noindex and protected by the existing access checks. No provisional estimate or ₹99 deposit is represented as a full-price structured offer.
+
+```sh
+npm run audit:seo -- --base-url http://127.0.0.1:3001 --json /tmp/jaisalgo-seo-audit.json
+```
+
+Start a production preview before the HTTP audit; it uses Python 3 with no additional packages. See [implementation and verification](docs/SEO-IMPLEMENTATION.md), [the prioritized audit](docs/SEO-AUDIT.md), [keyword-to-page mapping](docs/SEO-KEYWORDS.md), and [Search Console setup, analytics and the 30/60/90-day plan](docs/SEO-OPERATIONS.md).
+
+Search Console verification/submission and real field metrics remain operator steps. Repository-wide lint currently reports 13 pre-existing errors and 9 warnings; comparison with the preceding commit found no new diagnostics from this change. They are documented separately from successful SEO/build/booking checks.

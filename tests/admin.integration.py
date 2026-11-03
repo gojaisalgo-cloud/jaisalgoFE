@@ -36,9 +36,14 @@ with tempfile.TemporaryDirectory(prefix='jaisalgo-admin-qa-') as tmp:
   assert request('/api/admin/manage',{'action':'save','tour':t},origin='https://wrong.invalid')[0]==403
   assert request('/api/admin/manage',{'action':'save','tour':t})[0]==200
   assert request('/packages/qa-private-escape',auth=False)[0]==404
-  t=next(x for x in request('/api/admin/manage')[1]['tours'] if x['slug']==t['slug']);t['published']=True
+  assert '/packages/qa-private-escape' not in request('/sitemap.xml',auth=False)[1]
+  t=next(x for x in request('/api/admin/manage')[1]['tours'] if x['slug']==t['slug']);content_date=t['contentModifiedAt']
+  assert request('/api/admin/manage',{'action':'save','tour':t})[0]==200
+  t=next(x for x in request('/api/admin/manage')[1]['tours'] if x['slug']==t['slug']);assert t['contentModifiedAt']==content_date
+  t['published']=True
   assert request('/api/admin/manage',{'action':'save','tour':t})[0]==200
   assert request('/packages/qa-private-escape',auth=False)[0]==200
+  assert '/packages/qa-private-escape' in request('/sitemap.xml',auth=False)[1]
   assert request('/api/admin/manage',{'action':'save','tour':t})[0]==400
   date=(datetime.date.today()+datetime.timedelta(days=25)).isoformat()
   assert request('/api/admin/manage',{'action':'departure','slug':t['slug'],'date':date,'capacity':12})[0]==200

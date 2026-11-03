@@ -419,7 +419,7 @@ export const guides:EditorialEntry[]=[
     "slug": "first-time-jaisalmer",
     "title": "Your first time in Jaisalmer",
     "eyebrow": "Start here",
-    "description": "City lanes or desert dunes? Begin with the shape of the trip, then fill in the details.",
+    "description": "Plan your first Jaisalmer visit around your available nights, city sights, desert stay, arrival plans and full trip budget.",
     "image": "haveli",
     "location": "Jaisalmer & the Thar",
     "duration": "Planning notes",
@@ -435,10 +435,30 @@ export const guides:EditorialEntry[]=[
       {
         "heading": "Budget the whole trip",
         "body": "Compare accommodation occupancy, transfers, tickets, guide fees, meals and safari duration. An advertised per-person camp rate may exclude city transfers and holiday supplements."
+      },
+      {
+        "heading": "Keep the city and the dunes as separate decisions",
+        "body": "The fort lanes, a haveli and Gadisar make a city-focused day. A desert evening adds a transfer, a reporting time and a return plan. Decide whether you want a short activity, dinner followed by a city return, or an overnight stay before comparing prices. A package with a desert photograph does not automatically include a tent, a safari or transport."
+      },
+      {
+        "heading": "Choose a route that fits your arrival",
+        "body": "Start with the actual arrival and departure times on your transport booking. Keep the first block flexible if the journey is long. Put an overnight camp before a day with enough return time, rather than assuming a dawn checkout will connect with every train or flight. The suggested itineraries are planning sequences, not guaranteed transfer timetables. Ask the operator to confirm reporting, luggage storage and pickup in writing."
+      },
+      {
+        "heading": "Make room sharing and transport explicit",
+        "body": "For a solo trip, ask whether the price buys a private room, a dorm bed or a shared tent and whether a single-occupancy supplement applies. Couples and families should confirm the room or tent count, actual beds, bathroom arrangement and child policy. Friends sharing a vehicle still need to check seats and luggage capacity. Sharing a transfer does not mean sharing your room; these are separate choices."
+      },
+      {
+        "heading": "Read a package as a checklist",
+        "body": "Check each day against the stay nights, named meals, transport legs, safari duration and entry tickets. Treat an optional experience as an extra until its charge is itemized. An activity mentioned in a proposed itinerary is not automatically an inclusion. If the property, vehicle, AC, bathroom or pickup location is marked Not specified, obtain that detail before making a real reservation."
+      },
+      {
+        "heading": "Understand the estimate and reservation token",
+        "body": "Compare the full group total for the same date and choices, rather than comparing a per-person price with a per-tent or per-vehicle price. On JaisalGo, the ₹99 reservation token is part of the package total when an eligible live checkout is available; it is not the complete trip price. Provisional estimates and demo checkout do not confirm supplier inventory or take real money. Review the final terms, accepted total and cancellation policy before paying."
       }
     ],
     "source": "https://www.tourism.rajasthan.gov.in/jaisalmer.html",
-    "updated": "2026-10-24"
+    "updated": "2026-11-03"
   },
   {
     "slug": "best-time-to-visit",
