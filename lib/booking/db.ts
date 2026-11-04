@@ -11,6 +11,7 @@ export async function db(){const settings=databaseSettings();try{if(!client){if(
  `CREATE TABLE IF NOT EXISTS payments(id TEXT PRIMARY KEY,draft_id TEXT NOT NULL UNIQUE,amount INTEGER NOT NULL,mode TEXT NOT NULL,refunded INTEGER NOT NULL DEFAULT 0)`,
  `CREATE TABLE IF NOT EXISTS payment_exceptions(id TEXT PRIMARY KEY,draft_id TEXT NOT NULL,amount INTEGER NOT NULL,mode TEXT NOT NULL,refunded INTEGER NOT NULL DEFAULT 0,reason TEXT NOT NULL)`,
  `CREATE TABLE IF NOT EXISTS bookings(id TEXT PRIMARY KEY,draft_id TEXT NOT NULL UNIQUE,payload TEXT NOT NULL,status TEXT NOT NULL)`,
+ `CREATE TABLE IF NOT EXISTS ticket_verifications(token_hash TEXT PRIMARY KEY,draft_id TEXT NOT NULL UNIQUE)`,
  `CREATE TABLE IF NOT EXISTS events(id TEXT PRIMARY KEY,created INTEGER NOT NULL)`,
  `CREATE TABLE IF NOT EXISTS audits(id TEXT PRIMARY KEY,created INTEGER NOT NULL,action TEXT NOT NULL)`,
  `CREATE INDEX IF NOT EXISTS draft_departure_lookup ON drafts(json_extract(payload,'$.slug'),json_extract(payload,'$.date'),json_extract(payload,'$.mode'),state,expires)`,

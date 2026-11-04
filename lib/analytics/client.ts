@@ -26,7 +26,7 @@ function bridgePosthog(name:ClientEvent,props:EventProps,context:Measurement){
  case 'date_selected':captureBehaviour('travel_date_selected',common);break;
  case 'travellers_selected':captureBehaviour('traveller_count_updated',common);break;
  case 'variant_selected':captureBehaviour('package_variant_updated',common);break;
- case 'payment_initiated':captureBehaviour('payment_initiated',{...common,...(props.paymentPhase==='balance'?{}:{reservation_amount_inr:99 as const}),booking_step:'payment'});break;
+ case 'payment_initiated':captureBehaviour('payment_initiated',{...common,...(props.paymentPhase==='balance'||props.paymentPhase==='full'?{}:{reservation_amount_inr:99 as const}),booking_step:'payment'});break;
  case 'booking_error':captureBehaviour(props.reason==='payment_failed'?'payment_attempt_failed':'booking_error',{...common,reason:['network','validation','price_changed','availability','payment_failed','gateway_closed','gateway_load','unknown'].includes(props.reason||'')?props.reason as 'network':'unknown'});break;
  case 'support_clicked':if(props.support==='whatsapp')captureBehaviour('whatsapp_contact_clicked');else if(props.support==='phone')captureBehaviour('call_contact_clicked');break;
  case 'city_guide_viewed':captureBehaviourOnce('city-guide:'+props.cityGuideId,'city_guide_viewed',{city_guide_target:props.cityGuideId});break;

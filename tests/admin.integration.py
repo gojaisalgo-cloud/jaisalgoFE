@@ -71,6 +71,14 @@ with tempfile.TemporaryDirectory(prefix='jaisalgo-admin-qa-') as tmp:
   status,s=request('/api/booking',{'action':'demo','id':draft,'access':access,'outcome':'captured'});assert status==200,s;b=s['booking'];assert b['paid']==9900 and b['quote']['total']-9900==b['quote']['balance']
   assert request('/api/booking',{'action':'demo','id':draft,'access':access,'outcome':'captured'})[1]['booking']['id']==b['id']
   assert request('/api/booking',{'action':'balance','id':draft,'access':access})[0]==400
+  ops=dict(reporting='16:00',pickup='QA meeting point',instructions='Bring your ticket.')
+  assert request('/api/admin/manage',{'action':'operations','id':b['id'],'operations':ops},auth=False)[0]==403
+  assert request('/api/admin/manage',{'action':'operations','id':b['id'],'operations':ops})[0]==200
+  current=request('/api/booking',{'action':'status','id':draft,'access':access})[1]['booking'];assert current['operations']==ops and current['paid']==9900 and current['status']=='reserved'
+  assert request('/api/admin/manage',{'action':'operations','id':b['id'],'operations':dict(ops,reporting='x'*501)})[0]==400
+  assert request('/api/admin/manage',{'action':'mark_paid','id':b['id']})[0]==400
+  assert 'checkouts' in request('/api/admin/manage')[1]
+
   report=request('/api/admin/analytics?mode=demo&period=month')[1]
   assert report['totals']['sessions']==1 and report['totals']['reservations']==1 and report['totals']['completed']==0
   assert not any(x in json.dumps(report) for x in [i['name'],i['phone'],access])

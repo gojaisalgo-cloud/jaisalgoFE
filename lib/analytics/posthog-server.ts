@@ -21,9 +21,9 @@ export function financialPosthogEvent(event:AnalyticsEvent,measurement:Measureme
   for(const [prefix,touch] of [['first_touch',identity.data.firstTouch],['latest_touch',identity.data.latestTouch]] as const)for(const [key,value] of Object.entries(touch))properties[prefix+'_'+key]=value;
   properties.traffic_source=trafficSource(identity.data.latestTouch);properties.first_touch_traffic_source=trafficSource(identity.data.firstTouch);properties.latest_touch_traffic_source=trafficSource(identity.data.latestTouch);
   properties.landing_page_path=identity.data.firstTouch.landing_page_path;
-  if(p.phase==='token'||p.phase==='balance')properties.payment_phase=p.phase;else if(['reservation_payment_verified','booking_confirmed'].includes(event.name))properties.payment_phase='token';else if(event.name==='balance_payment_completed')properties.payment_phase='balance';
+  if(p.phase==='token'||p.phase==='balance'||p.phase==='full')properties.payment_phase=p.phase;else if(['reservation_payment_verified','booking_confirmed'].includes(event.name))properties.payment_phase='token';else if(event.name==='balance_payment_completed')properties.payment_phase='balance';
   const paid=typeof p.paidPaise==='number'?p.paidPaise:0,refunded=typeof p.refundedPaise==='number'?p.refundedPaise:0,total=typeof p.price==='number'?p.price:0;
-  if(event.name!=='payment_failed'){properties.total_collected_inr=paid/100;properties.refunded_inr=refunded/100}if(['reservation_payment_verified','booking_confirmed','balance_payment_completed'].includes(event.name)){properties.reservation_amount_inr=99;properties.outstanding_balance_inr=Math.max(0,total-paid)/100}
+  if(event.name!=='payment_failed'){properties.total_collected_inr=paid/100;properties.refunded_inr=refunded/100}if(['reservation_payment_verified','booking_confirmed','balance_payment_completed'].includes(event.name)){properties.reservation_amount_inr=p.phase==='full'?0:99;properties.outstanding_balance_inr=Math.max(0,total-paid)/100}
   if(event.name==='reservation_payment_verified')properties.deposit_collected_inr=99;
   if(event.name==='balance_payment_completed')properties.fully_paid=true;
   if(event.name==='refund_recorded'&&typeof p.refundTotal==='number')properties.refund_total_inr=p.refundTotal/100;

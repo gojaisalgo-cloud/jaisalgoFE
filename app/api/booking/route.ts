@@ -12,6 +12,7 @@ export async function POST(req:Request){schedulePosthogDelivery();if(!sameOrigin
  if(b.action==='availability')return NextResponse.json(await inspectDeparture(b.input),{headers:{'Cache-Control':'no-store'}});
  if(b.action==='resume')return NextResponse.json(await resumeDraft(b.idempotency,b.access));
  if(typeof b.id!=='string'||typeof b.access!=='string')throw Error('Missing reservation access.');
+ if(b.action==='ticket'){const {verifiedTicket}=await import('@/lib/booking/verification');const t=await verifiedTicket(b.id,b.access);return NextResponse.json({verificationPath:t.verificationPath},{headers:{'Cache-Control':'private, no-store'}})}
  if(b.action==='status')return NextResponse.json(await viewDraft(b.id,b.access));
  if(b.action==='balance')return NextResponse.json(await startBalance(b.id,b.access));
  if(b.action==='prepare')return NextResponse.json(await preparePayment(b.id,b.access));

@@ -209,3 +209,67 @@ test('live is the default; demo is explicit and payment readiness rejects wrong 
  const {mode,paymentReady}=await import('../lib/booking/payments'),keys=['BOOKING_MODE','RAZORPAY_KEY_ID','RAZORPAY_KEY_SECRET','RAZORPAY_WEBHOOK_SECRET'],previous=Object.fromEntries(keys.map(k=>[k,process.env[k]]));
  try{for(const key of keys)delete process.env[key];assert.equal(mode(),'live');assert.equal(paymentReady(),false);process.env.BOOKING_MODE='demo';assert.equal(mode(),'demo');assert.equal(paymentReady(),true);process.env.BOOKING_MODE='live';process.env.RAZORPAY_KEY_ID='rzp_test_fixture';process.env.RAZORPAY_KEY_SECRET='fixture';process.env.RAZORPAY_WEBHOOK_SECRET='fixture';assert.equal(paymentReady(),false);process.env.RAZORPAY_KEY_ID='rzp_live_fixture';assert.equal(paymentReady(),true);process.env.BOOKING_MODE='dmeo';assert.equal(paymentReady(),false)}finally{for(const key of keys){if(previous[key]===undefined)delete process.env[key];else process.env[key]=previous[key]}}
 });
+
+test('full payment is server-priced, bound to its intent and settled exactly once',async()=>{
+ const i={...input('royal-jaisalmer-holiday',future(100)),paymentPlan:'full' as const},r=await createDraft(i),s=await viewDraft(r.id,i.access);
+ assert.equal(s.draft.amount,s.draft.quote.total);assert.ok(s.draft.amount>9900);assert.equal(s.booking,null);
+ await assert.rejects(()=>createDraft({...i,paymentPlan:'token'}),/different trip details/);
+ await assert.rejects(async()=>settle(r.id,{...await paid(r.id,i.access),amount:9900}));
+ await settle(r.id,await paid(r.id,i.access));await settle(r.id,await paid(r.id,i.access));
+ const b=(await viewDraft(r.id,i.access)).booking!;assert.equal(b.status,'paid');assert.equal(b.paid,b.quote.total);
+ await assert.rejects(()=>startBalance(r.id,i.access),/no payable balance/);
+ await recordRefund('sim_'+r.id,b.paid);assert.equal((await viewDraft(r.id,i.access)).booking?.status,'refunded');
+});
+
+test('optional contact and requests are normalized, saved and immutable for an existing attempt',async()=>{
+ const i={...input('city-and-dunes',future(101)),whatsapp:'88888 88888',specialRequest:'  Late arrival  '},r=await createDraft(i),s=await viewDraft(r.id,i.access);
+ assert.equal(s.draft.whatsapp,'+918888888888');assert.equal(s.draft.specialRequest,'Late arrival');
+ await assert.rejects(()=>createDraft({...i,specialRequest:'Different request'}),/different trip details/);
+ assert.equal(inputSchema.safeParse({...i,whatsapp:'invalid'}).success,false);assert.equal(inputSchema.safeParse({...i,specialRequest:'x'.repeat(501)}).success,false);
+});
+
+test('QR verification is stable, reveals no customer contact and reflects refunds',async()=>{
+ const {verifiedTicket,publicVerification}=await import('../lib/booking/verification');
+ const i=input('short-camel-ride',future(102)),r=await createDraft(i);
+ await assert.rejects(()=>verifiedTicket(r.id,i.access),/only after payment verification/);
+ await settle(r.id,await paid(r.id,i.access));
+ await assert.rejects(()=>verifiedTicket(r.id,'wrong-key'));
+ const one=await verifiedTicket(r.id,i.access),two=await verifiedTicket(r.id,i.access);
+ assert.equal(one.verificationPath,two.verificationPath);assert.equal(one.verificationPath.includes(i.access),false);
+ const token=one.verificationPath.split('/').pop()!,publicRecord=await publicVerification(token);
+ assert.equal(publicRecord?.id,one.booking.id);assert.equal(publicRecord?.status,'reserved');
+ for(const value of [i.name,i.phone,i.access,r.id])assert.equal(JSON.stringify(publicRecord).includes(value),false);
+ assert.equal(await publicVerification('invalid'),null);assert.equal(await publicVerification('a'.repeat(48)),null);
+ await recordRefund('sim_'+r.id,9900);assert.equal((await publicVerification(token))?.status,'refunded');
+});
+
+test('PDF export requires private access and a verified booking; download remains private and current',async()=>{
+ const {POST}=await import('../app/api/booking/ticket/route'),i={...input('golden-city-day',future(103)),paymentPlan:'full' as const},r=await createDraft(i);
+ const request=(access=i.access,origin='http://localhost')=>new Request('http://localhost/api/booking/ticket',{method:'POST',headers:{origin,'Content-Type':'application/json'},body:JSON.stringify({id:r.id,access})});
+ assert.equal((await POST(request())).status,400);assert.equal((await POST(request(i.access,'https://other.invalid'))).status,403);
+ await settle(r.id,await paid(r.id,i.access));assert.equal((await POST(request('invalid-key'))).status,400);
+ const response=await POST(request());assert.equal(response.status,200,response.status!==200?await response.text():'');assert.equal(response.headers.get('Content-Type'),'application/pdf');assert.match(response.headers.get('Cache-Control')!,/no-store/);
+ const bytes=Buffer.from(await response.arrayBuffer());assert.equal(bytes.subarray(0,5).toString(),'%PDF-');assert.ok(bytes.length>5000);assert.match(response.headers.get('Content-Disposition')!,/\.pdf/);
+});
+
+test('Razorpay full-payment order uses the calculated total and rejects a mismatched capture',async()=>{
+ const originalFetch=global.fetch,previous={...process.env};let orderedAmount=0;
+ process.env.BOOKING_MODE='test';process.env.RAZORPAY_KEY_ID='rzp_test_full';process.env.RAZORPAY_KEY_SECRET='fixture-secret';process.env.RAZORPAY_WEBHOOK_SECRET='fixture-webhook';
+ global.fetch=async(_url,options)=>{orderedAmount=JSON.parse(String(options?.body)).amount;return Response.json({id:'order_full_'+randomUUID()})};
+ try{const i={...input('city-and-dunes',future(104)),paymentPlan:'full' as const};await (await db()).execute({sql:'INSERT INTO departures VALUES(?,?,?,?)',args:[i.slug,i.date,4,'test']});const r=await createDraft(i),s=await viewDraft(r.id,i.access);assert.equal(orderedAmount,s.draft.quote.total);await assert.rejects(async()=>settle(r.id,{...await paid(r.id,i.access),amount:9900}));await settle(r.id,await paid(r.id,i.access));assert.equal((await viewDraft(r.id,i.access)).booking?.status,'paid')}
+ finally{global.fetch=originalFetch;for(const k of ['BOOKING_MODE','RAZORPAY_KEY_ID','RAZORPAY_KEY_SECRET','RAZORPAY_WEBHOOK_SECRET']){if(previous[k]===undefined)delete process.env[k];else process.env[k]=previous[k]}}
+});
+
+test('verification URLs never enter replay or heatmap data',async()=>{
+ const {analyticsPage,privateAnalyticsPage}=await import('../lib/analytics/posthog-schema'),{sanitizeHeatmap,sanitizeReplayUrls}=await import('../lib/analytics/posthog-privacy'),url='https://www.jaisalgo.com/verify/'+('a'.repeat(48));
+ assert.equal(analyticsPage(new URL(url).pathname),'/verify/[token]');assert.equal(privateAnalyticsPage('/verify/[token]'),true);assert.deepEqual(sanitizeHeatmap({[url]:[{x:1,y:2,type:'click'}]},'https://www.jaisalgo.com'),{});assert.equal(sanitizeReplayUrls(url,'https://www.jaisalgo.com'),'https://www.jaisalgo.com/verify/[token]');
+});
+
+test('full-payment analytics records full revenue without inventing a ₹99 deposit',async()=>{
+ const {analyticsDb}=await import('../lib/analytics/server'),{financialPosthogEvent}=await import('../lib/analytics/posthog-server');
+ const sessionId=randomUUID(),measurement={consent:true as const,sessionId,device:'mobile' as const,source:'direct' as const,campaign:'unassigned'},i={...input('short-camel-ride',future(105)),paymentPlan:'full' as const,measurement},r=await createDraft(i);await settle(r.id,await paid(r.id,i.access));
+ const events=(await (await analyticsDb()).execute({sql:'SELECT name,props FROM analytics_events WHERE session=?',args:[sessionId]})).rows;
+ assert.equal(events.some(e=>e.name==='reservation_payment_verified'),false);assert.equal(events.some(e=>e.name==='captured_payment_review'),false);assert.ok(events.some(e=>e.name==='booking_confirmed'));assert.ok(events.some(e=>e.name==='balance_payment_completed'));
+ const b=(await viewDraft(r.id,i.access)).booking!,ph={...measurement,posthog:{distinctId:randomUUID(),firstTouch:{landing_page_path:'/'},latestTouch:{landing_page_path:'/'}}},payload=financialPosthogEvent({id:'full-test',name:'balance_payment_completed',at:Date.now(),mode:'demo',origin:'server',session:sessionId,attempt:null,props:{phase:'full',price:b.quote.total,paidPaise:b.paid}},ph);
+ assert.equal(payload?.properties?.payment_phase,'full');assert.equal(payload?.properties?.fully_paid,true);assert.equal(payload?.properties?.reservation_amount_inr,0);
+});

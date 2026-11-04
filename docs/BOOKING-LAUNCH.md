@@ -1,6 +1,6 @@
 # Book now and real payment launch — 4 November 2026
 
-The public booking experience now uses **Book now**, a visible **₹99 now / balance at check-in or on the visit date** promise, and call assistance at **8824548099** (`tel:+918824548099`). Name and mobile remain the only customer contact fields. No email or account is added.
+The public booking experience now uses **Book now**, a visible **₹99 now / balance at check-in or on the visit date** promise, and call assistance at **8824548099** (`tel:+918824548099`). Name and mobile remain the only required customer contact fields; a different WhatsApp number and a special request are optional and collapsed. No email or account is added.
 
 ## Implemented
 
@@ -25,10 +25,24 @@ Official setup references: [Razorpay Standard Checkout](https://razorpay.com/doc
 
 ## Customer journey
 
-Package → **Book now** → date/travellers → full group total, ₹99 now and remaining amount → essential name/mobile and accepted terms → verified payment → ticket. The balance is not collected in advance; online balance payment remains unavailable until the visit date. An offline check-in/day-of-visit payment needs the existing operator receipt before the balance can be marked paid.
+Package → **Book now** → date/travellers → full group total and a choice of ₹99 now or full payment → essential name/mobile and accepted terms → verified payment → ticket. The balance is not collected in advance; online balance payment remains unavailable until the visit date. An offline check-in/day-of-visit payment needs the existing operator receipt before the balance can be marked paid.
 
-Live payment failure/pending status never produces a successful ticket. Returning customers open My Bookings on the same device or their private ticket link. A QR opens the booking record; admission/location claims require the real operator's confirmed data.
+Live payment failure/pending status never produces a successful ticket. Returning customers open My Bookings on the same device or their private ticket link. A QR opens a separate verification page with current status and no customer contact details; admission/location claims require the real operator's confirmed data.
 
 ## Validation
 
-75 automated tests pass, including the new default-mode/wrong-key/mistyped-environment regression. Typecheck, production build and isolated admin HTTP integration passed. Browser checks and deployment evidence are recorded in the external delivery output. Demo/test validation remains explicitly separate from actual merchant readiness.
+82 automated tests pass, including full-payment totals and settlement, immutable retry intent, optional contact validation, private PDF authorization, QR privacy/refund updates and full-payment analytics. Typecheck, production build and isolated admin HTTP integration passed. Browser checks and deployment evidence are recorded in the external delivery output. Demo/test validation remains explicitly separate from actual merchant readiness.
+
+## Reference-inspired booking update
+
+The existing one-page checkout now has three clear progress stages, two large payment-choice cards, an arrival-balance summary and a sticky Book now action. The default remains ₹99. Full payment creates a server-priced order for the complete accepted package quote, without an invented discount, and confirms the existing booking ID as fully paid after capture verification. Existing initial drafts retain their internal `kind=token` for compatibility; the additive `paymentPlan` distinguishes token/full payment. Missing legacy values mean token.
+
+Ticket download now uses an authenticated, same-origin POST to `/api/booking/ticket` and returns a server-generated, noncached PDF with the current ledger amounts, support number, reporting details, QR, itinerary, inclusion summary and cancellation terms. The existing PNG download remains available as Save ticket image. Private sharing and account-free retrieval remain available. Share on WhatsApp opens a draft link; it does not automatically send a message.
+
+QR verification uses an independent opaque capability at `/verify/[token]`. It shows booking reference, package, date, group size and current status; it never returns the name, contact, payment reference or private ticket access key. The token is indexed by hash. Existing bookings receive this verification capability lazily under private authorization. Refund/cancellation changes appear at verification time. Verification routes are noindex and excluded from replay/heatmaps; analytics URLs redact the token.
+
+Admins can search by booking ID, name, mobile, package or date, filter active/payment/review records, inspect receipt history and pending/failed attempts, and save reporting/pickup/arrival instructions. Operational changes cannot mark an unverified payment successful or change the paid amount. Online balance payment retains the accepted check-in/visit-date policy and uses the existing order/idempotence checks.
+
+Browser verification used an isolated local database with explicit demo mode, not production money: both full and ₹99 checkout succeeded, a three-traveller selection persisted across refresh, PDF downloaded, the limited QR page omitted contact data, My Bookings reopened the ticket, and early balance payment remained disabled. The downloaded A5 PDF was rendered and visually checked across all three pages. Test/production source builds, typecheck, 82 tests and the isolated authenticated admin HTTP suite passed. Production dependency audit reports no known vulnerabilities. Repository lint retains pre-existing issues; this is not claimed as a clean lint run.
+
+Production merchant/database/supplier setup above is still required. This update does not activate a payment account, invent approved inventory or bypass live-payment safeguards.
