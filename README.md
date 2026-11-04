@@ -57,7 +57,7 @@ npm run build
 npm run test:admin
 ```
 
-Seventy-four domain/payment/privacy/ticket/marketplace/SEO/PostHog tests pass. The isolated HTTP admin integration is documented in the latest verification report. `test:admin` requires Python 3 and a completed build; it uses a temporary DB and private generated test credentials. The full Playwright suite includes additional UI/axe scenarios, but the prior browser-launch limitation means those assertions are not claimed as passing. Real browser checks used the in-app browser.
+Seventy-five domain/payment/privacy/ticket/marketplace/SEO/PostHog tests pass. The isolated HTTP admin integration is documented in the latest verification report. `test:admin` requires Python 3 and a completed build; it uses a temporary DB and private generated test credentials. The full Playwright suite includes additional UI/axe scenarios, but the prior browser-launch limitation means those assertions are not claimed as passing. Real browser checks used the in-app browser.
 
 Read [docs/UI-REFINEMENT.md](docs/UI-REFINEMENT.md) for the current input, ticket and private-access design.
 
@@ -84,3 +84,7 @@ Search Console verification/submission and real field metrics remain operator st
 ### Pan-India travel discovery
 
 Six source-reviewed origin guides live under `/jaisalmer-travel-from`, with a region-grouped directory, canonical alias redirects and a shared publication gate. The 103-market research backlog never generates public pages automatically. See [implementation and 90-day plan](docs/PAN-INDIA-SEO.md), [keyword candidates](docs/PAN-INDIA-KEYWORDS.csv) and [verification](docs/PAN-INDIA-VERIFICATION.md). Local package booking and live payment gates remain unchanged.
+
+### Real bookings and assistance
+
+Public deployments default to live mode and require real credentials, shared storage, reviewed suppliers and date capacity. Demo mode must be selected explicitly for isolated testing. Book now uses ₹99 towards the total; the balance is due at check-in or on the visit date. Call assistance: 8824548099. See [real booking activation and verification](docs/BOOKING-LAUNCH.md).

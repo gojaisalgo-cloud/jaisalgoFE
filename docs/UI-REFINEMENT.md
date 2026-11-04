@@ -33,7 +33,7 @@ Local trip-brief creation requires no personal information: dates, traveler coun
 
 Eighteen domain/payment/privacy/ticket tests passed, including normalized mobile contact, removal of unwanted personal fields, private-link origin validation, escaped ticket text and gateway configuration. Production build and TypeScript passed. Isolated admin integration passed after the contact change. Real-browser verification and final responsive checks are recorded in `VERIFICATION.md`.
 
-The application still defaults to demo. Real gateway/SMS delivery, supplier times and confirmed inventory require business configuration and staging validation described in `BOOKING-SYSTEM.md`.
+As of 4 November 2026 the application defaults to live and requires explicit demo mode for testing; see `BOOKING-LAUNCH.md`. Real gateway/SMS delivery, supplier times and confirmed inventory require business configuration and staging validation described in `BOOKING-SYSTEM.md`.
 
 
 ## Shared dropdowns

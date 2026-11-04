@@ -1,4 +1,5 @@
 import {DirectionalIcon} from '@/components/directional-control';
+import {bookingCta} from '@/lib/booking/customer-copy';
 import Link from 'next/link';
 import {Clock,MapPin} from 'lucide-react';
 import {Photo} from '@/components/photo';
@@ -17,9 +18,9 @@ export function TourCard({tour:t}:{tour:Tour}){
    <div className="tour-card-kicker"><MapPin size={11}/>JAISALMER · {d.kind==='activity'?'SAFARI & ACTIVITY':d.kind==='cultural'?'CULTURAL EVENING':d.kind==='camp'?'DESERT STAY':t.area==='Both'?'CITY & DESERT':t.area.toUpperCase()}</div>
    <h3><Link href={`/packages/${t.slug}`}>{t.title}</Link></h3><p className="tour-card-description">{t.subtitle}</p>
    <PackageHighlights tour={t} choices={c}/>
-   <div className="tour-card-price"><div><small>Estimate / {unit}</small><strong>{money(amount)}</strong></div><span className="token-chip"><b>₹99 <span>token</span></b><small>Part of total</small></span></div>
+   <div className="tour-card-price"><div><small>Estimate / {unit}</small><strong>{money(amount)}</strong></div><span className="token-chip"><b>₹99 <span>now</span></b><small>Part of total</small></span></div>
    <p className="tour-price-basis">{unit==='vehicle'?`Up to ${d.unitCapacity} travelers / vehicle · no seat-share rate`:unit==='tent'?`${d.unitCapacity} guests / tent · 1 night`:t.nights?d.stayType==='open-sky'?'2 travelers · open-sky sleeping':'2 travelers · private twin sharing':'Based on 2 travelers'}</p>
-   <div className="tour-card-actions"><Link href={`/packages/${t.slug}`} className="tour-detail-link">View package <DirectionalIcon direction="up-right"/></Link><Link href={`/book/${t.slug}`} className="button">Book for ₹99 <DirectionalIcon direction="right"/></Link></div><p className="estimate-tag">{t.confirmed?'Reviewed model · check your date':'Provisional estimate · *supplier confirmation needed'}</p>
+   <div className="tour-card-actions"><Link href={`/packages/${t.slug}`} className="tour-detail-link">View package <DirectionalIcon direction="up-right"/></Link><Link href={`/book/${t.slug}`} className="button">{bookingCta} <DirectionalIcon direction="right"/></Link></div><p className="estimate-tag">{t.confirmed?'Reviewed model · check your date':'Provisional estimate · *supplier confirmation needed'}</p>
   </div>
  </article>
 }

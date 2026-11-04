@@ -1,4 +1,5 @@
 'use client';
+import {bookingCta,bookingPaymentTerms} from '@/lib/booking/customer-copy';
 import {captureBehaviourOnce} from '@/lib/analytics/posthog-client';
 import {track} from '@/lib/analytics/client';
 import {DirectionalIcon,IconButton} from '@/components/directional-control';
@@ -36,7 +37,7 @@ export function PackageInformationContent({tour:t,titleId,standalone=false,initi
     <ClarityOverview data={clarity}/>
     <details className="clarity-accordion"><summary><span><strong>Operator inclusions & exclusions</strong><small>Original package notes, without adding promises</small></span><ChevronDown size={18} aria-hidden="true"/></summary><div className="info-inclusions"><section><h4>Listed / proposed inclusions</h4><ul>{t.inclusions.map(s=><li key={s}><Check size={14} aria-hidden="true"/><span>{s}</span></li>)}</ul></section><section><h4>Optional or excluded</h4><ul>{t.exclusions.map(s=><li key={s}><span>{s}</span></li>)}</ul></section></div></details>
     <details className="clarity-accordion"><summary><span><strong>Children, accessibility & safety</strong><small>Eligibility, facilities and optional riding</small></span><ChevronDown size={18} aria-hidden="true"/></summary><h4>Children</h4><p>{d.children}</p><h4>Accessibility</h4><p>{d.amenities.accessibility}</p><h4>Activity safety</h4><p>{d.safety}</p></details>
-    <details className="clarity-accordion"><summary><span><strong>Cancellation & payment</strong><small>₹99 is deducted from the package total</small></span><ChevronDown size={18} aria-hidden="true"/></summary><p>{t.policy}</p><p>The balance is due on your travel date. A demo ticket confirms no travel or real payment.</p></details>
+    <details className="clarity-accordion"><summary><span><strong>Cancellation & payment</strong><small>₹99 is deducted from the package total</small></span><ChevronDown size={18} aria-hidden="true"/></summary><p>{t.policy}</p><p>{bookingPaymentTerms}</p></details>
     {!!t.faq.length&&<details className="clarity-accordion"><summary><span><strong>Package questions</strong><small>Answers from the published package notes</small></span><ChevronDown size={18} aria-hidden="true"/></summary>{t.faq.map(f=><section key={f.question}><h3>{f.question}</h3><p>{f.answer}</p></section>)}</details>}
     {(t.slug.includes('tanot')||t.slug==='desert-border-circuit'||t.days===5)&&<p className="request-note">Tanot &amp; Longewala need a separate excursion day. Forward border posts are excluded; current access and identity rules must be checked.</p>}
    </section>
@@ -61,6 +62,6 @@ export function PackageInformationContent({tour:t,titleId,standalone=false,initi
     {d.marketReference&&<div className="market-reference"><strong>{d.marketReference.label}</strong><p>{d.marketReference.note}</p><a href={d.marketReference.source} target="_blank" rel="noreferrer">View operator reference <DirectionalIcon direction="up-right"/></a></div>}
    </section>
   </div>
-  <div className="info-booking-footer"><div><span>Group estimate · {c.travelers} {c.travelers===1?'person':'people'}</span><strong>{money(q.total)} <small>₹99 token</small></strong></div><Link className="button" href={bookingHref(t,c,initialDate)}>Choose date <DirectionalIcon direction="right"/></Link><p>₹99 is part of the total · check supplier availability</p></div>
+  <div className="info-booking-footer"><div><span>Group estimate · {c.travelers} {c.travelers===1?'person':'people'}</span><strong>{money(q.total)} <small>₹99 token</small></strong></div><Link className="button" href={bookingHref(t,c,initialDate)}>{bookingCta} <DirectionalIcon direction="right"/></Link><p>{bookingPaymentTerms}</p></div>
  </div>;
 }

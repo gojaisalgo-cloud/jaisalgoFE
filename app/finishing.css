@@ -532,3 +532,25 @@ footer{background:var(--surface-soft);border-color:var(--line)}
  .checkout-availability{font-size:13px}
 }
 .extra-requests[open]>summary>span{transform:none;color:var(--muted)}
+
+/* One booking promise and a visible human contact at every important step. */
+.checkout-payment-note{display:flex;align-items:flex-start;gap:12px;padding:18px 20px;border:1px solid var(--line);border-radius:14px;background:#fff;margin:0 0 14px;color:var(--ink)}
+.checkout-payment-note>svg{flex-shrink:0;margin-top:3px;color:var(--ink)}
+.checkout-payment-note strong,.checkout-payment-note span{display:block;line-height:1.65}
+.checkout-payment-note strong{font-size:15px;font-weight:600;margin-bottom:3px}
+.checkout-payment-note span{font-size:13px;color:var(--muted)}
+.checkout-test-note{font-size:13px;line-height:1.7;padding:0 2px;color:var(--muted);margin:0 0 15px}
+.booking-assistance{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:16px 0;margin:0 0 12px;border-bottom:1px solid var(--line)}
+.booking-assistance strong,.booking-assistance span{display:block;font-size:13px;line-height:1.7}
+.booking-assistance strong{font-weight:550;color:var(--ink)}
+.booking-assistance span{font-size:12px;color:var(--muted)}
+.booking-assistance>a{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 13px;border:1px solid var(--line);border-radius:11px;background:#fff;font-size:14px;font-weight:600;white-space:nowrap;color:var(--ink);transition:background .2s,border-color .2s}
+.booking-assistance>a:hover{background:var(--ivory);border-color:var(--muted)}
+.trust-strip>a{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:44px;color:inherit}
+.checkout-inline-total>div>span>small,.checkout-price-summary>div>span>small{display:block;font-size:11px;color:var(--muted);margin-top:4px}
+.ticket-amounts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:25px;padding-top:20px;border-top:1px solid var(--line)}
+.ticket-amounts span{display:block;font-size:11px;line-height:1.6;color:var(--muted);margin-bottom:5px}
+.ticket-amounts strong{display:block;font-size:19px;font-weight:600;line-height:1.5;overflow-wrap:anywhere;color:var(--ink)}
+.ticket-portal>.booking-assistance{max-width:980px;margin:16px auto 0}
+.booking-assisted{max-width:850px}.booking-assisted>h1{font-size:clamp(34px,5vw,56px);line-height:1.15}.booking-assisted>p{max-width:650px}.booking-assisted>.tour-card-actions{margin-top:24px;justify-content:flex-start;gap:14px}
+@media(max-width:700px){.checkout-payment-note{padding:15px;gap:10px}.checkout-payment-note strong{font-size:14px}.checkout-payment-note span{font-size:12px}.booking-assistance{align-items:flex-start;flex-direction:column;gap:10px;padding-block:15px}.booking-assistance>a{font-size:14px}.ticket-amounts{gap:10px;margin-top:22px;padding-top:18px}.ticket-amounts strong{font-size:16px}.ticket-amounts span{font-size:10px}.ticket-payment>p small{font-size:10px;line-height:1.6}.trust-strip>a{font-size:12px}}

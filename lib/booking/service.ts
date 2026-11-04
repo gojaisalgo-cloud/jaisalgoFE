@@ -1,6 +1,7 @@
 import {analyticsDb,recordFinancialMilestones,consentContext} from '@/lib/analytics/server';
 import type {Measurement} from '@/lib/analytics/schema';
 import {z} from 'zod';
+import {config} from '@/lib/config';
 import {phoneSchema} from '@/lib/phone';
 import {db,tour,hydrateTour} from './db';
 import {BookingIssue} from './errors';
@@ -18,7 +19,7 @@ export type Booking=Draft & {id:string;draftId:string;paymentId:string;paid:numb
 function quotedTour(t:Tour,choices:Choices,date?:string){const c=normalizeChoices(t,choices),d=packageDetails(t);if(c.stayType&&!d.stayOptions.includes(c.stayType))throw Error('This stay preference is unavailable.');if(c.addons?.some(id=>!d.extras.some(e=>e.id===id)))throw Error('An extra is no longer available.');if(c.travelMode==='Solo'&&c.travelers!==1)throw Error('Solo travel requires one traveler.');return {tour:t,choices:c,quote:quote(t.costs,t.nights,c,d.extras,date)}}
 export async function publicQuote(slug:string,choices:Choices,date?:string){const t=await tour(slug);if(!t)throw Error('Package unavailable.');return quotedTour(t,choices,date)}
 export const selectionSchema=inputSchema.omit({name:true,phone:true,consent:true,website:true,access:true,idempotency:true,expectedTotal:true,expectedRevision:true,measurement:true});
-function confirmed(t:Tour){if(mode()==='live'&&(!t.confirmed||!t.taxReviewed||!process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g,'')||!process.env.BOOKING_BUSINESS_NAME||t.policy.startsWith('Draft')||t.policy.length<50))throw Error('Supplier costs, taxes, support details and refund terms must be confirmed before live reservations.');if(!paymentReady())throw Error('Secure payment is not configured yet.')}
+function confirmed(t:Tour){if(mode()==='live'&&(!t.confirmed||!t.taxReviewed||!config.phone||!process.env.BOOKING_BUSINESS_NAME||t.policy.startsWith('Draft')||t.policy.length<50))throw Error('Supplier costs, taxes, support details and refund terms must be confirmed before live reservations.');if(!paymentReady())throw Error('Secure payment is not configured yet.')}
 export async function draftFor(id:string,access:string){const c=await db(),r=await c.execute({sql:'SELECT * FROM drafts WHERE id=? AND access_hash=?',args:[id,hash(access)]});if(!r.rows[0])throw Error('Reservation not found or access key is incorrect.');return r.rows[0]}
 async function occupancy(tx:Pick<Transaction,'execute'>,slug:string,date:string,exclude=''){
  const drafts=await tx.execute({sql:"SELECT COALESCE(SUM(json_extract(payload,'$.choices.travelers')),0) used FROM drafts WHERE state IN ('pending','creating','authorized') AND expires>? AND id<>? AND json_extract(payload,'$.kind')='token' AND json_extract(payload,'$.slug')=? AND json_extract(payload,'$.date')=? AND json_extract(payload,'$.mode')=?",args:[Date.now(),exclude,slug,date,mode()]}),bookings=await tx.execute({sql:"SELECT COALESCE(SUM(json_extract(payload,'$.choices.travelers')),0) used FROM bookings WHERE status NOT IN ('refunded','cancelled') AND json_extract(payload,'$.slug')=? AND json_extract(payload,'$.date')=? AND json_extract(payload,'$.mode')=?",args:[slug,date,mode()]});
