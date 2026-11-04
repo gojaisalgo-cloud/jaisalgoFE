@@ -1,3 +1,4 @@
+import {schedulePosthogDelivery} from '@/lib/analytics/posthog-after';
 import {StorageUnavailableError} from '@/lib/booking/storage';
 import {recordFinancialMilestones} from '@/lib/analytics/server';
 import {NextResponse} from 'next/server';
@@ -6,7 +7,7 @@ import {createDraft,draftFor,settle,startBalance,viewDraft,inspectDeparture,prep
 import {sameOrigin,jsonBody,limit} from '@/lib/booking/security';
 import {mode,provider,verifyCheckout} from '@/lib/booking/payments';
 export const runtime='nodejs';
-export async function POST(req:Request){if(!sameOrigin(req))return NextResponse.json({error:'Use this website to book.'},{status:403});try{limit(req.headers.get('x-forwarded-for')||'local',60);const b=await jsonBody(req);if(!b||typeof b!=='object'||Array.isArray(b))throw Error('Invalid booking request.');
+export async function POST(req:Request){schedulePosthogDelivery();if(!sameOrigin(req))return NextResponse.json({error:'Use this website to book.'},{status:403});try{limit(req.headers.get('x-forwarded-for')||'local',60);const b=await jsonBody(req);if(!b||typeof b!=='object'||Array.isArray(b))throw Error('Invalid booking request.');
  if(b.action==='create')return NextResponse.json(await createDraft(b.input));
  if(b.action==='availability')return NextResponse.json(await inspectDeparture(b.input),{headers:{'Cache-Control':'no-store'}});
  if(b.action==='resume')return NextResponse.json(await resumeDraft(b.idempotency,b.access));

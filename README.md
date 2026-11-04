@@ -57,7 +57,7 @@ npm run build
 npm run test:admin
 ```
 
-Sixty domain/payment/privacy/ticket/marketplace/SEO tests and the isolated HTTP admin integration passed in the latest SEO verification. `test:admin` requires Python 3 and a completed build; it uses a temporary DB and private generated test credentials. The full Playwright suite includes additional UI/axe scenarios, but the prior browser-launch limitation means those assertions are not claimed as passing. Real browser checks used the in-app browser.
+Seventy-four domain/payment/privacy/ticket/marketplace/SEO/PostHog tests pass. The isolated HTTP admin integration is documented in the latest verification report. `test:admin` requires Python 3 and a completed build; it uses a temporary DB and private generated test credentials. The full Playwright suite includes additional UI/axe scenarios, but the prior browser-launch limitation means those assertions are not claimed as passing. Real browser checks used the in-app browser.
 
 Read [docs/UI-REFINEMENT.md](docs/UI-REFINEMENT.md) for the current input, ticket and private-access design.
 
@@ -65,7 +65,7 @@ Read [docs/BOOKING-SYSTEM.md](docs/BOOKING-SYSTEM.md) for source-linked research
 
 ## Conversion analytics
 
-Open Travel desk → Analytics after administrator sign-in. See [metric definitions, privacy, configuration and rollout](docs/ANALYTICS.md). Analytics is first-party and optional; verified deposit, full payment and actual trip completion remain distinct. No third-party vendor or new email collection is installed.
+Open Travel desk → Analytics after administrator sign-in. See [metric definitions, privacy, configuration and rollout](docs/ANALYTICS.md). Analytics is first-party and optional; verified deposit, full payment and actual trip completion remain distinct. Optional PostHog browser and verified-backend instrumentation now complements the private first-party report; no email collection is added. See [PostHog activation, event dictionary, dashboard recipes and verification limits](docs/POSTHOG_ANALYTICS.md). Tracking stays off without a public project token/host and consent.
 
 For Vercel, follow [persistent database setup](docs/VERCEL-DEPLOYMENT.md). The site remains browsable before connection; online booking requires shared durable libSQL storage.
 

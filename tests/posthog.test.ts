@@ -1,0 +1,80 @@
+import {test,after} from 'node:test';
+import assert from 'node:assert/strict';
+import {randomUUID} from 'node:crypto';
+import {mkdtempSync,rmSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {analyticsPage,privateAnalyticsPage,marketingTouch,safeBehaviourProps,behaviourEvents,posthogHost} from '../lib/analytics/posthog-schema';
+import {sanitizeHeatmap,sanitizeReplayUrls} from '../lib/analytics/posthog-privacy';
+import {pageLifecycle} from '../lib/analytics/posthog-navigation';
+import {financialPosthogEvent,drainPosthogOutbox,stableEventUuid} from '../lib/analytics/posthog-server';
+import {analyticsDb,recordFinancialMilestones,withdraw} from '../lib/analytics/server';
+import {db} from '../lib/booking/db';
+import {createDraft,settle,viewDraft,recordRefund} from '../lib/booking/service';
+import type {AnalyticsEvent,Measurement} from '../lib/analytics/schema';
+import type {EventMessage} from 'posthog-node';
+const temp=mkdtempSync(join(tmpdir(),'jaisalgo-posthog-'));process.env.DATABASE_URL='file:'+join(temp,'test.db');process.env.BOOKING_MODE='demo';
+process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN='phc_unit_test_not_a_real_project';process.env.NEXT_PUBLIC_POSTHOG_HOST='https://us.i.posthog.com';
+after(async()=>{(await db()).close();rmSync(temp,{recursive:true,force:true})});
+const measurement=():Measurement=>({consent:true,sessionId:randomUUID(),attemptId:randomUUID(),device:'mobile',source:'search',campaign:'unassigned',posthog:{distinctId:randomUUID(),sessionId:randomUUID(),firstTouch:{landing_page_path:'/jaisalmer-travel-from/delhi',referrer_origin:'https://www.google.com'},latestTouch:{landing_page_path:'/jaisalmer-travel-from/delhi'}}});
+test('analytics paths remove all queries/fragments and redact private identifiers and unknown user paths',()=>{
+  assert.equal(analyticsPage('/packages/city-and-dunes?phone=private#secret'),'/packages/city-and-dunes');
+  assert.equal(analyticsPage('/reservations/secret-booking-id?access=private#token'),'/reservations/[id]');
+  assert.equal(analyticsPage('/book/city-and-dunes?name=private'),'/book/[slug]');
+  assert.equal(analyticsPage('/visitor-name-and-secret'),'/not-found');assert.equal(analyticsPage('/admin/bookings'),'/admin');
+  for(const path of ['/book/example','/reservations/example','/my-bookings','/admin'])assert.ok(privateAnalyticsPage(path));
+  assert.equal(posthogHost('https://evil.invalid'),undefined);assert.equal(posthogHost('https://us.i.posthog.com'),'https://us.i.posthog.com');
+});
+test('attribution keeps approved marketing identifiers and origin only, never raw or sensitive query values',()=>{
+  const values=marketingTouch('https://www.jaisalgo.com/jaisalmer-travel-from/delhi?utm_source=google&utm_medium=cpc&utm_campaign=winter&utm_content=family&utm_term=desert&phone=9999999999&access=secret','https://www.google.com/search?q=private',{campaigns:'winter',content:'family',terms:'desert'});
+  assert.equal(values.utm_campaign,'winter');assert.equal(values.referrer_origin,'https://www.google.com');assert.ok(!JSON.stringify(values).includes('private')&&!JSON.stringify(values).includes('9999999999')&&!JSON.stringify(values).includes('secret'));
+  const unsafe=marketingTouch('https://www.jaisalgo.com/?utm_source=alice@example.com&utm_campaign=9999999999&utm_content=AliceSmith&utm_term=secret','https://private.example/profile/name',{campaigns:'winter',content:'family',terms:'desert'});assert.equal(unsafe.utm_source,'other');assert.equal(unsafe.utm_campaign,'other');assert.equal(unsafe.utm_term,'other');assert.equal(unsafe.referrer_origin,'other');
+});
+test('browser identity and first/latest entry attribution survive internal SPA navigation without SDK/network waits',async()=>{
+  const store=new Map<string,string>();
+  Object.defineProperty(globalThis,'localStorage',{configurable:true,value:{getItem:(key:string)=>store.get(key)||null,setItem:(key:string,value:string)=>store.set(key,value),removeItem:(key:string)=>store.delete(key)}});
+  Object.defineProperty(globalThis,'navigator',{configurable:true,value:{doNotTrack:'0'}});
+  Object.defineProperty(globalThis,'document',{configurable:true,value:{referrer:'https://www.google.com/search?q=private'}});
+  const browserLocation={href:'https://www.jaisalgo.com/jaisalmer-travel-from/delhi?utm_source=google&utm_medium=cpc',pathname:'/jaisalmer-travel-from/delhi'};
+  Object.defineProperty(globalThis,'location',{configurable:true,value:browserLocation});
+  store.set('jaisalgo_measurement','allow');
+  const {posthogMeasurement,resetPosthogIdentity}=await import('../lib/analytics/posthog-client');
+  const first=posthogMeasurement()!;browserLocation.href='https://www.jaisalgo.com/packages/city-and-dunes';browserLocation.pathname='/packages/city-and-dunes';const next=posthogMeasurement()!;
+  assert.equal(next.distinctId,first.distinctId);assert.deepEqual(next.firstTouch,first.firstTouch);assert.deepEqual(next.latestTouch,first.latestTouch);assert.equal(next.latestTouch.landing_page_path,'/jaisalmer-travel-from/delhi');assert.equal(next.latestTouch.utm_medium,'cpc');
+  resetPosthogIdentity();Object.defineProperty(globalThis,'localStorage',{configurable:true,value:{getItem:(key:string)=>store.get(key)||null,setItem:()=>{throw Error('storage unavailable')},removeItem:(key:string)=>store.delete(key)}});
+  const memory=posthogMeasurement()!;assert.equal(posthogMeasurement()!.distinctId,memory.distinctId,'blocked storage still has a stable in-memory identity');
+  resetPosthogIdentity();store.set('jaisalgo_measurement','decline');assert.equal(posthogMeasurement(),undefined);
+});
+test('navigation emits one view per visit, ignores stale SDK callbacks and deduplicates landing and leave signals',()=>{
+  const nav=pageLifecycle(),first=nav.start('/')!;assert.equal(nav.start('/'),undefined);assert.ok(nav.ready(first.revision));assert.equal(nav.landing('session-a'),true);assert.equal(nav.landing('session-a'),false);
+  const second=nav.start('/packages')!,third=nav.start('/')!;assert.equal(second.previous,'/');assert.equal(third.previous,'/packages');assert.equal(nav.ready(first.revision),false);assert.equal(nav.ready(second.revision),false);assert.ok(nav.ready(third.revision));
+  assert.equal(nav.end(),'/');assert.equal(nav.end(),undefined);assert.equal(nav.ready(third.revision),false);assert.equal(nav.landing('session-b'),true);nav.reset();assert.equal(nav.landing('session-b'),true);
+});
+test('typed business events reject personal fields and never allow client financial success',()=>{
+  assert.ok(safeBehaviourProps({package_slug:'city-and-dunes',traveller_count:4,package_price_inr:16654,currency:'INR'}));
+  for(const input of [{name:'private'},{phone:'9999999999'},{email:'private@example.com'},{url:'https://example.com'},{page_path:'/reservations/private-id'},{travel_month:'2026-99'},{traveller_count:0}])assert.equal(safeBehaviourProps(input),undefined);
+  for(const event of ['reservation_completed','booking_confirmed','full_booking_paid'])assert.ok(!(behaviourEvents as readonly string[]).includes(event));
+});
+test('heatmaps and replay metadata discard sensitive URL keys, private screens and non-coordinate values',()=>{
+  const safe=sanitizeHeatmap({'https://www.jaisalgo.com/packages?access=private&name=Alice':[{x:20,y:40,type:'click',target_fixed:false,text:'private',href:'secret'}],'https://www.jaisalgo.com/reservations/secret':[{x:1,y:1,type:'click'}]},'https://www.jaisalgo.com');
+  assert.deepEqual(Object.keys(safe),['https://www.jaisalgo.com/packages']);assert.ok(!JSON.stringify(safe).includes('secret')&&!JSON.stringify(safe).includes('private'));
+  const replay=sanitizeReplayUrls({data:{href:'https://www.jaisalgo.com/packages?name=Alice#secret',requests:['https://private.invalid?token=secret']}},'https://www.jaisalgo.com');assert.ok(!JSON.stringify(replay).includes('Alice')&&!JSON.stringify(replay).includes('secret'));
+});
+test('backend event adapter sends only verified server milestones with stable UUID, timestamp and anonymous identity',()=>{
+  const m=measurement(),e:AnalyticsEvent={id:'stable-internal-event',name:'reservation_payment_verified',at:10000,origin:'server',mode:'live',session:m.sessionId,attempt:m.attemptId!,props:{packageId:'city-and-dunes',price:100000,travellers:2,paidPaise:9900,name:'private',phone:'9999999999',order_id:'secret'}};
+  const result=financialPosthogEvent(e,m)!;assert.equal(result.event,'reservation_completed');assert.equal(result.distinctId,m.posthog!.distinctId);assert.equal(result.properties?.deposit_collected_inr,99);assert.equal(result.properties?.package_price_inr,1000);assert.equal(result.properties?.outstanding_balance_inr,901);assert.equal(result.uuid,stableEventUuid(e.id));assert.equal(result.timestamp?.getTime(),e.at);assert.ok(!JSON.stringify(result).includes('private')&&!JSON.stringify(result).includes('secret')&&!JSON.stringify(result).includes('9999999999'));
+  const failed=financialPosthogEvent({...e,name:'payment_failed',props:{packageId:'city-and-dunes',phase:'token'}},m)!;assert.equal(failed.properties?.deposit_collected_inr,undefined);assert.equal(failed.properties?.total_collected_inr,undefined);assert.equal(failed.properties?.outstanding_balance_inr,undefined);assert.equal(failed.properties?.payment_phase,'token');
+  assert.equal(financialPosthogEvent({...e,origin:'client'},m),undefined);assert.equal(financialPosthogEvent({...e,name:'payment_authorized'},m),undefined);assert.equal(financialPosthogEvent(e,{...m,posthog:undefined}),undefined);
+  m.posthog!.firstTouch.utm_campaign='private_name';assert.equal(financialPosthogEvent(e,m)!.properties?.first_touch_utm_campaign,'other','server independently enforces marketing allowlists');
+});
+test('actual verified demo settlement queues success once, survives delivery failure, retries with the same identity and honors withdrawal',async()=>{
+  const c=await analyticsDb(),m=measurement(),access=randomUUID()+randomUUID(),input={slug:'city-and-dunes',date:new Date(Date.now()+60*86400000).toISOString().slice(0,10),travelers:2,stay:'Comfort',transport:true,jeep:false,guide:false,name:'Private Unit Traveler',phone:'+919999999999',consent:true,website:'',access,idempotency:randomUUID(),measurement:m};
+  const draft=await createDraft(input),before=await viewDraft(draft.id,access);
+  assert.equal((await c.execute('SELECT COUNT(*) n FROM posthog_outbox')).rows[0].n,0,'a pending draft is not success');
+  const payment={id:'sim_'+draft.id,amount:9900,currency:'INR',order_id:String(before.order),status:'captured'};await settle(draft.id,payment);await settle(draft.id,payment);await recordFinancialMilestones(draft.id);
+  let rows=(await c.execute('SELECT * FROM posthog_outbox')).rows;assert.equal(rows.length,2);assert.equal(rows.map(r=>JSON.parse(String(r.payload))).filter(e=>e.event==='reservation_completed').length,1);assert.ok(!JSON.stringify(rows).includes(input.name)&&!JSON.stringify(rows).includes(input.phone));
+  const failure=await drainPosthogOutbox(c,async()=>{throw Error('offline')});assert.equal(failure.failed,2);assert.equal((await viewDraft(draft.id,access)).booking?.status,'reserved');
+  const original=rows.map(r=>JSON.parse(String(r.payload))),sent:EventMessage[]=[];await c.execute('UPDATE posthog_outbox SET next_at=0');const retry=await drainPosthogOutbox(c,async event=>{sent.push(event)});assert.equal(retry.sent,2);assert.deepEqual(sent.map(e=>e.uuid).sort(),original.map(e=>e.uuid).sort());assert.deepEqual(sent.map(e=>e.timestamp?.toISOString()).sort(),original.map(e=>e.timestamp).sort());
+  assert.equal((await drainPosthogOutbox(c,async()=>{throw Error('should not send twice')})).sent,0);await recordFinancialMilestones(draft.id);assert.equal((await c.execute('SELECT COUNT(*) n FROM posthog_outbox')).rows[0].n,2);
+  await recordRefund(payment.id,9900);rows=(await c.execute("SELECT * FROM posthog_outbox WHERE state='pending'")).rows;assert.equal(rows.length,1);assert.equal(JSON.parse(String(rows[0].payload)).event,'refund_recorded');await withdraw(m.sessionId);assert.equal((await c.execute('SELECT COUNT(*) n FROM posthog_outbox')).rows[0].n,0);await recordFinancialMilestones(draft.id);assert.equal((await c.execute('SELECT COUNT(*) n FROM posthog_outbox')).rows[0].n,0);
+});

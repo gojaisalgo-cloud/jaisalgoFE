@@ -1,6 +1,8 @@
-# Conversion analytics — 3 November 2026
+# First-party conversion analytics — 3 November 2026
 
-Existing local Next.js application enhanced in place. No external analytics vendor, new account flow or change to financial settlement rules. Admin → Analytics provides rolling 24-hour / 7-day / 30-day windows and separate live, test and demo reports. No historical baseline or experiment results are fabricated.
+The optional PostHog integration was added on 4 November; see [POSTHOG_ANALYTICS.md](POSTHOG_ANALYTICS.md) for its separate persistent anonymous browser identity, consent, vendor payloads and activation requirements. This document describes the original first-party report.
+
+Existing local Next.js application enhanced in place. The original implementation introduced no external vendor, new account flow or change to financial settlement rules. Admin → Analytics provides rolling 24-hour / 7-day / 30-day windows and separate live, test and demo reports. No historical baseline or experiment results are fabricated.
 
 ## Privacy and data boundary
 

@@ -12,13 +12,16 @@
     "test:browser": "node scripts/run.mjs test:browser",
     "admin:setup": "node scripts/admin-setup.mjs",
     "test:admin": "node scripts/admin-http-check.mjs",
-    "audit:seo": "python3 scripts/seo-audit.py"
+    "audit:seo": "python3 scripts/seo-audit.py",
+    "analytics:retry": "node scripts/posthog-retry.mjs"
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",
     "@radix-ui/react-select": "^2.4.1",
     "lucide-react": "^0.468.0",
     "next": "^16.4.3",
+    "posthog-js": "^1.445.1",
+    "posthog-node": "^5.61.2",
     "qrcode": "^1.5.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

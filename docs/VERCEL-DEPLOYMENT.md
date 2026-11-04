@@ -14,7 +14,7 @@ Vercel uses `@libsql/client/web` to access shared storage over HTTP. Local devel
 
 Home, packages, package details, editorial pages and sitemap render without trying to create a database file. Catalogue fallback uses the existing provisional seed data only when hosted storage is unconfigured. It does not mask failures of a configured database or override edited supplier prices.
 
-Online checkout displays a temporary-unavailability state; booking APIs return HTTP 503 with `STORAGE_UNAVAILABLE`. They never open a payment order without durable storage. Analytics collection is disabled until storage is configured. The travel desk shows setup instructions. Existing routes and local booking behavior remain intact.
+Online checkout displays a temporary-unavailability state; booking APIs return HTTP 503 with `STORAGE_UNAVAILABLE`. They never open a payment order without durable storage. First-party analytics and verified financial PostHog delivery require storage. Optional consented public-browser PostHog analytics can work independently when its public project configuration is supplied; see [PostHog setup](POSTHOG_ANALYTICS.md). The travel desk shows setup instructions. Existing routes and local booking behavior remain intact.
 
 File URLs, memory databases, `/tmp`, insecure remote URLs and database URLs containing embedded username/password credentials are rejected on Vercel. No temporary database is used for bookings or inventory. Database initialization retries after failures instead of preserving a rejected promise for the function's lifetime.
 

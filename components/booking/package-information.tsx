@@ -1,4 +1,5 @@
 'use client';
+import {captureBehaviourOnce} from '@/lib/analytics/posthog-client';
 import {track} from '@/lib/analytics/client';
 import {DirectionalIcon,IconButton} from '@/components/directional-control';
 import {useEffect,useId,useRef,useState} from 'react';
@@ -21,6 +22,7 @@ export function PackageInformation({tour:t}:{tour:Tour}){
 export function PackageInformationContent({tour:t,titleId,standalone=false,initialChoices,initialDate,initialSection='overview'}:{tour:Tour;titleId?:string;standalone?:boolean;initialChoices?:Choices;initialDate?:string;initialSection?:string}){
  const d=packageDetails(t),[c,setChoices]=useState<Choices>(()=>normalizeChoices(t,initialChoices||defaultChoices(t))),[tab,setTab]=useState(initialSection);
  const sectionId=useId();
+ useEffect(()=>{const props={package_slug:t.slug,package_category:t.category,section:tab as 'overview'|'itinerary'|'stay'|'price'};if(tab==='itinerary')captureBehaviourOnce('itinerary:'+t.slug,'package_itinerary_viewed',props);if(tab==='overview')captureBehaviourOnce('inclusions:'+t.slug,'package_inclusions_viewed',props);if(tab==='price')captureBehaviourOnce('price:'+t.slug,'package_price_viewed',props)},[tab,t.slug,t.category]);
  const q=quote(t.costs,t.nights,c,d.extras,initialDate),clarity=packageClarity(t,c,q),requests=pendingRequests(t,c);
  const tabs=[['overview','Overview'],['itinerary','Itinerary'],['stay','Stay & venue'],['price','Price & extras']];
  const change=(next:Choices)=>setChoices(normalizeChoices(t,next));
