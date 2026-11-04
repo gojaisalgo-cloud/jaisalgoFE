@@ -36,3 +36,14 @@ No real `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` or `NEXT_PUBLIC_POSTHOG_HOST` was pr
 Production financial analytics additionally depends on the existing hosted persistent database, verified payment setup and supplier launch gates. The integration preserves those gates. No live money was charged, historical conversion invented, geo-IP location collected, Google impression fabricated or customer email requested.
 
 Commit/push/deployment evidence is recorded separately in the delivery output after publication; this file describes the implementation checks and their limits.
+
+
+## Activation follow-up — 4 November 2026
+
+The supplied EU project configuration was saved in local configuration and Vercel Production configuration. No project token was added to tracked source.
+
+A real browser smoke test revealed that the `before_send` privacy hook omitted the SDK's required public `token` property. The installed SDK drops such events before transport. The hook now retains the configured project token while still removing arbitrary personal fields and private URL identifiers. A regression test covers trusted project routing, anonymous identity, query redaction, private-screen exclusions and declined consent.
+
+Validation: **83 automated tests passed**, targeted analytics lint passed, and the configured production build passed. Through the actual consent and package-details UI on an isolated local demo build, PostHog project 332646 displayed real page-view, package-view, click and scroll-depth event rows from the local test origin. These are development interactions, not production conversions. No booking was submitted or payment attempted.
+
+Production deployment and live-domain receipt are recorded separately in the external delivery evidence after publication. Existing payment, persistent database and supplier launch prerequisites remain independent of analytics activation.

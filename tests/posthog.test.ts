@@ -13,6 +13,7 @@ import {db} from '../lib/booking/db';
 import {createDraft,settle,viewDraft,recordRefund} from '../lib/booking/service';
 import type {AnalyticsEvent,Measurement} from '../lib/analytics/schema';
 import type {EventMessage} from 'posthog-node';
+import type {CaptureResult} from 'posthog-js';
 const temp=mkdtempSync(join(tmpdir(),'jaisalgo-posthog-'));process.env.DATABASE_URL='file:'+join(temp,'test.db');process.env.BOOKING_MODE='demo';
 process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN='phc_unit_test_not_a_real_project';process.env.NEXT_PUBLIC_POSTHOG_HOST='https://us.i.posthog.com';
 after(async()=>{(await db()).close();rmSync(temp,{recursive:true,force:true})});
@@ -49,6 +50,26 @@ test('navigation emits one view per visit, ignores stale SDK callbacks and dedup
   const nav=pageLifecycle(),first=nav.start('/')!;assert.equal(nav.start('/'),undefined);assert.ok(nav.ready(first.revision));assert.equal(nav.landing('session-a'),true);assert.equal(nav.landing('session-a'),false);
   const second=nav.start('/packages')!,third=nav.start('/')!;assert.equal(second.previous,'/');assert.equal(third.previous,'/packages');assert.equal(nav.ready(first.revision),false);assert.equal(nav.ready(second.revision),false);assert.ok(nav.ready(third.revision));
   assert.equal(nav.end(),'/');assert.equal(nav.end(),undefined);assert.equal(nav.ready(third.revision),false);assert.equal(nav.landing('session-b'),true);nav.reset();assert.equal(nav.landing('session-b'),true);
+});
+test('browser privacy hook retains required project routing and anonymous identity while removing personal data',async()=>{
+  let consent='allow';
+  Object.defineProperty(globalThis,'localStorage',{configurable:true,value:{getItem:(key:string)=>key==='jaisalgo_measurement'?consent:null,setItem:()=>{},removeItem:()=>{}}});
+  Object.defineProperty(globalThis,'navigator',{configurable:true,value:{doNotTrack:'0'}});
+  Object.defineProperty(globalThis,'document',{configurable:true,value:{referrer:''}});
+  const browserLocation={origin:'https://www.jaisalgo.com',hostname:'www.jaisalgo.com',href:'https://www.jaisalgo.com/packages?email=private@example.com',pathname:'/packages'};
+  Object.defineProperty(globalThis,'location',{configurable:true,value:browserLocation});
+  Object.defineProperty(globalThis,'innerWidth',{configurable:true,value:390});
+  const {sanitizePosthogEvent,resetPosthogIdentity}=await import('../lib/analytics/posthog-client');
+  const event:CaptureResult={uuid:randomUUID(),event:'$pageview',properties:{token:'untrusted-project',distinct_id:randomUUID(),$session_id:randomUUID(),$current_url:browserLocation.href,email:'private@example.com',phone:'9999999999',name:'Private Traveler'}};
+  const result=sanitizePosthogEvent(event)!;
+  assert.equal(result.properties.token,process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN,'ingestion requires the configured public project token');
+  assert.equal(result.properties.distinct_id,event.properties.distinct_id);assert.equal(result.properties.$session_id,event.properties.$session_id);
+  assert.equal(result.properties.$current_url,'https://www.jaisalgo.com/packages');
+  for(const value of ['untrusted-project','private@example.com','9999999999','Private Traveler'])assert.ok(!JSON.stringify(result).includes(value));
+  browserLocation.pathname='/reservations/private-booking';
+  assert.equal(sanitizePosthogEvent({...event,event:'$pageview'})!.properties.$current_url,'https://www.jaisalgo.com/reservations/[id]');
+  assert.equal(sanitizePosthogEvent({...event,event:'$autocapture'}),null);assert.equal(sanitizePosthogEvent({...event,event:'$snapshot'}),null);
+  consent='decline';assert.equal(sanitizePosthogEvent(event),null);resetPosthogIdentity();
 });
 test('typed business events reject personal fields and never allow client financial success',()=>{
   assert.ok(safeBehaviourProps({package_slug:'city-and-dunes',traveller_count:4,package_price_inr:16654,currency:'INR'}));
