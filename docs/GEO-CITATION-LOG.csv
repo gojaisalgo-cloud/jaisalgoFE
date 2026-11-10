@@ -1,0 +1,5 @@
+Observation date,Engine,Locale/language,Prompt,Search enabled,Status,JaisalGo mentioned,Cited canonical URL,Other cited URLs,Evidence path or link,Notes
+,ChatGPT Search,en-IN,Use fixed prompt set in GEO-MEASUREMENT.md,,Not measured,,,,,Establish engine-specific baseline with actual UI observations; blank is not zero
+,Google AI Mode / Gemini,en-IN,Use fixed prompt set in GEO-MEASUREMENT.md,,Not measured,,,,,Establish engine-specific baseline with actual UI observations; blank is not zero
+,Perplexity,en-IN,Use fixed prompt set in GEO-MEASUREMENT.md,,Not measured,,,,,Establish engine-specific baseline with actual UI observations; blank is not zero
+,Microsoft Copilot,en-IN,Use fixed prompt set in GEO-MEASUREMENT.md,,Not measured,,,,,Establish engine-specific baseline with actual UI observations; blank is not zero

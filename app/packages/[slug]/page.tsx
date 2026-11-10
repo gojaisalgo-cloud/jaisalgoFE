@@ -1,3 +1,4 @@
+import {webPageSchema} from '@/lib/geo';
 import {packageCollections} from '@/data/package-collections';
 import {PackageCollection} from '@/components/booking/package-collection';
 import type {Metadata} from 'next';
@@ -16,7 +17,7 @@ export async function generateMetadata({params,searchParams}:{params:Promise<{sl
 export default async function Details({params,searchParams}:{params:Promise<{slug:string}>;searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const {slug}=await params,collection=packageCollections.find(c=>c.slug===slug);if(collection)return <PackageCollection collection={collection} tours={await publishedTours()}/>;const t=await publishedTour(slug);if(!t)notFound();const query=await searchParams,choices=choicesFromParams(t,query),bounds=travelDateBounds(today()),date=requestedDate(query.date,bounds.minDate,bounds.maxDate);
  const related=(await publishedTours()).filter(p=>p.slug!==slug&&p.area===t.area).sort((a,b)=>Math.abs(a.days-t.days)-Math.abs(b.days-t.days)).slice(0,3);
- return <div className="wrap standalone-package">
+ return <div className="wrap standalone-package"><StructuredData data={webPageSchema(t.title,t.subtitle,'/packages/'+slug,'/packages/'+slug+'#trip')}/>
   <StructuredData data={breadcrumbSchema([{name:'Home',path:'/'},{name:'Jaisalmer packages',path:'/packages'},{name:t.title,path:`/packages/${slug}`}])}/>
   <StructuredData data={tripSchema(t)}/>
   <nav className="breadcrumbs" aria-label="Breadcrumb"><Link href="/">Home</Link> / <Link href="/packages">Packages</Link> / <span aria-current="page">{t.title}</span></nav>

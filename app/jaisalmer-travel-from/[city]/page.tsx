@@ -1,3 +1,4 @@
+import {webPageSchema} from '@/lib/geo';
 import type {Metadata} from 'next';
 import {notFound,permanentRedirect} from 'next/navigation';
 import Link from 'next/link';
@@ -17,7 +18,7 @@ export async function generateMetadata({params,searchParams}:Props):Promise<Meta
 const icons={Air:Plane,Rail:TrainFront,Road:Car};
 export default async function CityGuide({params}:Props){
   const {guide,packages}=await resolve((await params).city),market=findMarket(guide.slug)!,related=guide.relevantPackageIds.flatMap(id=>packages.find(p=>p.slug===id)||[]);
-  return <div className="wrap city-guide" data-city-guide={guide.slug}>
+  return <div className="wrap city-guide" data-city-guide={guide.slug}><StructuredData data={webPageSchema('Jaisalmer, from '+market.city+'.',guide.seoDescription,cityPath(guide.slug))}/>
     <StructuredData data={breadcrumbSchema([{name:'Home',path:'/'},{name:'Travel from your city',path:cityDirectoryPath},{name:market.city,path:cityPath(guide.slug)}])}/>
     <StructuredData data={cityArticleSchema(guide)}/>
     <nav className="breadcrumbs" aria-label="Breadcrumb"><Link href="/">Home</Link> / <Link href={cityDirectoryPath}>Travel from your city</Link> / <span aria-current="page">{market.city}</span></nav>

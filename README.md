@@ -79,11 +79,15 @@ npm run audit:seo -- --base-url http://127.0.0.1:3001 --json /tmp/jaisalgo-seo-a
 
 Start a production preview before the HTTP audit; it uses Python 3 with no additional packages. See [implementation and verification](docs/SEO-IMPLEMENTATION.md), [the prioritized audit](docs/SEO-AUDIT.md), [keyword-to-page mapping](docs/SEO-KEYWORDS.md), and [Search Console setup, analytics and the 30/60/90-day plan](docs/SEO-OPERATIONS.md).
 
-See the [10 November SEO release](docs/SEO-RELEASE-2026-11-10.md) for the current 89-page inventory, validation and Google setup status. Real field metrics require Google processing. Repository-wide lint currently reports 13 pre-existing errors and 9 warnings; comparison with the preceding commit found no new diagnostics from this change. They are documented separately from successful SEO/build/booking checks.
+See the [10 November SEO release](docs/SEO-RELEASE-2026-11-10.md) for the earlier 89-page inventory, validation and Google setup status. Real field metrics require Google processing. Repository-wide lint currently reports 13 pre-existing errors and 9 warnings; comparison with the preceding commit found no new diagnostics from this change. They are documented separately from successful SEO/build/booking checks.
+
+### Generative search and answer-first guides
+
+The 10 November GEO release expands the canonical inventory to 93 URLs, including Pune, stay-area and night-planning guides and editorial standards. It adds 39 direct-answer articles, 13 attraction entities and consented AI referral reporting. See [GEO audit](docs/GEO-AUDIT.md), [measurement definitions](docs/GEO-MEASUREMENT.md) and [release verification](docs/GEO-RELEASE-2026-11-10.md). Bing verification awaits a genuine owner token; AI citations and field performance require observation.
 
 ### Pan-India travel discovery
 
-Ten source-reviewed origin guides live under `/jaisalmer-travel-from`, with a region-grouped directory, canonical alias redirects and a shared publication gate. The 103-market research backlog never generates public pages automatically. See [implementation and 90-day plan](docs/PAN-INDIA-SEO.md), [keyword candidates](docs/PAN-INDIA-KEYWORDS.csv) and [verification](docs/PAN-INDIA-VERIFICATION.md). Local package booking and live payment gates remain unchanged.
+Eleven source-reviewed origin guides live under `/jaisalmer-travel-from`, with a region-grouped directory, canonical alias redirects and a shared publication gate. The 103-market research backlog never generates public pages automatically. See [implementation and 90-day plan](docs/PAN-INDIA-SEO.md), [keyword candidates](docs/PAN-INDIA-KEYWORDS.csv) and [verification](docs/PAN-INDIA-VERIFICATION.md). Local package booking and live payment gates remain unchanged.
 
 ### Real bookings and assistance
 

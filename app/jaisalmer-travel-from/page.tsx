@@ -1,3 +1,4 @@
+import {webPageSchema} from '@/lib/geo';
 import type {Metadata} from 'next';
 import Link from 'next/link';
 import {publishedTours} from '@/lib/seo-catalog';
@@ -11,7 +12,7 @@ export const dynamic='force-dynamic';
 export async function generateMetadata({searchParams}:{searchParams:Promise<Query>}):Promise<Metadata>{return pageMetadata({...searchPages[cityDirectoryPath],path:cityDirectoryPath,noindex:hasSelection(await searchParams)})}
 export default async function CityDirectory(){
   const guides=publishedCityGuides(await publishedTours());
-  return <div className="wrap city-directory">
+  return <div className="wrap city-directory"><StructuredData data={webPageSchema(searchPages[cityDirectoryPath].title,searchPages[cityDirectoryPath].description,cityDirectoryPath)}/>
     <StructuredData data={breadcrumbSchema([{name:'Home',path:'/'},{name:'Travel from your city',path:cityDirectoryPath}])}/>
     <StructuredData data={listSchema('Jaisalmer travel from Indian cities',cityDirectoryPath,guides.map(g=>({title:`Jaisalmer from ${findMarket(g.slug)!.city}`,path:cityPath(g.slug)})))}/>
     <nav className="breadcrumbs" aria-label="Breadcrumb"><Link href="/">Home</Link> / <span aria-current="page">Travel from your city</span></nav>

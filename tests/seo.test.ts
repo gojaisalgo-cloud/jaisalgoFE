@@ -55,7 +55,7 @@ test('trip schema describes the real itinerary without invented offers, ratings,
 });
 
 test('editorial schema uses recorded content dates and honest organization attribution',()=>{
-  for(const [name,items] of Object.entries(collections))for(const item of items){const data=articleSchema(item,`/${name}/${item.slug}`);assert.equal(data.dateModified,item.updated);assert.equal('datePublished'in data,false);assert.equal(data.author.name,'JaisalGo');assert.equal(data.citation,item.source)}
+  for(const [name,items] of Object.entries(collections))for(const item of items){const data=articleSchema(item,`/${name}/${item.slug}`);assert.equal(data.dateModified,item.updated);assert.equal('datePublished'in data,false);assert.equal(data.author.name,'JaisalGo');assert.deepEqual(data.citation,[...new Set([item.source,...(item.sources||[]).map(s=>s.url)])])}
   const data=breadcrumbSchema([{name:'Home',path:'/'},{name:'Packages',path:'/packages'}]);assert.deepEqual(data.itemListElement.map(i=>i.position),[1,2]);assert.equal(data.itemListElement[1].item,'https://www.jaisalgo.com/packages');
 });
 

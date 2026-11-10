@@ -1,5 +1,5 @@
 /** Small allowlist for anonymous measurement; this alone never publishes a route. */
-export const cityGuideKeys=['delhi','ahmedabad','surat','vadodara','jaipur','bengaluru','mumbai','hyderabad','chennai','kolkata'] as const;
+export const cityGuideKeys=['delhi','ahmedabad','surat','vadodara','jaipur','bengaluru','mumbai','hyderabad','chennai','kolkata','pune'] as const;
 export type CityGuideKey=typeof cityGuideKeys[number];
 export function cityGuideAtPath(path:string):CityGuideKey|undefined {
   const match=/^\/jaisalmer-travel-from\/([a-z-]+)\/?$/.exec(path);

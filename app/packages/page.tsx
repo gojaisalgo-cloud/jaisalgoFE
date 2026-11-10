@@ -1,3 +1,4 @@
+import {webPageSchema} from '@/lib/geo';
 import {packageCollections} from '@/data/package-collections';
 import {TravelSearch} from '@/components/travel-search';
 import {travelDateBounds} from '@/lib/booking/preferences';
@@ -18,7 +19,7 @@ export async function generateMetadata({searchParams}:{searchParams:Promise<Quer
 }
 export default async function Packages({searchParams}:{searchParams:Promise<Query>}){
   const all=await publishedTours(),query=await searchParams;
-  return <div className="wrap booking-list-page">
+  return <div className="wrap booking-list-page"><StructuredData data={webPageSchema(searchPages['/packages'].title,searchPages['/packages'].description,'/packages')}/>
     {!hasSelection(query)&&<StructuredData data={listSchema('Jaisalmer tour packages','/packages',all.map(t=>({title:t.title,path:`/packages/${t.slug}`})))}/>}
     <StructuredData data={breadcrumbSchema([{name:'Home',path:'/'},{name:'Jaisalmer packages',path:'/packages'}])}/><nav className="breadcrumbs" aria-label="Breadcrumb"><Link href="/">Home</Link> / <span aria-current="page">Packages</span></nav>
     <header className="package-list-heading"><div><span className="overline">JAISALMER, YOUR WAY</span><h1>Jaisalmer tour packages.</h1><p>Find your perfect mix of golden streets, desert skies and a little adventure.</p></div><span className="listing-destination">Rajasthan, India · Jaisalmer</span></header>

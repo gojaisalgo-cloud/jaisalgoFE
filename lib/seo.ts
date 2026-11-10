@@ -1,3 +1,4 @@
+import {attractionReference,destinationId} from './geo';
 import {tourSearchTitles,searchDescription} from '@/data/seo-titles';
 import type {Metadata} from 'next';
 import type {Tour} from '@/data/catalog';
@@ -47,20 +48,20 @@ export function listSchema(name:string,path:string,items:{title:string;path:stri
 export function destinationSchema(){return {'@context':'https://schema.org','@type':'TouristDestination','@id':`${config.url}/#jaisalmer`,name:'Jaisalmer',description:'Jaisalmer in Rajasthan, India: living sandstone heritage, desert landscapes and city-and-dunes travel planning.',url:canonicalUrl('/',config.url),touristType:['Heritage travellers','Families','Couples','Desert travellers'],containedInPlace:{'@type':'AdministrativeArea',name:'Rajasthan, India'}}}
 export function websiteSchema() {
   return {'@context':'https://schema.org','@graph':[
-    {'@type':'Organization','@id':`${config.url}/#organization`,name:config.name,url:canonicalUrl('/',config.url)},
+    {'@type':'Organization','@id':`${config.url}/#organization`,name:config.name,url:canonicalUrl('/',config.url),description:'Jaisalmer destination guides and local package planning',contactPoint:{'@type':'ContactPoint',telephone:config.phoneHref.replace('tel:',''),contactType:'booking assistance',url:canonicalUrl('/contact',config.url)}},
     {'@type':'WebSite','@id':`${config.url}/#website`,name:config.name,url:canonicalUrl('/',config.url),inLanguage:'en-IN',publisher:{'@id':`${config.url}/#organization`}},
   ]};
 }
 export function tripSchema(t:Tour) {
   const d=packageDetails(t),url=canonicalUrl(`/packages/${t.slug}`,config.url);
   return {'@context':'https://schema.org','@type':'TouristTrip','@id':`${url}#trip`,name:t.title,url,description:packageDescription(t),image:canonicalUrl(imageAsset(t.image).src,config.url),touristType:t.styles,
-    itinerary:{'@type':'ItemList',itemListOrder:'https://schema.org/ItemListOrderAscending',itemListElement:d.attractions.map((name,i)=>({'@type':'ListItem',position:i+1,item:{'@type':'Place',name}}))},
+    itinerary:{'@type':'ItemList',itemListOrder:'https://schema.org/ItemListOrderAscending',itemListElement:d.attractions.map((name,i)=>({'@type':'ListItem',position:i+1,item:attractionReference(name)}))},
     subTrip:t.itinerary.map(day=>({'@type':'Trip',name:day.title,description:day.body})),
   };
 }
 export function articleSchema(item:EditorialEntry,path:string,headline=item.title) {
   const url=canonicalUrl(path,config.url);
-  return {'@context':'https://schema.org','@type':'Article','@id':`${url}#article`,headline,description:item.description,url,mainEntityOfPage:{'@type':'WebPage','@id':url},image:canonicalUrl(imageAsset(item.image).src,config.url),inLanguage:'en-IN',dateModified:item.updated,
-    author:{'@type':'Organization',name:config.name,url:canonicalUrl('/about',config.url)},publisher:{'@type':'Organization','@id':`${config.url}/#organization`,name:config.name,url:canonicalUrl('/',config.url)},citation:item.source,
+  return {'@context':'https://schema.org','@type':'Article','@id':`${url}#article`,headline,description:item.description,url,mainEntityOfPage:{'@id':url+'#webpage'},about:{'@id':path.startsWith('/places/')?url+'#attraction':destinationId()},image:canonicalUrl(imageAsset(item.image).src,config.url),inLanguage:'en-IN',dateModified:item.updated,
+    author:{'@type':'Organization','@id':config.url+'/#organization',name:config.name,url:canonicalUrl('/about',config.url)},publisher:{'@type':'Organization','@id':`${config.url}/#organization`,name:config.name,url:canonicalUrl('/',config.url)},citation:[...new Set([item.source,...(item.sources||[]).map(s=>s.url)])],
   };
 }

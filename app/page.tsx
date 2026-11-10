@@ -1,3 +1,4 @@
+import {webPageSchema} from '@/lib/geo';
 import {HomeTravelGuide} from '@/components/home-travel-guide';
 import {TravelSearch} from '@/components/travel-search';
 import {travelDateBounds} from '@/lib/booking/preferences';
@@ -22,7 +23,7 @@ export const dynamic='force-dynamic';
 export default async function Home(){
  const all=await tours(),featured=['golden-city-escape','city-and-dunes','royal-jaisalmer-holiday'].flatMap(s=>all.find(t=>t.slug===s)||[]),bounds=travelDateBounds(today());
  const collections=[{title:'Desert safaris',note:'Chase the last light',image:'khuri',href:'/packages?kind=activity',icon:Compass},{title:'Desert stays',note:'A night beyond the ordinary',image:'sam',href:'/packages?kind=camp',icon:Tent},{title:'City & heritage',note:'Stories in golden stone',image:'haveli',href:'/packages?area=City',icon:MapPin},{title:'Cultural evenings',note:'The rhythm of Rajasthan',image:'sunset',href:'/packages?kind=cultural',icon:Sun}];
- return <><StructuredData data={websiteSchema()}/><StructuredData data={destinationSchema()}/>
+ return <><StructuredData data={websiteSchema()}/><StructuredData data={webPageSchema(searchPages['/'].title,searchPages['/'].description,'/')}/><StructuredData data={destinationSchema()}/>
  <section className="golden-hero"><Photo id="khuri" priority sizes="100vw"/><div className="golden-hero-shade"/><div className="wrap golden-hero-content"><span className="hero-eyebrow"><Sun size={17}/>JAISALMER. A GOLDEN STATE OF MIND.</span><h1>Jaisalmer tourism <br/><span>&amp; tour packages.</span></h1><p>Desert nights. Living heritage. Unforgettable days.<br/>Discover Jaisalmer at your own pace.</p><Link href="#discover" className="hero-discover">A place for every kind of explorer <ArrowUpRight size={19}/></Link></div><span className="hero-location"><MapPin size={15}/>Khuri dunes · The Thar Desert</span></section>
  <div className="wrap premium-home"><div className="home-search"><TravelSearch {...bounds} suggestions={['Jaisalmer','Sam','Khuri','Camel','City',...all.map(t=>t.title)]}/></div>
  <div className="travel-promises"><span><IndianRupee/><span><strong>A little now. More adventure later.</strong>Reserve with ₹99, deducted from your total.</span></span><span><SlidersHorizontal/><span><strong>Your trip, your choices.</strong>Compare stays, transfers and experiences.</span></span><a href={config.phoneHref}><Phone/><span><strong>A real person, a little local help.</strong>{config.phone} · booking assistance</span></a></div>

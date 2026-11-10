@@ -1,3 +1,4 @@
+import {destinationId} from './geo';
 import type {Tour} from '@/data/catalog';
 import {cityGuides,type CityTravelSEO} from '@/data/city-guides';
 import {findMarket} from '@/data/india-markets';
@@ -28,5 +29,5 @@ export function resolveCityGuide(slug:string,packages:Pick<Tour,'slug'|'publishe
 }
 export function cityArticleSchema(guide:CityTravelSEO){
   const data=articleSchema({slug:guide.slug,title:guide.seoTitle,description:guide.seoDescription,image:guide.image,updated:guide.contentReviewedAt,source:guide.sources[0].url,eyebrow:'Origin travel planning',location:findMarket(guide.slug)!.city,duration:'Planning guide',sections:[]},cityPath(guide.slug),`Jaisalmer, from ${findMarket(guide.slug)!.city}.`);
-  return {...data,citation:guide.sources.map(source=>source.url),about:{'@type':'Place',name:'Jaisalmer'},spatialCoverage:{'@type':'Place',name:'Jaisalmer, Rajasthan, India'}};
+  return {...data,citation:guide.sources.map(source=>source.url),about:{'@id':destinationId()},spatialCoverage:{'@type':'Place',name:'Jaisalmer, Rajasthan, India'}};
 }
