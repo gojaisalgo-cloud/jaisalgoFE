@@ -331,7 +331,7 @@ def main():
         _, status, _, body, _ = request(path)
         if status != 404 or 'noindex' not in ' '.join(Document(body.decode(errors='replace')).meta.get('robots', [])).lower():
             fail(path, 'Unknown content must return HTTP 404 and noindex')
-    for alias, canonical in [('new-delhi', 'delhi'), ('delhi-ncr', 'delhi'), ('baroda', 'vadodara'), ('bangalore', 'bengaluru')]:
+    for alias, canonical in [('new-delhi', 'delhi'), ('delhi-ncr', 'delhi'), ('baroda', 'vadodara'), ('bangalore', 'bengaluru'), ('aurangabad', 'chhatrapati-sambhajinagar'), ('mysore', 'mysuru'), ('mangalore', 'mangaluru'), ('cochin', 'kochi'), ('trivandrum', 'thiruvananthapuram'), ('calicut', 'kozhikode'), ('vizag', 'visakhapatnam'), ('allahabad', 'prayagraj'), ('chandigarh-tricity', 'chandigarh')]:
         path = '/jaisalmer-travel-from/' + alias
         _, status, _, body, final = request(path)
         doc = Document(body.decode(errors='replace'))

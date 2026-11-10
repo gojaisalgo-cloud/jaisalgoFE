@@ -4,6 +4,7 @@ import {collections} from '../data/editorial';
 import {searchPages,editorialTitle,editorialDescription} from '../data/search-pages';
 import {seedTours} from '../data/catalog';
 import {packageCollections} from '../data/package-collections';
+import {indiaMarkets,findMarket} from '../data/india-markets';
 import {cityGuides} from '../data/city-guides';
 import {publishedCityGuides} from '../lib/city-travel';
 import {tourSearchTitles,searchDescription} from '../data/seo-titles';
@@ -20,11 +21,19 @@ for(const [path,p] of Object.entries(searchPages))if(!p.noindex)rows.push({path,
 for(const [collection,entries] of Object.entries(collections))for(const item of entries){const path=`/${collection}/${item.slug}`;rows.push({path,primary:primary[path]||(collection==='itineraries'?`Jaisalmer ${item.slug.split('-')[0]} day itinerary`:`${item.title} Jaisalmer visiting guide`),intent:'Informational guide',title:editorialTitle(collection,item),description:editorialDescription(collection,item)})}
 for(const c of packageCollections)rows.push({path:'/packages/'+c.slug,primary:c.intent,intent:'Commercial comparison',title:c.title,description:c.description});
 for(const t of seedTours().filter(t=>t.published))rows.push({path:'/packages/'+t.slug,primary:t.title+' package details',intent:'Specific local product / booking',title:tourSearchTitles[t.slug]||t.title,description:packageDescription(t)});
-for(const g of publishedCityGuides(seedTours()))rows.push({path:'/jaisalmer-travel-from/'+g.slug,primary:`Jaisalmer trip from ${g.slug[0].toUpperCase()+g.slug.slice(1)}`,intent:'Origin travel planning; transport separate',title:`Jaisalmer from ${g.slug[0].toUpperCase()+g.slug.slice(1)}: Travel & Packages`,description:g.seoDescription});
+const approvedGuides=publishedCityGuides(seedTours());
+for(const g of approvedGuides)rows.push({path:'/jaisalmer-travel-from/'+g.slug,primary:`Jaisalmer trip from ${findMarket(g.slug)!.city}`,intent:'Origin travel planning; transport separate',title:g.seoTitle,description:g.seoDescription});
 // Keep the publication gate authoritative rather than including research backlog cities.
 if(!cityGuides.length||new Set(rows.map(r=>r.path)).size!==rows.length)throw new Error('Invalid canonical inventory');
 const cell=(s:string)=>'"'+s.replaceAll('"','""')+'"';
 const csv=[['Canonical URL','Primary search intent / keyword','Intent class','SEO title before brand suffix','Meta description'],...rows.sort((a,b)=>a.path.localeCompare(b.path)).map(r=>['https://www.jaisalgo.com'+(r.path==='/'?'/':r.path),r.primary,r.intent,r.title,searchDescription(r.description)])].map(r=>r.map(cell).join(',')).join('\n')+'\n';
 writeFileSync('docs/SEO-PAGE-MAP.csv',csv);
-writeFileSync('docs/SEO-REDIRECTS.csv',[['Alias path','Canonical path','HTTP status'],...Object.entries(seoAliases).map(([a,b])=>[a,b,'301'])].map(r=>r.map(cell).join(',')).join('\n')+'\n');
-console.log(`Mapped ${rows.length} canonical pages and ${Object.keys(seoAliases).length} redirects.`);
+const cityRedirects=approvedGuides.flatMap(guide=>findMarket(guide.slug)!.aliases.map(alias=>['/jaisalmer-travel-from/'+alias.toLowerCase().replaceAll(' ','-'),'/jaisalmer-travel-from/'+guide.slug,'308']));
+writeFileSync('docs/SEO-REDIRECTS.csv',[['Alias path','Canonical path','HTTP status'],...Object.entries(seoAliases).map(([a,b])=>[a,b,'301']),...cityRedirects].map(row=>row.map(cell).join(',')).join('\n')+'\n');
+writeFileSync('data/analytics-public-paths.json',JSON.stringify(rows.map(row=>row.path),null,2)+'\n');
+const published=new Set(approvedGuides.map(guide=>guide.slug as string));
+writeFileSync('docs/PAN-INDIA-KEYWORDS.csv',[
+ ['City','State or UT','Target market group','Editorial priority tier','Aliases','Primary query candidate','Other query candidates','Intent owner','URL or candidate path','Publication status','Evidence / next step'],
+ ...indiaMarkets.map(market=>[market.city,market.state,market.group,String(market.priority),market.aliases.join('; '),`Jaisalmer trip from ${market.city}`,[`Jaisalmer tour package from ${market.city}`,`${market.city} to Jaisalmer travel`,...market.aliases.map(alias=>`Jaisalmer trip from ${alias}`)].join('; '),'Origin planning guide; not an origin-departure product','/jaisalmer-travel-from/'+market.slug,published.has(market.slug)?'Published':'Research candidate only; route absent',published.has(market.slug)?'Official context reviewed; no live schedule or fare claim':'Validate demand in Search Console, dated connections and unique editorial value before creating content']),
+].map(row=>row.map(cell).join(',')).join('\n')+'\n');
+console.log(`Mapped ${rows.length} canonical pages, ${approvedGuides.length} city guides and ${Object.keys(seoAliases).length+cityRedirects.length} redirects.`);

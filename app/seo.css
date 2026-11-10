@@ -64,3 +64,21 @@
 @media(max-width:600px){.golden-hero .golden-hero-content h1{font-size:clamp(33px,9.5vw,42px)}}
 
 .guide-answer{padding:24px;border:1px solid var(--line);border-radius:16px;background:var(--surface);margin-bottom:30px}.prose .guide-answer h2{font-size:clamp(23px,3vw,32px);margin:10px 0 14px}.guide-answer p{margin:0;line-height:1.8}.guide-comparison{margin:32px 0}.guide-comparison>div{overflow-x:auto;max-width:100%;border:1px solid var(--line);border-radius:12px}.guide-comparison table{border-collapse:collapse;min-width:520px;width:100%;font-size:14px}.guide-comparison th,.guide-comparison td{padding:16px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}.guide-comparison thead{background:var(--surface)}.guide-comparison>div:focus-visible{outline:2px solid var(--accent);outline-offset:3px}.article-layout>article{min-width:0}
+
+/* National origin directory: wrap navigation and long city names at every size. */
+.city-region-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin:0 0 1.5rem}
+.city-region-nav a{display:inline-flex;align-items:center;min-height:44px;padding:.5rem .85rem;border:1px solid var(--line,#e5e8e4);border-radius:999px;color:var(--green,#29473c);font-size:.82rem;line-height:1.5;text-decoration:none}
+.city-region-nav a:hover{background:#f4f6f3}
+.city-region-nav a:focus-visible,.related-origin-links a:focus-visible{outline:2px solid var(--green,#29473c);outline-offset:3px}
+.city-region-grid>section{scroll-margin-top:7rem;min-width:0}
+.city-region-grid a>span,.city-guide-hero h1{min-width:0;overflow-wrap:anywhere}
+.related-origins{padding:2rem 0;border-top:1px solid var(--line,#e5e8e4);margin-top:2.5rem}
+.related-origins h2{font-size:clamp(1.6rem,3vw,2.4rem);margin:.5rem 0}
+.related-origins>p{color:var(--muted,#626b65);line-height:1.8;max-width:700px}
+.related-origin-links{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.75rem;margin-top:1rem}
+.related-origin-links a{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:1rem;min-height:52px;border:1px solid var(--line,#e5e8e4);border-radius:14px;color:var(--green,#29473c);font-weight:600;overflow-wrap:anywhere}
+@media(max-width:800px){.related-origin-links{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.related-origin-links{grid-template-columns:1fr}.city-region-nav{gap:.4rem}.city-region-nav a{font-size:.78rem;padding:.5rem .7rem}}
+
+.city-guide-hero-long-name h1{font-size:clamp(2rem,4.2vw,3.5rem)}
+@media(max-width:360px){.city-guide-hero-long-name h1{font-size:1.75rem}}

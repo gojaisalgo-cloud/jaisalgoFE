@@ -1,4 +1,5 @@
 import {additionalCityGuides} from './additional-city-guides';
+import {nationalCityGuides} from './national-city-guides';
 import type {CityGuideKey} from './city-guide-keys';
 
 export type TravelOption={mode:'Air'|'Rail'|'Road';title:string;body:string;timing:string;source:string};
@@ -6,7 +7,7 @@ export type CityTravelSEO={
   slug:CityGuideKey;seoTitle:string;seoDescription:string;intro:string;image:string;
   travelOptions:TravelOption[];itinerarySuggestions:{title:string;body:string;path:string}[];
   groupAdvice:{title:string;body:string}[];budget:string;arrivalTips:string[];
-  faqs:{question:string;answer:string}[];relevantPackageIds:string[];
+  faqs:{question:string;answer:string}[];relevantPackageIds:string[];relatedOriginSlugs?:string[];
   sources:{id:string;title:string;url:string;scope:string}[];
   contentReviewedAt:string;reviewStatus:'source-checked'|'draft';published:boolean;indexable:boolean;
 };
@@ -114,4 +115,5 @@ export const cityGuides:CityTravelSEO[]=[
     relevantPackageIds:['golden-city-escape','jaisalmer-unhurried','couples-escape'],sources:[{id:'bengaluru',title:'Bengaluru Urban district · transport hubs',url:'https://bengaluruurban.nic.in/en/how-to-reach/',scope:'City air gateways and rail-station identities. Older airline contact listings are not adopted.'},airline,rail,indigo],...review,
   },
  ...additionalCityGuides,
+ ...nationalCityGuides,
 ];

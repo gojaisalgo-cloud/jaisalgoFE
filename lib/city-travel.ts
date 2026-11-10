@@ -27,7 +27,13 @@ export function resolveCityGuide(slug:string,packages:Pick<Tour,'slug'|'publishe
   const market=findMarket(slug);
   return market?publishedCityGuides(packages).find(g=>g.slug===market.slug):undefined;
 }
+/** Contextual connections may only point to published canonical guides. */
+export function relatedCityGuides(guide:CityTravelSEO,packages:Pick<Tour,'slug'|'published'>[]){
+  const approved=publishedCityGuides(packages),market=findMarket(guide.slug)!;
+  const preferred=guide.relatedOriginSlugs||approved.filter(g=>findMarket(g.slug)!.group===market.group).map(g=>g.slug);
+  return [...new Set(preferred)].filter(slug=>slug!==guide.slug).flatMap(slug=>approved.find(g=>g.slug===slug)||[]).slice(0,4);
+}
 export function cityArticleSchema(guide:CityTravelSEO){
   const data=articleSchema({slug:guide.slug,title:guide.seoTitle,description:guide.seoDescription,image:guide.image,updated:guide.contentReviewedAt,source:guide.sources[0].url,eyebrow:'Origin travel planning',location:findMarket(guide.slug)!.city,duration:'Planning guide',sections:[]},cityPath(guide.slug),`Jaisalmer, from ${findMarket(guide.slug)!.city}.`);
-  return {...data,citation:guide.sources.map(source=>source.url),about:{'@id':destinationId()},spatialCoverage:{'@type':'Place',name:'Jaisalmer, Rajasthan, India'}};
+  return {...data,citation:guide.sources.map(source=>source.url),about:{'@id':destinationId()},mentions:{'@type':'City',name:findMarket(guide.slug)!.city,containedInPlace:{'@type':'AdministrativeArea',name:findMarket(guide.slug)!.state,containedInPlace:{'@type':'Country',name:'India'}}},spatialCoverage:{'@type':'Place',name:'Jaisalmer, Rajasthan, India'}};
 }

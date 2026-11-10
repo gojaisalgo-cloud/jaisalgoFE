@@ -1,5 +1,7 @@
 # Pan-India Jaisalmer discovery · 3 November 2026
 
+Current expansion: see [10 November national release](NATIONAL-SEO-2026-11-10.md) for 56 published guides, the 138-URL inventory and current verification. Earlier counts below describe the initial rollout.
+
 ## What changed
 
 The existing Next.js 16 App Router site now has an origin-planning directory and six individually written travel guides. They lead to the same published local catalogue and existing checkout, not new origin-departure products. Existing `/packages`, `/book`, ticket, admin, API, payment, inventory and refund behaviour remains in place. No email field, new authentication step, SEO dependency, geolocation service or external tracking tag was added.

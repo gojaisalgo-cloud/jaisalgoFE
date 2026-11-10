@@ -87,7 +87,7 @@ The 10 November GEO release expands the canonical inventory to 93 URLs, includin
 
 ### Pan-India travel discovery
 
-Eleven source-reviewed origin guides live under `/jaisalmer-travel-from`, with a region-grouped directory, canonical alias redirects and a shared publication gate. The 103-market research backlog never generates public pages automatically. See [implementation and 90-day plan](docs/PAN-INDIA-SEO.md), [keyword candidates](docs/PAN-INDIA-KEYWORDS.csv) and [verification](docs/PAN-INDIA-VERIFICATION.md). Local package booking and live payment gates remain unchanged.
+Fifty-six source-reviewed origin guides live under `/jaisalmer-travel-from`, with a region-grouped directory, canonical alias redirects and a shared publication gate. The 103-market research backlog never generates public pages automatically. The national expansion adds 45 individually researched guides and brings the sitemap to 138 canonical URLs. See [the current national release](docs/NATIONAL-SEO-2026-11-10.md), [implementation and 90-day plan](docs/PAN-INDIA-SEO.md), [keyword candidates](docs/PAN-INDIA-KEYWORDS.csv) and [verification](docs/PAN-INDIA-VERIFICATION.md). Local package booking and live payment gates remain unchanged.
 
 ### Real bookings and assistance
 

@@ -4,7 +4,7 @@ import {seedTours} from '../data/catalog';
 import {cityGuides} from '../data/city-guides';
 import {cityGuideKeys,cityGuideAtPath} from '../data/city-guide-keys';
 import {indiaMarkets,findMarket} from '../data/india-markets';
-import {cityPublicationIssues,publishedCityGuides,resolveCityGuide,cityPath,cityArticleSchema} from '../lib/city-travel';
+import {cityPublicationIssues,publishedCityGuides,resolveCityGuide,cityPath,cityArticleSchema,relatedCityGuides} from '../lib/city-travel';
 import {pageMetadata} from '../lib/seo';
 import {batchSchema} from '../lib/analytics/schema';
 import {cityTargetReport} from '../lib/analytics/city-targets';
@@ -38,7 +38,7 @@ test('a city name, flags or a partial draft alone can never publish a guide',()=
   assert.ok(publishedCityGuides(tours.filter(t=>t.slug!=='city-and-dunes')).some(g=>g.slug==='delhi'),'other published local options keep a useful guide available');
 });
 test('aliases resolve to one canonical guide; unknown, typo and unsupported city paths stay absent',()=>{
-  const tours=seedTours();for(const [alias,target] of [['new-delhi','delhi'],['delhi-ncr','delhi'],['baroda','vadodara'],['bangalore','bengaluru']])assert.equal(resolveCityGuide(alias,tours)?.slug,target);
+  const tours=seedTours();for(const [alias,target] of [['new-delhi','delhi'],['delhi-ncr','delhi'],['baroda','vadodara'],['bangalore','bengaluru'],['aurangabad','chhatrapati-sambhajinagar'],['mysore','mysuru'],['mangalore','mangaluru'],['cochin','kochi'],['calicut','kozhikode'],['trivandrum','thiruvananthapuram'],['vizag','visakhapatnam'],['allahabad','prayagraj']])assert.equal(resolveCityGuide(alias,tours)?.slug,target);
   for(const value of ['jaiselmer','gurgaon','unknown','../../delhi','delhi/extra'])assert.equal(resolveCityGuide(value,tours),undefined);
   assert.equal(cityGuideAtPath('/jaisalmer-travel-from/delhi'),'delhi');
   for(const path of ['/jaisalmer-travel-from/bangalore','/jaisalmer-travel-from/noida','/packages/delhi','/jaisalmer-travel-from/delhi/private'])assert.equal(cityGuideAtPath(path),undefined);
@@ -57,4 +57,24 @@ test('target reports separate guide interest from organic entry, reject late att
   assert.equal(delhi.guideSessions,2);assert.equal(delhi.guideToPackageSessions,1);assert.equal(delhi.guideToPackageRate,.5);assert.equal(delhi.organicLandingSessions,2);assert.equal(delhi.organicPackageDetailSessions,1);assert.equal(delhi.organicReservationStartSessions,1);assert.equal(delhi.verifiedReservations,1);assert.equal(delhi.fullyPaidBookings,1);assert.equal(delhi.completedTrips,1);assert.equal(delhi.netCollectedPaise,100000);assert.equal(delhi.organicLandingConversion,.5);assert.equal(ahmedabad.organicLandingSessions,0);
   const refunded=cityTargetReport(events,[{...book,status:'refunded',refunded:100000,ledgerRefunded:100000}]).city[0];assert.equal(refunded.netCollectedPaise,0);assert.equal(refunded.completedTrips,0);
   assert.equal(cityTargetReport([],[]).city[0].organicLandingConversion,null);
+});
+
+test('national guides contain distinct origin research and contextual links that cannot expose withdrawn guides',()=>{
+  const tours=seedTours(),narratives=new Set(),budgets=new Set();
+  assert.equal(publishedCityGuides(tours).length,56);
+  for(const guide of cityGuides){
+    const market=findMarket(guide.slug)!;
+    const narrative=guide.travelOptions.map(option=>option.body).join(' ');
+    assert.equal(narratives.has(narrative),false,guide.slug);narratives.add(narrative);
+    assert.equal(budgets.has(guide.budget),false,guide.slug);budgets.add(guide.budget);
+    assert.ok(guide.seoTitle.length+11<=70,guide.slug);
+    const schema=cityArticleSchema(guide);
+    assert.equal(schema.mentions.name,market.city);
+    assert.equal(schema.mentions.containedInPlace.name,market.state);
+    for(const slug of guide.relatedOriginSlugs||[]){assert.notEqual(slug,guide.slug);assert.ok(resolveCityGuide(slug,tours),`${guide.slug} links to ${slug}`)}
+    assert.equal(relatedCityGuides(guide,tours.map(tour=>({...tour,published:false}))).length,0);
+  }
+  const rajkot=cityGuides.find(guide=>guide.slug==='rajkot')!,ahmedabad=cityGuides.find(guide=>guide.slug==='ahmedabad')!;
+  const saved=ahmedabad.published;
+  try{ahmedabad.published=false;assert.ok(!relatedCityGuides(rajkot,tours).some(guide=>guide.slug==='ahmedabad'))}finally{ahmedabad.published=saved}
 });
