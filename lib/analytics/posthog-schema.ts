@@ -1,3 +1,4 @@
+import {isPackageCollectionPath} from '@/data/package-collection-keys';
 import {z} from 'zod';
 import publicPaths from '@/data/analytics-public-paths.json';
 const paths=new Set(publicPaths);
@@ -13,7 +14,7 @@ export function analyticsPage(path:string){
   return '/not-found';
 }
 export const privateAnalyticsPage=(path:string)=>/^\/(?:book|reservations|my-bookings|admin|verify)(?:\/|$)/.test(path);
-export function pageType(path:string){return path==='/'?'home':path==='/packages'?'package_list':path.startsWith('/packages/')?'package':path.startsWith('/book/')?'checkout':path.startsWith('/reservations/')?'ticket':path.startsWith('/jaisalmer-travel-from/')?'city_guide':path==='/admin'?'admin':'editorial'}
+export function pageType(path:string){return path==='/'?'home':path==='/packages'||isPackageCollectionPath(path)?'package_list':path.startsWith('/packages/')?'package':path.startsWith('/book/')?'checkout':path.startsWith('/reservations/')?'ticket':path.startsWith('/jaisalmer-travel-from/')?'city_guide':path==='/admin'?'admin':'editorial'}
 export function posthogHost(value:string|undefined){return value==='https://us.i.posthog.com'||value==='https://eu.i.posthog.com'?value:undefined}
 export const marketingSchema=z.object({utm_source:z.enum(['google','bing','facebook','instagram','youtube','whatsapp','newsletter','partner','other']).optional(),utm_medium:z.enum(['organic','cpc','ppc','paid','social','referral','email','other']).optional(),utm_campaign:z.string().regex(/^[a-z][a-z0-9_-]{0,59}$/).optional(),utm_content:z.string().regex(/^[a-z][a-z0-9_-]{0,59}$/).optional(),utm_term:z.string().regex(/^[a-z][a-z0-9_-]{0,59}$/).optional(),landing_page_path:z.string().max(180).refine(p=>p===analyticsPage(p)),referrer_origin:z.enum(['https://www.google.com','https://google.com','https://www.bing.com','https://bing.com','https://www.instagram.com','https://instagram.com','https://www.facebook.com','https://facebook.com','https://t.co','https://www.youtube.com','other']).optional()}).strict();
 export type Marketing=z.infer<typeof marketingSchema>;

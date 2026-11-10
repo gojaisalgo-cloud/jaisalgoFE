@@ -1,18 +1,20 @@
+import {packageCollections} from '@/data/package-collections';
+import {PackageCollection} from '@/components/booking/package-collection';
 import type {Metadata} from 'next';
 import {notFound} from 'next/navigation';
 import Link from 'next/link';
 import {publishedTour,publishedTours} from '@/lib/seo-catalog';
 import {choicesFromParams,travelDateBounds,requestedDate} from '@/lib/booking/preferences';
 import {today} from '@/lib/booking/security';
-import {PackageInformationContent} from '@/components/booking/package-information';
+import {PackageInformationContent} from '@/components/booking/package-information-content';
 import {StructuredData} from '@/components/structured-data';
 import {TourCard} from '@/components/booking/tour-card';
-import {breadcrumbSchema,tripSchema,packageMetadata,hasSelection,privateRobots,type Query} from '@/lib/seo';
+import {pageMetadata,breadcrumbSchema,tripSchema,packageMetadata,hasSelection,privateRobots,type Query} from '@/lib/seo';
 import {guideLinks} from '@/data/search-pages';
 export const dynamic='force-dynamic';
-export async function generateMetadata({params,searchParams}:{params:Promise<{slug:string}>;searchParams:Promise<Query>}):Promise<Metadata>{const {slug}=await params,t=await publishedTour(slug);return t?packageMetadata(t,hasSelection(await searchParams)):{title:'Package not found',robots:privateRobots}}
+export async function generateMetadata({params,searchParams}:{params:Promise<{slug:string}>;searchParams:Promise<Query>}):Promise<Metadata>{const {slug}=await params,collection=packageCollections.find(c=>c.slug===slug);if(collection)return pageMetadata({...collection,path:'/packages/'+slug,noindex:hasSelection(await searchParams)});const t=await publishedTour(slug);return t?packageMetadata(t,hasSelection(await searchParams)):{title:'Package not found',robots:privateRobots}}
 export default async function Details({params,searchParams}:{params:Promise<{slug:string}>;searchParams:Promise<Record<string,string|string[]|undefined>>}){
- const {slug}=await params,t=await publishedTour(slug);if(!t)notFound();const query=await searchParams,choices=choicesFromParams(t,query),bounds=travelDateBounds(today()),date=requestedDate(query.date,bounds.minDate,bounds.maxDate);
+ const {slug}=await params,collection=packageCollections.find(c=>c.slug===slug);if(collection)return <PackageCollection collection={collection} tours={await publishedTours()}/>;const t=await publishedTour(slug);if(!t)notFound();const query=await searchParams,choices=choicesFromParams(t,query),bounds=travelDateBounds(today()),date=requestedDate(query.date,bounds.minDate,bounds.maxDate);
  const related=(await publishedTours()).filter(p=>p.slug!==slug&&p.area===t.area).sort((a,b)=>Math.abs(a.days-t.days)-Math.abs(b.days-t.days)).slice(0,3);
  return <div className="wrap standalone-package">
   <StructuredData data={breadcrumbSchema([{name:'Home',path:'/'},{name:'Jaisalmer packages',path:'/packages'},{name:t.title,path:`/packages/${slug}`}])}/>

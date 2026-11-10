@@ -1,3 +1,4 @@
+import {additionalCityGuides} from './additional-city-guides';
 import type {CityGuideKey} from './city-guide-keys';
 
 export type TravelOption={mode:'Air'|'Rail'|'Road';title:string;body:string;timing:string;source:string};
@@ -112,4 +113,5 @@ export const cityGuides:CityTravelSEO[]=[
     faqs:[{question:'Do Bangalore and Bengaluru need different package pages?',answer:'No. Both names are covered by this guide and the same canonical URL. They do not represent two different travel products.'},{question:'Is a direct Bengaluru flight guaranteed?',answer:'No. Check the airline for your exact dates and both directions. Older seasonal route announcements do not establish a current nonstop service.'},{question:'How long should I stay after travelling from Bengaluru?',answer:'Consider three or four usable local days if your leave allows it. This is a planning recommendation, not a transport timetable; count arrival and return travel separately.'}],
     relevantPackageIds:['golden-city-escape','jaisalmer-unhurried','couples-escape'],sources:[{id:'bengaluru',title:'Bengaluru Urban district · transport hubs',url:'https://bengaluruurban.nic.in/en/how-to-reach/',scope:'City air gateways and rail-station identities. Older airline contact listings are not adopted.'},airline,rail,indigo],...review,
   },
+ ...additionalCityGuides,
 ];

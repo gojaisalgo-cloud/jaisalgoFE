@@ -186,6 +186,8 @@ def main():
         if f'Disallow: {path}' in text:
             fail('/robots.txt', f'Blocks assets or prevents reading noindex: {path}')
 
+    collection_text=(Path(__file__).resolve().parent.parent/'data/package-collections.ts').read_text()
+    collection_paths={'/packages/'+slug for slug in re.findall(r"slug:'([^']+)'",collection_text)}
     seen_titles, seen_descriptions = {}, {}
     schemas = {}
     for path, status, headers, body, final in get_many(paths):
@@ -252,7 +254,9 @@ def main():
                     fail(path, 'Review provisional price/review markup before publishing')
             if kind == 'Article' and ' '.join(str(node.get('headline', '')).split()) not in body_text:
                 fail(path, 'Article headline does not match rendered content')
-        if path.startswith('/packages/') and not any(node.get('@type') == 'TouristTrip' for node in nodes):
+        if path in collection_paths and not any(node.get('@type') == 'ItemList' for node in nodes):
+            fail(path,'Missing collection item-list schema')
+        if path.startswith('/packages/') and path not in collection_paths and not any(node.get('@type') == 'TouristTrip' for node in nodes):
             fail(path, 'Missing package trip schema')
         if path.startswith('/jaisalmer-travel-from/'):
             if not any(node.get('@type') == 'Article' for node in nodes) or not any(node.get('@type') == 'BreadcrumbList' for node in nodes):
@@ -280,7 +284,7 @@ def main():
                 image_urls.add(source)
         if any('localhost' in value or '127.0.0.1' in value for value in doc.canonicals + [doc.one('og:url')]):
             fail(path, 'Local development origin leaked into metadata')
-        pages[path] = {'title': title, 'description': description, 'canonical': doc.canonicals, 'h1': doc.h1, 'htmlBytes': len(body), 'schemaTypes': [node.get('@type') for node in nodes]}
+        pages[path] = {'title': title, 'description': description, 'canonical': doc.canonicals, 'h1': doc.h1, 'htmlBytes': len(body), 'titleCharacters':len(title), 'descriptionCharacters':len(description), 'schemaTypes': [node.get('@type') for node in nodes]}
 
     for path in paths - {'/'}:
         if path not in {link.split('?')[0].rstrip('/') or '/' for link in links}:
@@ -291,7 +295,7 @@ def main():
     for path, status, headers, _, _ in get_many(image_urls):
         if status != 200 or not headers.get('Content-Type', headers.get('content-type', '')).startswith('image/'):
             fail(path, f'Broken image or preview asset: HTTP {status}')
-    package_path = next(iter(sorted(path for path in paths if path.startswith('/packages/'))), '/packages/city-and-dunes')
+    package_path = next(iter(sorted(path for path in paths if 'TouristTrip' in pages.get(path,{}).get('schemaTypes',[]))), '/packages/city-and-dunes')
     slug = package_path.rsplit('/', 1)[-1]
     for path in [f'/book/{slug}', '/reservations/seo-audit-example', '/my-bookings', '/admin', '/terms', '/privacy-policy', '/cancellation-policy']:
         _, status, headers, body, _ = request(path)
@@ -306,7 +310,7 @@ def main():
         noindex = 'noindex' in ' '.join(doc.meta.get('robots', [])).lower()
         if status != 200 or noindex != (args.preview or not should_index) or doc.canonicals != [origin+path.split('?')[0]]:
             fail(path, 'Incorrect variant/tracking canonical or indexing policy')
-    for path in ['/packages/seo-audit-nonexistent', '/travel-guide/seo-audit-nonexistent', '/seo-audit-nonexistent', '/jaisalmer-travel-from/mumbai', '/jaisalmer-travel-from/noida', '/jaisalmer-travel-from/jaiselmer', '/jaisalmer-travel-from/unknown']:
+    for path in ['/packages/seo-audit-nonexistent', '/travel-guide/seo-audit-nonexistent', '/seo-audit-nonexistent', '/jaisalmer-travel-from/noida', '/jaisalmer-travel-from/jaiselmer', '/jaisalmer-travel-from/unknown']:
         _, status, _, body, _ = request(path)
         if status != 404 or 'noindex' not in ' '.join(Document(body.decode(errors='replace')).meta.get('robots', [])).lower():
             fail(path, 'Unknown content must return HTTP 404 and noindex')
@@ -323,6 +327,28 @@ def main():
         _, status, _, _, final = request(path)
         if status != 200 or urllib.parse.urlsplit(final).path.endswith('/'):
             fail(path, 'Trailing-slash variant does not resolve to the canonical path')
+
+    alias_text=(Path(__file__).resolve().parent.parent/'data/seo-aliases.ts').read_text()
+    aliases=dict(re.findall(r"'(/[^']+)':'(/[^']+)'",alias_text))
+    class NoRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, req, fp, code, msg, headers, newurl):
+            return None
+    direct=urllib.request.build_opener(NoRedirect)
+    for alias,target in aliases.items():
+        try:
+            direct.open(base+alias,timeout=25)
+            fail(alias,'Expected a permanent 301 alias redirect')
+        except urllib.error.HTTPError as error:
+            if error.code!=301 or urllib.parse.urlsplit(error.headers.get('Location','')).path!=target:
+                fail(alias,f'Unexpected alias response {error.code}')
+        except Exception as error:
+            fail(alias,str(error))
+        _,status,_,body,final=request(alias)
+        doc=Document(body.decode(errors='replace'))
+        if status!=200 or urllib.parse.urlsplit(final).path!=target or not any(same_url(c,origin+target) for c in doc.canonicals):
+            fail(alias,'Alias does not finish at its canonical page')
+        if origin+alias in urls:
+            fail(alias,'Redirecting alias is included in the sitemap')
 
     warnings.append('This HTTP audit does not measure real-user Core Web Vitals, Google indexing, ranking, or Rich Results eligibility.')
     report = {'checkedAt': dt.datetime.now(dt.timezone.utc).isoformat(), 'baseUrl': base, 'canonicalOrigin': origin, 'summary': {'indexablePages': len(pages), 'sitemapEntries': len(entries), 'internalTargets': len(links), 'imageAssets': len(image_urls), 'criticalIssues': len(issues), 'schemaTypes': schemas}, 'issues': issues, 'warnings': warnings, 'pages': pages}

@@ -17,9 +17,9 @@ test('market coverage is a research backlog, with all 36 states and UTs and no d
   const names=indiaMarkets.flatMap(m=>[m.city,...m.aliases].map(name=>name.toLowerCase()));
   assert.equal(names.length,new Set(names).size);
   assert.equal(findMarket('Gurgaon')?.slug,'gurugram');assert.equal(findMarket('Bangalore')?.slug,'bengaluru');assert.equal(findMarket('Baroda')?.slug,'vadodara');
-  assert.ok(indiaMarkets.length>100);assert.equal(resolveCityGuide('mumbai',seedTours()),undefined);assert.equal(resolveCityGuide('noida',seedTours()),undefined);
+  assert.ok(indiaMarkets.length>100);assert.equal(resolveCityGuide('mumbai',seedTours())?.slug,'mumbai');assert.equal(resolveCityGuide('noida',seedTours()),undefined);
 });
-test('six separately researched guides pass publication checks and contain only real local experience references',()=>{
+test('published separately researched guides pass publication checks and contain only real local experience references',()=>{
   const tours=seedTours(),approved=publishedCityGuides(tours),paths=new Set(),titles=new Set(),descriptions=new Set(),intros=new Set();
   assert.deepEqual(approved.map(g=>g.slug),[...cityGuideKeys]);
   for(const guide of cityGuides){
@@ -46,7 +46,7 @@ test('aliases resolve to one canonical guide; unknown, typo and unsupported city
 test('city measurement accepts only guide identifiers, never personal geography or arbitrary URLs',()=>{
   const event={id:randomUUID(),name:'city_guide_viewed',context:{consent:true,sessionId:randomUUID(),device:'mobile',source:'search',campaign:'unassigned'},props:{cityGuideId:'delhi'}};
   assert.ok(batchSchema.safeParse({events:[event]}).success);
-  for(const props of [{cityGuideId:'mumbai'},{cityGuideId:'https://example.com'},{cityGuideId:'delhi',visitorCity:'Delhi'},{cityGuideId:'delhi',url:'/private?access=secret'}])assert.equal(batchSchema.safeParse({events:[{...event,props}]}).success,false);
+  for(const props of [{cityGuideId:'unpublished-city'},{cityGuideId:'https://example.com'},{cityGuideId:'delhi',visitorCity:'Delhi'},{cityGuideId:'delhi',url:'/private?access=secret'}])assert.equal(batchSchema.safeParse({events:[{...event,props}]}).success,false);
 });
 test('target reports separate guide interest from organic entry, reject late attribution, deduplicate clicks and verify money',()=>{
   const e=(name:string,session:string,at:number,props:Record<string,unknown>={}):AnalyticsEvent=>({id:randomUUID(),name,session,at,mode:'live',origin:'client',attempt:null,props});

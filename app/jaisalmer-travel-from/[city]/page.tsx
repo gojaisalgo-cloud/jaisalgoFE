@@ -13,7 +13,7 @@ import {DirectionalIcon} from '@/components/directional-control';
 export const dynamic='force-dynamic';
 type Props={params:Promise<{city:string}>;searchParams:Promise<Query>};
 async function resolve(city:string){const packages=await publishedTours(),guide=resolveCityGuide(city,packages);if(!guide)notFound();if(city!==guide.slug)permanentRedirect(cityPath(guide.slug));return {guide,packages}}
-export async function generateMetadata({params,searchParams}:Props):Promise<Metadata>{const {guide}=await resolve((await params).city);return pageMetadata({title:guide.seoTitle,description:guide.seoDescription,path:cityPath(guide.slug),image:guide.image,article:{updated:guide.contentReviewedAt},noindex:hasSelection(await searchParams)})}
+export async function generateMetadata({params,searchParams}:Props):Promise<Metadata>{const {guide}=await resolve((await params).city);return pageMetadata({title:`Jaisalmer from ${findMarket(guide.slug)!.city}: Travel & Packages`,description:guide.seoDescription,path:cityPath(guide.slug),image:guide.image,article:{updated:guide.contentReviewedAt},noindex:hasSelection(await searchParams)})}
 const icons={Air:Plane,Rail:TrainFront,Road:Car};
 export default async function CityGuide({params}:Props){
   const {guide,packages}=await resolve((await params).city),market=findMarket(guide.slug)!,related=guide.relevantPackageIds.flatMap(id=>packages.find(p=>p.slug===id)||[]);

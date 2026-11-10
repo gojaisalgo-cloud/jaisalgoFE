@@ -1,3 +1,4 @@
+import {enrichEditorial} from './seo-editorial';
 import type {EditorialEntry} from '@/types';
 export const places:EditorialEntry[]=[
   {
@@ -775,4 +776,4 @@ export const itineraries:EditorialEntry[]=[
     "updated": "2026-10-24"
   }
 ];
-export const collections:Record<string,EditorialEntry[]>={places,experiences,itineraries,"travel-guide":guides};
+export const collections:Record<string,EditorialEntry[]>={places:enrichEditorial('places',places),experiences:enrichEditorial('experiences',experiences),itineraries:enrichEditorial('itineraries',itineraries),"travel-guide":enrichEditorial('travel-guide',guides)};
