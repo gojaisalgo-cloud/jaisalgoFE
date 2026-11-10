@@ -2,7 +2,7 @@
 import {useCallback,useEffect,useRef,useState} from 'react';
 import {usePathname} from 'next/navigation';
 import Link from 'next/link';
-import {X,ShieldCheck,Sun,LogOut} from 'lucide-react';
+import {X,ShieldCheck,Sun,LogOut,ArrowRight} from 'lucide-react';
 import {Photo} from '@/components/photo';
 
 type User={name:string;email:string};
@@ -47,10 +47,10 @@ function CustomerEntryPanel({path}:{path:string}){
  if(!open)return null;
  return <dialog ref={dialog} className="customer-entry ph-no-capture" data-posthog-private aria-labelledby="customer-title" onCancel={e=>{e.preventDefault();dismiss()}} onClick={e=>{if(e.target===e.currentTarget){const r=e.currentTarget.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dismiss()}}}>
   <button type="button" className="customer-close" aria-label="Close account popup" onClick={dismiss} autoFocus><X size={20}/></button>
-  <div className="customer-art"><Photo id="fort" sizes="(max-width: 640px) 100vw, 420px"/><div className="customer-art-copy"><span><Sun size={20}/>JAISALGO</span><h2>A golden state<br/>of mind.</h2><p>Your next Jaisalmer story starts here.</p></div></div>
-  <div className="customer-panel"><span className="customer-eyebrow">YOUR JAISALGO ACCOUNT</span><h2 id="customer-title">{user?'Good to see you.':'A little closer to your next escape.'}</h2>
+  <div className="customer-art"><Photo id="khuri" sizes="(max-width: 640px) 100vw, 600px"/><div className="customer-art-copy"><span><Sun size={18} aria-hidden="true"/>JAISALGO</span><p>A golden state of mind.</p></div><span className="customer-token-badge"><strong>₹99</strong><span>to reserve</span></span></div>
+  <div className="customer-panel"><span className="customer-eyebrow">JAISALMER IS CALLING</span><h2 id="customer-title">{user?'Good to see you.':'Your next desert escape starts with ₹99.'}</h2>
    {user?<><p className="customer-intro">You’re signed in with Google.</p><div className="customer-profile"><strong>{user.name}</strong><span>{user.email}</span></div><Link className="button" href="/my-bookings" onClick={dismiss}>My bookings</Link><p className="customer-note">Use your private booking link or access key to view a reservation.</p><button type="button" className="customer-guest" disabled={phase==='saving'} onClick={signOut}><LogOut size={16}/>Sign out</button></>:<>
-    <p className="customer-intro">Continue with Google, or explore Jaisalmer as a guest.</p>
+    <p className="customer-intro">A little now. More adventure later.<br/>Your ₹99 token counts towards the package total.</p><Link className="button customer-explore" href="/packages" onClick={dismiss}>Find your Jaisalmer escape <ArrowRight size={18} aria-hidden="true"/></Link><p className="customer-offer-terms">Final services &amp; availability require supplier confirmation. <Link href="/cancellation-policy" onClick={dismiss}>Booking terms</Link></p><div className="customer-signin-label"><span>Or continue with Google</span></div>
     {configured?<><label className="customer-consent"><input type="checkbox" checked={consent} disabled={phase==='saving'} onChange={e=>{setConsent(e.target.checked);setPhase(e.target.checked?'loading':'idle');setError('')}}/><span>I agree to share my name and Google email with JaisalGo’s private travel-desk WhatsApp group for enquiry support.</span></label><div className="customer-google-area" aria-busy={phase==='loading'||phase==='saving'}><div ref={googleButton} className="customer-google" hidden={!consent||phase==='saving'}/>{(!consent||phase!=='ready')&&<p role="status">{phase==='saving'?'Completing your sign-in…':phase==='loading'?'Loading Google sign-in…':'Confirm the notice above to continue with Google.'}</p>}</div></>:<p className="customer-note">Google sign-in is being connected. You can continue browsing and booking as a guest.</p>}
     {error&&<p className="customer-error" role="alert">{error}</p>}
     <button type="button" className="customer-guest" onClick={dismiss}>Continue as a guest <span aria-hidden="true">→</span></button>
