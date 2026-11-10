@@ -15,7 +15,7 @@ export function TourCard({tour:t,selection={}}:{tour:Tour;selection?:Record<stri
  const amount=unit==='person'?q.perPerson:q.total,peopleLabel=`${c.travelers} ${c.travelers===1?'traveler':'travelers'}`,roomLabel=c.rooming==='single'?'single rooming':c.rooming==='shared'?'shared rooming':'private rooming';
  const city=t.nights?(t.costs.cityNights??Math.max(0,t.nights-1)):0,desert=t.nights-city;
  return <article data-analytics-package={t.slug} className="tour-card compact-tour-card">
-  <div className="tour-photo-container"><Link href={detailUrl} className="tour-card-photo" aria-label={`View ${t.title}`}><Photo id={t.image} sizes="(max-width:700px) 100vw, (max-width:1000px) 50vw, 33vw"/><span className="tour-duration"><Clock size={16} strokeWidth={1.9}/>{durationLabel(t)}</span><DirectionalIcon direction="up-right" className="tour-photo-arrow"/></Link><PackageInformation tour={t} initialChoices={c} initialDate={date}/></div>
+  <div className="tour-photo-container"><Link href={detailUrl} className="tour-card-photo" aria-label={`View ${t.title}`}><Photo id={t.image} sizes="(max-width:700px) 100vw, (max-width:1000px) 50vw, 33vw"/><span className="tour-duration"><Clock size={16} strokeWidth={1.9}/>{durationLabel(t)}</span><span className="tour-photo-arrow" aria-hidden="true">View trip</span></Link><PackageInformation tour={t} initialChoices={c} initialDate={date}/></div>
   <div className="tour-card-body">
    <div className="tour-card-kicker"><MapPin size={11}/>JAISALMER · {d.kind==='activity'?'SAFARI & ACTIVITY':d.kind==='cultural'?'CULTURAL EVENING':d.kind==='camp'?'DESERT STAY':t.area==='Both'?'CITY & DESERT':t.area.toUpperCase()}</div>
    <h3><Link href={detailUrl}>{t.title}</Link></h3><p className="tour-card-description">{t.subtitle}</p>
