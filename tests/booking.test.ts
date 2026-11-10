@@ -106,6 +106,32 @@ test('availability reflects date, full group size, active holds, sold out dates 
  await (await db()).execute({sql:'UPDATE drafts SET expires=? WHERE id=?',args:[Date.now()-1,r.id]});assert.equal((await inspectDeparture(i)).remaining,3);assert.equal((await viewDraft(r.id,i.access)).state,'expired');
  await setDeparture(i.slug,future(74),0);assert.equal((await inspectDeparture({...i,date:future(74)})).available,false);await assert.rejects(()=>setDeparture('missing-package',future(74),2),/not found/);await assert.rejects(()=>setDeparture(i.slug,'2027-02-30',2),/valid date/);
 });
+test('unconfigured dates require confirmation; open dates respect limits, closures and payment capture',async()=>{
+ const {inspectDeparture,setDeparture}=await import('../lib/booking/service'),previous={...process.env},originalFetch=global.fetch,c=await db();
+ const i=input('city-and-dunes',future(106));
+ process.env.BOOKING_MODE='test';delete process.env.BOOKING_DEFAULT_CAPACITY;
+ process.env.RAZORPAY_KEY_ID='rzp_test_open_dates';process.env.RAZORPAY_KEY_SECRET='fixture-secret';process.env.RAZORPAY_WEBHOOK_SECRET='fixture-webhook';
+ global.fetch=async()=>Response.json({id:'order_open_'+randomUUID()});
+ try{
+  await c.execute({sql:'INSERT INTO departures VALUES(?,?,?,?)',args:[i.slug,i.date,24,'demo']});
+  const missing=await inspectDeparture(i);assert.equal(missing.status,'unconfirmed');assert.equal(missing.available,false);assert.doesNotMatch(missing.message,/another date/);
+  for(const invalid of ['','0','101','12people']){process.env.BOOKING_DEFAULT_CAPACITY=invalid;assert.equal((await inspectDeparture(i)).available,false)}
+  process.env.BOOKING_DEFAULT_CAPACITY='3';assert.equal((await inspectDeparture(i)).remaining,3);assert.equal((await inspectDeparture({...i,travelers:4})).status,'insufficient');
+  process.env.BOOKING_DEFAULT_CAPACITY='unlimited';
+  for(const t of seedTours())assert.equal((await inspectDeparture({...i,slug:t.slug,travelers:12})).available,true,t.slug);
+  const open=await inspectDeparture(i);assert.equal(open.status,'available');assert.equal(open.remaining,null);
+  const draft=await createDraft(i);await settle(draft.id,await paid(draft.id,i.access));assert.equal((await viewDraft(draft.id,i.access)).booking?.status,'reserved');
+  assert.equal((await inspectDeparture({...i,travelers:12})).available,true);
+  await setDeparture(i.slug,future(107),0);assert.equal((await inspectDeparture({...i,date:future(107)})).status,'sold_out');
+  await setDeparture(i.slug,future(108),2);assert.equal((await inspectDeparture({...i,date:future(108),travelers:3})).status,'insufficient');
+  const closing={...input(i.slug,future(109)),travelers:2},pending=await createDraft(closing);await setDeparture(closing.slug,closing.date,2);
+  await c.execute({sql:'UPDATE departures SET capacity=0 WHERE slug=? AND date=? AND mode=?',args:[closing.slug,closing.date,'test']});
+  await settle(pending.id,await paid(pending.id,closing.access));const rejected=await viewDraft(pending.id,closing.access);assert.equal(rejected.booking,null);assert.equal(rejected.state,'refund_required');
+ }finally{
+  global.fetch=originalFetch;
+  for(const k of ['BOOKING_MODE','BOOKING_DEFAULT_CAPACITY','RAZORPAY_KEY_ID','RAZORPAY_KEY_SECRET','RAZORPAY_WEBHOOK_SECRET']){if(previous[k]===undefined)delete process.env[k];else process.env[k]=previous[k]}
+ }
+});
 test('all traveler counts, occupancy choices, stay allowances and child counts preserve pricing invariants',()=>{
  let cases=0;for(const t of seedTours())for(let travelers=1;travelers<=12;travelers++)for(const stay of ['Budget','Comfort','Premium'] as const)for(const rooming of ['private','single','shared'] as const){const c={travelers,children:travelers>1?1:0,stay,rooming,transport:true,jeep:true,guide:true},q=quote(t.costs,t.nights,c,t.details?.extras||[]);assert.ok(q.total>=q.token&&q.balance>=0);assert.equal(q.total,q.balance+9900);assert.ok(q.margin>=.1);assert.ok(Number.isSafeInteger(q.total));cases++}assert.equal(cases,2592);
  const t=seedTours()[2],base={travelers:3,stay:'Comfort' as const,transport:true,jeep:false,guide:false};assert.equal(quote(t.costs,t.nights,{...base,children:1}).total,quote(t.costs,t.nights,base).total);

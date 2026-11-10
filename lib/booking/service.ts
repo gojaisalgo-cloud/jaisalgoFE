@@ -57,7 +57,7 @@ async function settleInternal(id:string,payment:Payment){
   if(payment.amount_refunded){await tx.execute({sql:"UPDATE drafts SET state='refund_required' WHERE id=?",args:[id]});await applyRefund(tx,payment.id,payment.amount_refunded);await tx.commit();return}
   if(['cancelled','refunded','refund_required'].includes(String(row.state))){await tx.execute({sql:"UPDATE drafts SET state='refund_required' WHERE id=?",args:[id]});await tx.commit();return}
   if(d.kind==='balance'){const br=await tx.execute({sql:'SELECT * FROM bookings WHERE draft_id=?',args:[d.parent!]});if(!br.rows[0]||br.rows[0].status!=='reserved'){await tx.execute({sql:"UPDATE drafts SET state='refund_required' WHERE id=?",args:[id]});await tx.commit();return}const b=JSON.parse(String(br.rows[0].payload)) as Booking;if(d.amount!==b.quote.total-b.paid){await tx.execute({sql:"UPDATE drafts SET state='refund_required' WHERE id=?",args:[id]});await tx.commit();return}b.paid+=d.amount;b.status='paid';await tx.execute({sql:"UPDATE bookings SET payload=?,status='paid' WHERE id=?",args:[JSON.stringify(b),b.id]});}
-  else{const dep=await tx.execute({sql:'SELECT capacity FROM departures WHERE slug=? AND date=? AND mode=?',args:[d.slug,d.date,d.mode]});if(Number(row.expires)<=Date.now()||!dep.rows[0]||Number(dep.rows[0].capacity)<await occupancy(tx,d.slug,d.date,id)+d.choices.travelers){await tx.execute({sql:"UPDATE drafts SET state='refund_required' WHERE id=?",args:[id]});await tx.commit();return}const b:Booking={...d,id:'JG-'+secretToken().slice(0,10).toUpperCase(),draftId:id,paymentId:payment.id,paid:d.amount,refunded:0,status:d.amount===d.quote.total?'paid':'reserved',created:new Date().toISOString()};await tx.execute({sql:'INSERT INTO bookings VALUES(?,?,?,?)',args:[b.id,id,JSON.stringify(b),b.status]});}
+  else{if(Number(row.expires)<=Date.now()||!(await availability(tx,d.slug,d.date,d.choices.travelers,id)).available){await tx.execute({sql:"UPDATE drafts SET state='refund_required' WHERE id=?",args:[id]});await tx.commit();return}const b:Booking={...d,id:'JG-'+secretToken().slice(0,10).toUpperCase(),draftId:id,paymentId:payment.id,paid:d.amount,refunded:0,status:d.amount===d.quote.total?'paid':'reserved',created:new Date().toISOString()};await tx.execute({sql:'INSERT INTO bookings VALUES(?,?,?,?)',args:[b.id,id,JSON.stringify(b),b.status]});}
   await tx.execute({sql:"UPDATE drafts SET state='captured' WHERE id=?",args:[id]});await tx.commit();
  }catch(e){await tx.rollback();throw e}finally{tx.close()}
 }
@@ -74,10 +74,21 @@ async function reconcileRefundInternal(p:{id:string;order_id:string;currency:str
 }
 
 type Executor=Pick<Transaction,'execute'>;
+export type DepartureStatus='available'|'unconfirmed'|'sold_out'|'insufficient';
+function defaultCapacity(){
+ const value=process.env.BOOKING_DEFAULT_CAPACITY?.trim();
+ if(value==='unlimited')return null;
+ if(value&&/^[1-9]\d?$|^100$/.test(value))return Number(value);
+ return undefined;
+}
 async function availability(tx:Executor,slug:string,date:string,people:number,exclude=''){
- const r=await tx.execute({sql:'SELECT capacity FROM departures WHERE slug=? AND date=? AND mode=?',args:[slug,date,mode()]}),capacity=r.rows[0]?Number(r.rows[0].capacity):mode()==='demo'?24:0;
+ const r=await tx.execute({sql:'SELECT capacity FROM departures WHERE slug=? AND date=? AND mode=?',args:[slug,date,mode()]});
+ const capacity=r.rows[0]?Number(r.rows[0].capacity):mode()==='demo'?24:defaultCapacity();
+ if(capacity===undefined)return {available:false,remaining:0,status:'unconfirmed' as DepartureStatus,message:'Availability for this date needs confirmation. Contact our travel desk before paying.'};
+ if(capacity===null)return {available:true,remaining:null,status:'available' as DepartureStatus,message:'Available for your group'};
  const remaining=Math.max(0,capacity-await occupancy(tx,slug,date,exclude)),available=people<=remaining;
- return {available,remaining,message:available?(mode()==='demo'?'Demo date available · no real inventory reserved':'Available for your group'):remaining?`Only ${remaining} places remain. Choose a smaller group or another date.`:'This date is unavailable. Choose another date.'};
+ const status:DepartureStatus=available?'available':remaining?'insufficient':'sold_out';
+ return {available,remaining,status,message:available?(mode()==='demo'?'Demo date available · no real inventory reserved':'Available for your group'):remaining?`Only ${remaining} places remain. Choose a smaller group or another date.`:'This date is unavailable. Choose another date.'};
 }
 export async function inspectDeparture(raw:unknown){const input=selectionSchema.parse(raw),result=await publicQuote(input.slug,input,input.date);return {...result,...await availability(await db(),input.slug,input.date,input.travelers)}}
 export async function setDeparture(slug:string,date:string,capacity:number){

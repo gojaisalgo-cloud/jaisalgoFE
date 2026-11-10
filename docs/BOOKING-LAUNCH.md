@@ -46,3 +46,10 @@ Admins can search by booking ID, name, mobile, package or date, filter active/pa
 Browser verification used an isolated local database with explicit demo mode, not production money: both full and ₹99 checkout succeeded, a three-traveller selection persisted across refresh, PDF downloaded, the limited QR page omitted contact data, My Bookings reopened the ticket, and early balance payment remained disabled. The downloaded A5 PDF was rendered and visually checked across all three pages. Test/production source builds, typecheck, 82 tests and the isolated authenticated admin HTTP suite passed. Production dependency audit reports no known vulnerabilities. Repository lint retains pre-existing issues; this is not claimed as a clean lint run.
 
 Production merchant/database/supplier setup above is still required. This update does not activate a payment account, invent approved inventory or bypass live-payment safeguards.
+
+
+## Open-date reservations
+
+Set `BOOKING_DEFAULT_CAPACITY=unlimited` to accept reservations without a daily traveler limit for package dates without an individual capacity entry. This is the owner-selected operating policy, not a claim of supplier-confirmed room or vehicle inventory. The existing valid travel-date range still applies. Set a per-date departure capacity in the travel desk to override this default; zero closes a date. A numeric default of 1–100 is also supported and accounts for active holds and bookings. Blank or invalid values require individual departure entries and display a confirmation request rather than a sold-out message. Demo mode retains its separate simulated capacity.
+
+The same policy is checked when creating an order, retrying it and fulfilling a captured payment. A subsequently closed date, insufficient remaining places or an expired hold puts a captured payment into refund review instead of issuing a ticket. Open dates do not approve supplier costs, tax treatment, venues or refund terms. Those existing paid-checkout requirements still apply. Set the capacity value in Vercel Production and deploy to apply it there.
