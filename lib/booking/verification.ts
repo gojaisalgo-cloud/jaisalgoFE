@@ -27,5 +27,5 @@ export async function publicVerification(token:string){
  if(!row)return null;
  const b=JSON.parse(String(row.payload)) as Booking;
  // Never return the customer, contact, access key, provider reference or private URL.
- return {id:b.id,title:b.title,date:b.date,travelers:b.choices.travelers,status:String(row.status),mode:b.mode,total:b.quote.total,paid:b.paid,refunded:b.refunded};
+ return {confirmationPending:b.confirmationPending===true,id:b.id,title:b.title,date:b.date,travelers:b.choices.travelers,status:String(row.status),mode:b.mode,total:b.quote.total,paid:b.paid,refunded:b.refunded};
 }

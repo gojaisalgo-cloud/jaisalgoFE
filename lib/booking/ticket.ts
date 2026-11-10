@@ -3,11 +3,11 @@ import type {Booking} from './service';
 import {inclusionLabel} from './package-clarity';
 import {money} from './pricing';
 export const ticketDate=(date:string)=>!/^\d{4}-\d{2}-\d{2}$/.test(date)||Number.isNaN(Date.parse(date))?'Choose a date':new Intl.DateTimeFormat('en-IN',{day:'numeric',month:'short',year:'numeric',timeZone:'Asia/Kolkata'}).format(new Date(date+'T12:00:00+05:30'));
-export function paymentLabel(b:Booking){if(b.status==='refunded')return 'Refunded';if(b.status==='partially_refunded')return 'Partially refunded';if(b.status==='cancelled')return 'Cancelled';if(b.status==='cancellation_requested')return 'Cancellation requested';if(b.status==='refund_requested')return 'Refund review requested';return b.paid>=b.quote.total?'Confirmed · fully paid':'Reserved · ₹99 paid'}
+export function paymentLabel(b:Booking){if(b.status==='refunded')return 'Refunded';if(b.status==='partially_refunded')return 'Partially refunded';if(b.status==='cancelled')return 'Cancelled';if(b.status==='cancellation_requested')return 'Cancellation requested';if(b.status==='refund_requested')return 'Refund review requested';return b.paid>=b.quote.total?'Confirmed · fully paid':b.confirmationPending?'₹99 paid · Confirmation pending':'Reserved · ₹99 paid'}
 export const activeBooking=(b:Booking)=>['reserved','paid'].includes(b.status);
 export const reportingTime=(b:Booking)=>b.operations?.reporting||(b.details?.venue.confirmed?b.details.culture.reporting:'To be confirmed');
 export const meetingPlace=(b:Booking)=>b.operations?.pickup||(b.details?.venue.confirmed?b.details.venue.name:'Jaisalmer, Rajasthan');
-export const ticketHeading=(b:Booking)=>b.status==='refunded'?'Your payment was refunded.':b.status==='cancelled'?'Your booking was cancelled.':activeBooking(b)?'Your ticket is ready.':'Your booking is under review.';
+export const ticketHeading=(b:Booking)=>b.status==='refunded'?'Your payment was refunded.':b.status==='cancelled'?'Your booking was cancelled.':b.status==='reserved'&&b.confirmationPending?'Your ₹99 reservation is recorded.':activeBooking(b)?'Your ticket is ready.':'Your booking is under review.';
 const escape=(s:string)=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]!));
 function wrap(value:string,limit=31,max=3){const words=value.split(/\s+/),lines:string[]=[];let line='';for(const word of words){if((line+' '+word).trim().length>limit&&line){lines.push(line);line=word}else line=(line+' '+word).trim()}if(line)lines.push(line);return lines.slice(0,max)}
 export function ticketSvg(b:Booking,qrData:string){
