@@ -3282,3 +3282,48 @@ button:focus-visible,summary:focus-visible { outline-color:var(--focus); }
   .article-booking-callout { padding:22px 20px; }
   .seo-attraction-grid>a>div:last-child { padding:16px; }
 }
+
+/* Shared customer date calendar; a portal keeps it clear of clipped search/card containers. */
+.travel-date-control { display:block; min-width:0; width:100%; }
+.travel-search-fields>label>.travel-date-control { display:block; margin:0; color:var(--ink); font:inherit; }
+.travel-date-trigger { display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; min-width:0; min-height:46px; padding:10px 12px; border:1px solid var(--control-border); border-radius:12px; color:var(--ink); background:white; font:600 16px/1.5 var(--font-body); text-align:left; cursor:pointer; }
+.travel-date-trigger>span { min-width:0; }
+.travel-date-trigger>svg { flex:none; color:var(--accent); }
+.travel-date-trigger .date-placeholder { color:var(--muted); font-weight:500; }
+.travel-date-trigger:hover { border-color:#9eb3a6; }
+.travel-date-trigger[aria-expanded=true] { border-color:var(--accent); box-shadow:0 0 0 3px #254a3e0d; }
+.travel-date-trigger:disabled { cursor:not-allowed; opacity:.6; }
+.travel-date-trigger[data-invalid=true] { border-color:var(--error); }
+.travel-search-fields .travel-date-trigger { border:0; border-radius:6px; padding:0; background:transparent; font-size:18px; }
+.travel-search-fields .travel-date-trigger[aria-expanded=true] { box-shadow:none; }
+.date-validation { display:block; margin-top:6px; font-size:13px; color:var(--error-text); }
+.travel-calendar { position:fixed; z-index:160; padding:16px; max-height:calc(100dvh - 32px); overflow:auto; overscroll-behavior:contain; border:1px solid var(--line); border-radius:18px; background:white; color:var(--ink); box-shadow:0 16px 48px #213b3526,0 2px 8px #213b3508; font:400 14px/1.5 var(--font-body); }
+.travel-calendar-header { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:16px; }
+.travel-calendar-header>strong { font-size:15px; line-height:1.4; font-weight:750; }
+.travel-calendar-header>div { display:flex; align-items:center; gap:4px; flex:none; }
+.travel-calendar-header button { display:grid; place-items:center; width:32px; height:36px; padding:0; border:1px solid var(--line); border-radius:8px; color:var(--ink); background:white; cursor:pointer; }
+.travel-calendar-header button:hover:not(:disabled) { background:#edf3ef; border-color:#b6cabc; }
+.travel-calendar-header button:disabled { opacity:.3; cursor:not-allowed; }
+.travel-calendar-weekdays,.travel-calendar-days { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:3px; }
+.travel-calendar-weekdays { margin-bottom:6px; }
+.travel-calendar-weekdays>span { text-align:center; color:var(--muted); font-size:11px; font-weight:650; padding:4px 0; }
+.travel-calendar-days button { display:grid; place-items:center; min-width:0; height:40px; padding:0; margin:0; border:1px solid transparent; border-radius:9px; color:var(--ink); background:white; font:600 14px/1 var(--font-body); cursor:pointer; }
+.travel-calendar-days button[data-outside] { color:var(--muted); font-weight:400; }
+.travel-calendar-days button:hover:not(:disabled) { background:#edf3ef; border-color:#c5d7ca; }
+.travel-calendar-days button:disabled { color:#b6bdb8; cursor:not-allowed; }
+.travel-calendar-days button[aria-pressed=true] { color:white; background:var(--accent); border-color:var(--accent); }
+.travel-calendar button:focus-visible { outline:2px solid var(--accent); outline-offset:1px; }
+.travel-calendar-footer { display:flex; justify-content:space-between; align-items:center; gap:12px; border-top:1px solid var(--line); margin-top:12px; padding-top:12px; }
+.travel-calendar-footer small { color:var(--muted); font-size:12px; line-height:1.6; }
+.travel-calendar-footer button { border:0; padding:8px 4px; background:none; color:var(--accent); font:650 13px/1.5 var(--font-body); cursor:pointer; }
+@media (max-width:600px) {
+  .travel-search-fields .travel-date-trigger { font-size:16px; gap:6px; }
+  .travel-calendar { padding:14px; }
+  .travel-calendar-header { gap:6px; }
+  .travel-calendar-header>strong { font-size:14px; }
+}
+
+@media (max-width:360px) {
+  .information-page .detail-booking-fields { grid-template-columns:1fr; }
+  .travel-search-fields .travel-date-trigger { font-size:14px; }
+}
