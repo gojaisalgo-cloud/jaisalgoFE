@@ -47,6 +47,12 @@ export async function queuePaymentAlert(tx:Executor,b:Booking,paymentId:string,a
  const target=alertTarget();
  await tx.execute({sql:"INSERT OR IGNORE INTO booking_alerts(id,booking_id,payment_id,target,message,state,created,next_attempt) VALUES(?,?,?,?,?,'pending',?,?)",args:[hash('payment:'+paymentId),b.id,paymentId,target,paymentAlertMessage(b,amount,phase),Date.now(),Date.now()]});
 }
+/** One consented, verified new-user entry; no sign-in tokens or Google subject reach WhatsApp. */
+export async function queueSignupAlert(tx:Executor,user:{id:string;name:string;email:string;consentAt:string},now=Date.now()){
+ if(process.env.CUSTOMER_SIGNUP_ALERTS_ENABLED!=='true'||!user.consentAt)return;
+ const key='signup:'+user.id,message=['JAISALGO · NEW GOOGLE SIGN-IN',`Name: ${inline(user.name)}`,`Google email: ${inline(user.email,320)}`,`Joined: ${new Date(now).toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})} IST`,'The user agreed to share these contact details with the private travel desk group.','New user entry only — no booking or payment has been made.'].join('\n');
+ await tx.execute({sql:"INSERT OR IGNORE INTO booking_alerts(id,booking_id,payment_id,target,message,state,created,next_attempt) VALUES(?,?,?,?,?,'pending',?,?)",args:[hash(key),user.id,key,alertTarget(),message,now,now]});
+}
 /** Only definite non-acceptance is retried automatically. Unknown sends need review to avoid duplicate group posts. */
 export async function drainPaymentAlerts(c:Client,now=Date.now()){
  const settings=whatsappSettings();if(!settings)return {configured:false,accepted:0,pending:0,review:0};
@@ -58,7 +64,10 @@ export async function drainPaymentAlerts(c:Client,now=Date.now()){
   if(!changed.rowsAffected)continue;
   const finish=async(state:string,error:string,providerId='')=>c.execute({sql:'UPDATE booking_alerts SET state=?,last_error=?,provider_id=?,next_attempt=?,claim=NULL,lease_until=0 WHERE id=? AND claim=?',args:[state,error,providerId,now+Math.min(3600000,60000*2**Math.min(6,Number(row.attempts))),row.id,claim]});
   try{
-   if(String(row.payment_id)==='checkout:'+row.booking_id){
+   if(String(row.payment_id)==='signup:'+row.booking_id){
+    const user=(await c.execute({sql:'SELECT consent_at FROM customer_users WHERE id=?',args:[row.booking_id]})).rows[0];
+    if(process.env.CUSTOMER_SIGNUP_ALERTS_ENABLED!=='true'||!user?.consent_at){await finish('cancelled','signup_not_active');continue}
+   }else if(String(row.payment_id)==='checkout:'+row.booking_id){
     const draft=(await c.execute({sql:'SELECT payload,state FROM drafts WHERE id=?',args:[row.booking_id]})).rows[0];
     const paid=(await c.execute({sql:'SELECT id FROM payments WHERE draft_id=?',args:[row.booking_id]})).rows[0];
     const d=draft?JSON.parse(String(draft.payload)) as Draft:null;

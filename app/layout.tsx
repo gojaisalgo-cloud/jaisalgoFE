@@ -4,6 +4,7 @@ import {AnalyticsProvider} from '@/components/analytics-provider';
 import './analytics.css';
 import type {Metadata} from 'next';
 import localFont from 'next/font/local';
+import {CustomerEntry} from '@/components/customer-entry';
 import {Navigation} from '@/components/navigation';
 import {Footer} from '@/components/footer';
 import {DiscoveryAssistance} from '@/components/discovery-assistance';
@@ -25,7 +26,8 @@ import './booking-flow.css';
 import './polish.css';
 import './discovery.css';
 import './travel-ui.css';
+import './customer-entry.css';
 const display=localFont({src:[{path:'../public/fonts/cormorant.woff2',weight:'300 700',style:'normal'},{path:'../public/fonts/cormorant-italic.woff2',weight:'300 700',style:'italic'}],variable:'--font-display',display:'swap',fallback:['Georgia'],adjustFontFallback:'Times New Roman'});
 const body=localFont({src:'../public/fonts/manrope.woff2',weight:'200 800',variable:'--font-body',display:'swap',fallback:['Arial'],adjustFontFallback:'Arial'});
 export const metadata:Metadata={metadataBase:new URL(config.url),title:{default:'JaisalGo · Jaisalmer Travel',template:'%s | JaisalGo'},description:'Thoughtful Jaisalmer travel planning, package information and destination guides.',robots:{index:searchIndexable(),follow:true},verification:{...(process.env.GOOGLE_SITE_VERIFICATION?{google:process.env.GOOGLE_SITE_VERIFICATION}:{}),...(process.env.BING_SITE_VERIFICATION?{other:{'msvalidate.01':process.env.BING_SITE_VERIFICATION}}:{})}};
-export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en" data-scroll-behavior="auto" className={`${display.variable} ${body.variable}`}><body><a className="skip-link" href="#main">Skip to content</a><Navigation/><main id="main">{children}</main><Footer/><DiscoveryAssistance phone={config.phone} phoneHref={config.phoneHref} whatsapp={config.whatsapp}/><AnalyticsProvider posthogEnabled={Boolean(process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN&&process.env.NEXT_PUBLIC_POSTHOG_HOST&&process.env.NEXT_PUBLIC_POSTHOG_ENABLED!=='false'&&process.env.ANALYTICS_ENABLED!=='false')} enabled={process.env.ANALYTICS_ENABLED!=='false'&&databaseConfigured()} campaigns={[...configuredCampaigns()]}/></body></html>}
+export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en" data-scroll-behavior="auto" className={`${display.variable} ${body.variable}`}><body><a className="skip-link" href="#main">Skip to content</a><Navigation/><main id="main">{children}</main><Footer/><DiscoveryAssistance phone={config.phone} phoneHref={config.phoneHref} whatsapp={config.whatsapp}/><CustomerEntry/><AnalyticsProvider posthogEnabled={Boolean(process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN&&process.env.NEXT_PUBLIC_POSTHOG_HOST&&process.env.NEXT_PUBLIC_POSTHOG_ENABLED!=='false'&&process.env.ANALYTICS_ENABLED!=='false')} enabled={process.env.ANALYTICS_ENABLED!=='false'&&databaseConfigured()} campaigns={[...configuredCampaigns()]}/></body></html>}
