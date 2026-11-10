@@ -1,5 +1,5 @@
 import type {Client,Transaction} from '@libsql/client';
-import type {Booking} from './service';
+import type {Booking,Draft} from './service';
 import {hash,secretToken} from './security';
 import {money} from './pricing';
 
@@ -23,10 +23,28 @@ export function paymentAlertMessage(b:Booking,amount:number,phase:'token'|'balan
   `Arrangements: ${b.confirmationPending?'Travel desk confirmation pending':'See booking details'}`,
   'Open the travel desk to manage this reservation.'].join('\n');
 }
+export function checkoutAlertMessage(d:Draft){
+ return ['JAISALGO · ₹99 CHECKOUT STARTED — NOT PAID',
+  `Checkout reference: ${d.id}`,`Package: ${inline(d.title)}`,`Travel date: ${d.date}`,`Travelers: ${d.choices.travelers}${d.choices.children?` (${d.choices.children} children included)`:''}`,
+  `Customer: ${inline(d.name)}`,`Mobile: ${inline(d.phone,30)}`,
+  ...(d.whatsapp?[`WhatsApp contact: ${inline(d.whatsapp,30)}`]:[]),
+  `Requested payment: ${money(d.amount)}`,`Estimated package total: ${money(d.quote.total)}`,
+  `Submitted: ${d.consentAt}`,
+  'Payment was not confirmed when this checkout was submitted. This is an enquiry, not a paid booking.',
+  'Supplier arrangements require confirmation. Check the travel desk before following up.'].join('\n');
+}
+function alertTarget(){try{const invite=new URL(process.env.WHATSAPP_GROUP_INVITE_URL||'');if(invite.protocol==='https:'&&invite.hostname==='chat.whatsapp.com')return hash(invite.origin+invite.pathname)}catch{}return ''}
+/** Validated, consented live ₹99 submissions only; one event per checkout, including retries. */
+export async function queueCheckoutAlert(tx:Executor,d:Draft){
+ if(d.mode!=='live'||d.kind!=='token'||d.paymentPlan==='full'||d.amount!==9900||!d.consentAt)return;
+ const key='checkout:'+d.id,now=Date.now();
+ // The legacy payment_id column is the unique event key; checkout events are namespaced.
+ await tx.execute({sql:"INSERT OR IGNORE INTO booking_alerts(id,booking_id,payment_id,target,message,state,created,next_attempt) VALUES(?,?,?,?,?,'pending',?,?)",args:[hash(key),d.id,key,alertTarget(),checkoutAlertMessage(d),now,now]});
+}
 /** Called inside the captured-payment transaction. No provider credentials or private ticket capability is stored. */
 export async function queuePaymentAlert(tx:Executor,b:Booking,paymentId:string,amount:number,phase:'token'|'balance'){
  if(b.mode!=='live')return;
- let target='';try{const invite=new URL(process.env.WHATSAPP_GROUP_INVITE_URL||'');if(invite.protocol==='https:'&&invite.hostname==='chat.whatsapp.com')target=hash(invite.origin+invite.pathname)}catch{}
+ const target=alertTarget();
  await tx.execute({sql:"INSERT OR IGNORE INTO booking_alerts(id,booking_id,payment_id,target,message,state,created,next_attempt) VALUES(?,?,?,?,?,'pending',?,?)",args:[hash('payment:'+paymentId),b.id,paymentId,target,paymentAlertMessage(b,amount,phase),Date.now(),Date.now()]});
 }
 /** Only definite non-acceptance is retried automatically. Unknown sends need review to avoid duplicate group posts. */
@@ -40,8 +58,15 @@ export async function drainPaymentAlerts(c:Client,now=Date.now()){
   if(!changed.rowsAffected)continue;
   const finish=async(state:string,error:string,providerId='')=>c.execute({sql:'UPDATE booking_alerts SET state=?,last_error=?,provider_id=?,next_attempt=?,claim=NULL,lease_until=0 WHERE id=? AND claim=?',args:[state,error,providerId,now+Math.min(3600000,60000*2**Math.min(6,Number(row.attempts))),row.id,claim]});
   try{
-   const payment=(await c.execute({sql:'SELECT p.mode,p.refunded,b.status FROM payments p JOIN bookings b ON b.id=? WHERE p.id=?',args:[row.booking_id,row.payment_id]})).rows[0];
-   if(!payment||payment.mode!=='live'||Number(payment.refunded)>0||!['reserved','paid'].includes(String(payment.status))){await finish('cancelled','booking_not_active');continue}
+   if(String(row.payment_id)==='checkout:'+row.booking_id){
+    const draft=(await c.execute({sql:'SELECT payload,state FROM drafts WHERE id=?',args:[row.booking_id]})).rows[0];
+    const paid=(await c.execute({sql:'SELECT id FROM payments WHERE draft_id=?',args:[row.booking_id]})).rows[0];
+    const d=draft?JSON.parse(String(draft.payload)) as Draft:null;
+    if(!d||d.mode!=='live'||d.kind!=='token'||d.paymentPlan==='full'||d.amount!==9900||!d.consentAt||paid||['captured','refunded','refund_required','payment_review'].includes(String(draft?.state))){await finish('cancelled','checkout_not_unpaid');continue}
+   }else{
+    const payment=(await c.execute({sql:'SELECT p.mode,p.refunded,b.status FROM payments p JOIN bookings b ON b.id=? WHERE p.id=?',args:[row.booking_id,row.payment_id]})).rows[0];
+    if(!payment||payment.mode!=='live'||Number(payment.refunded)>0||!['reserved','paid'].includes(String(payment.status))){await finish('cancelled','booking_not_active');continue}
+   }
    const response=await fetch(settings.endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chatId:settings.group,message:row.message,linkPreview:false}),cache:'no-store',redirect:'error',signal:AbortSignal.timeout(8000)});
    if([401,403,429].includes(response.status)){await finish('pending','provider_'+response.status);continue}
    if(!response.ok){await finish('review','provider_'+response.status);continue}
