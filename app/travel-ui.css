@@ -1,10 +1,10 @@
 /* JaisalGo travel system. Existing pricing, status and payment semantics are retained. */
 :root {
-  --canvas:#f8f7f4;
-  --ivory:#f8f7f4;
-  --paper:#f1ede5;
+  --canvas:#fff;
+  --ivory:#fff;
+  --paper:#fff;
   --surface:#fff;
-  --surface-soft:#f4f3ef;
+  --surface-soft:#fff;
   --ink:#213b35;
   --text:#43534e;
   --muted:#69746e;
@@ -92,7 +92,7 @@ h4 {
   position:sticky;
   inset:0 0 auto;
   height:112px;
-  background:#fffffffa;
+  background:#fff;
   color:var(--ink);
   border-bottom:1px solid var(--line);
   box-shadow:0 2px 15px #15372905;
@@ -100,7 +100,7 @@ h4 {
 }
 .nav-utility {
   height:32px;
-  background:#f3f3ed;
+  background:#fff;
   border-bottom:1px solid var(--line);
   font-size:10px;
   color:#58675e
@@ -747,7 +747,7 @@ h4 {
   align-items:center;
   padding:32px;
   border-radius:24px;
-  background:#eeeade;
+  background:#fff;
   border:1px solid #e7e0cf
 }
 .stay-discovery-images {
@@ -829,8 +829,9 @@ h4 {
   align-items:center;
   gap:24px;
   border-radius:22px;
-  background:#203f34;
-  color:white;
+  background:#fff;
+  color:var(--ink);
+  border:1px solid var(--line);
   position:relative;
   overflow:hidden
 }
@@ -840,23 +841,23 @@ h4 {
   flex:none;
   display:grid;
   place-items:center;
-  border:1px solid #e4ce9c4f;
+  border:1px solid var(--line);
   border-radius:50%;
-  color:#e3c68b;
+  color:var(--accent);
   background:#ffffff05
 }
 .custom-trip-banner h2 {
-  color:white;
+  color:var(--ink);
   font-size:28px;
   margin:0 0 8px
 }
 .custom-trip-banner p {
   font-size:13px;
-  color:#d6dfd3;
+  color:var(--text);
   margin:0
 }
 .custom-trip-banner .overline {
-  color:#dec48e;
+  color:#946134;
   margin-bottom:6px;
   font-size:9px
 }
@@ -1450,7 +1451,7 @@ h4 {
 .minimal-planner .brief-panel {
   padding:30px;
   border-radius:20px;
-  background:#eef0e5;
+  background:#fff;
   top:140px
 }
 .minimal-planner .brief-panel h2 {
@@ -1576,7 +1577,7 @@ h4 {
 }
 footer {
   border-top:1px solid var(--line);
-  background:#eeeee6
+  background:#fff
 }
 .footer-top {
   padding-top:52px
