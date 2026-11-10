@@ -3468,3 +3468,77 @@ p { text-wrap:pretty; }
   .search-mobile-terms[open]>summary>svg { transform:rotate(180deg); }
   .search-mobile-terms>p { margin:6px 0 0; font-size:12px; line-height:1.7; color:var(--text); }
 }
+
+/* Benefit tiles and package cards share a quieter, more useful hierarchy. */
+.travel-promises { gap:12px; padding-top:22px; }
+.travel-promises>span,.travel-promises>a {
+  align-items:flex-start; gap:12px; padding:18px; border:1px solid var(--line);
+  border-radius:16px; background:white; font-size:13px; line-height:1.7;
+}
+.travel-promises>*>svg { width:34px; height:34px; padding:8px; border-radius:10px; background:#edf4ef; }
+.travel-promises strong,.travel-promises>a strong { display:block; margin:0 0 5px; font-size:14px; font-weight:650; line-height:1.45; }
+.travel-promises>*>span { min-width:0; }
+.travel-promises>a { align-items:center; background:#f5f8f5; }
+.travel-promises>a>span:not(.direction-icon) { flex:1; }
+.travel-promises>a small { display:block; font-size:12px; line-height:1.6; color:var(--muted); }
+.travel-promises>a>.direction-icon { width:28px; height:28px; flex:0 0 28px; background:white; }
+.compact-tour-card .tour-card-body { padding:22px; }
+.compact-tour-card .tour-card-kicker { font-size:10px; letter-spacing:.09em; margin-bottom:8px; color:#89653a; }
+.compact-tour-card h3 { font-size:22px; font-weight:700; line-height:1.3; margin-bottom:8px; }
+.compact-tour-card .tour-card-description { margin-bottom:12px; font-size:14px; line-height:1.65; }
+.compact-tour-card .tour-night-plan { gap:6px; margin-bottom:12px; }
+.tour-night-plan>span:has(svg) { padding:4px 8px; border:1px solid var(--line); border-radius:7px; background:#f8faf8; font-size:11px; }
+.compact-tour-card .tour-night-plan>small { font-size:11px; color:var(--muted); }
+.compact-tour-card .card-availability { padding-bottom:12px; font-size:11px; }
+.compact-tour-card .tour-card-price { margin-top:auto; padding-top:16px; align-items:center; }
+.compact-tour-card .tour-card-price>div>small { font-size:11px; line-height:1.5; }
+.compact-tour-card .tour-card-price>div>strong { font-size:32px; font-weight:750; line-height:1.25; letter-spacing:-.035em; }
+.compact-tour-card .tour-card-price .token-chip { border-radius:10px; padding:7px 10px; background:#fbf4e8; border-color:#ebddc3; }
+.compact-tour-card .token-chip b { font-size:16px; line-height:1.4; }
+.compact-tour-card .token-chip b span,.compact-tour-card .token-chip>small { font-size:11px; }
+.compact-tour-card .tour-price-basis { margin:8px 0 12px; font-size:12px; line-height:1.6; }
+.compact-tour-card .tour-group-estimate { margin:0 0 12px; padding:10px 12px; background:#f5f8f5; border-color:#e0e7e1; border-radius:10px; }
+.compact-tour-card .tour-group-estimate>span { font-size:12px; line-height:1.5; }
+.compact-tour-card .tour-group-estimate small { font-size:11px; line-height:1.5; }
+.compact-tour-card .tour-group-estimate strong { font-size:16px; }
+.tour-inclusions { margin:0 0 10px; padding:0; border:0; }
+.tour-inclusions>summary { display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:44px; padding:10px 0; list-style:none; font-size:13px; font-weight:600; line-height:1.5; color:var(--ink); }
+.tour-inclusions>summary::-webkit-details-marker { display:none; }
+.tour-inclusions>summary>svg { flex:none; color:var(--accent); }
+.tour-inclusions[open]>summary>svg { transform:rotate(180deg); }
+.compact-tour-card .tour-inclusions .package-card-highlights { margin:0; padding:12px; border:1px solid var(--line); border-radius:12px; background:#fafbf9; gap:14px 12px; }
+.compact-tour-card .tour-inclusions .package-card-highlights>div>span { font-size:11px; margin-bottom:4px; }
+.compact-tour-card .tour-inclusions .package-card-highlights strong { font-size:12px; font-weight:550; }
+.compact-tour-card .package-options-button { width:100%; min-height:44px; margin:0 0 12px; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:#f8faf8; font-size:12px; line-height:1.5; }
+.compact-tour-card .package-options-button:hover { background:#edf4ef; border-color:#c1d2c6; }
+.compact-tour-card .tour-card-actions { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px; margin:0; padding-top:0; border:0; }
+.compact-tour-card .tour-card-actions>a { min-width:0; min-height:46px; justify-content:center; gap:8px; padding:10px 8px; border-radius:10px; font-size:13px; line-height:1.5; }
+.compact-tour-card .tour-card-actions .direction-icon,.compact-tour-card .package-options-button .direction-icon { flex:0 0 18px; width:18px; height:18px; min-width:18px; padding:0; background:transparent; border:0; color:inherit; }
+.compact-tour-card .estimate-tag { margin:12px 0 0; font-size:11px; line-height:1.65; }
+@media(max-width:600px) {
+  .travel-promises { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; padding-top:16px; }
+  .travel-promises>span { flex-direction:row; gap:8px; padding:12px; }
+  .travel-promises>span,.travel-promises>a { font-size:12px; line-height:1.65; }
+  .travel-promises strong,.travel-promises>a strong { font-size:13px; margin-bottom:5px; }
+  .travel-promises>a { grid-column:1/-1; gap:10px; padding:14px; }
+  .travel-promises>a strong { display:block; }
+  .travel-promises>*>svg { width:30px; height:30px; padding:7px; }
+  .travel-promises>a>.direction-icon { width:26px; height:26px; flex-basis:26px; }
+  .travel-promises>a small { font-size:11px; }
+  .compact-tour-card .tour-card-body { padding:18px; }
+  .compact-tour-card h3 { font-size:21px; }
+  .compact-tour-card .tour-card-description { font-size:13px; }
+  .compact-tour-card .tour-card-actions .button { padding:10px 8px; font-size:13px; margin:0; }
+}
+
+.promise-compact { display:none; }
+@media(max-width:600px) {
+  .travel-promises>span .promise-full { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  .travel-promises>span .promise-compact { display:block; flex:1; }
+  .travel-promises>span>svg { width:26px; height:26px; padding:6px; }
+  .travel-promises>a:has(>.direction-icon) { gap:10px; padding:12px; }
+}
+.compact-tour-card .tour-card-actions { align-items:stretch; }
+.compact-tour-card .tour-card-actions>.tour-detail-link,
+.compact-tour-card .tour-card-actions>.button { min-height:48px; height:100%; margin:0; padding:10px 8px; font-size:13px; }
+@media(max-width:360px) { .compact-tour-card .tour-card-actions .direction-icon { display:none; } }
