@@ -1,3 +1,6 @@
+import {TravelSearch} from '@/components/travel-search';
+import {travelDateBounds} from '@/lib/booking/preferences';
+import {today} from '@/lib/booking/security';
 import {bookingPaymentTerms} from '@/lib/booking/customer-copy';
 import type {Metadata} from 'next';
 import {mode} from '@/lib/booking/payments';
@@ -16,9 +19,8 @@ export default async function Packages({searchParams}:{searchParams:Promise<Quer
   const all=await publishedTours(),query=await searchParams;
   return <div className="wrap booking-list-page">
     {!hasSelection(query)&&<StructuredData data={listSchema('Jaisalmer tour packages','/packages',all.map(t=>({title:t.title,path:`/packages/${t.slug}`})))}/>}
-    <div className="overline">JAISALMER, YOUR WAY</div>
-    <h1>Jaisalmer tour packages.<br/><em>Your kind of escape.</em></h1>
-    <p>From a short camel ride to a private desert escape. Compare the itinerary, stay, meals and full estimate, then find your pace.</p>
+    <header className="package-list-heading"><div><span className="overline">JAISALMER, YOUR WAY</span><h1>Your next great escape.</h1><p>Find your perfect mix of golden streets, desert skies and a little adventure.</p></div><span className="listing-destination">Rajasthan, India · Jaisalmer</span></header>
+    <TravelSearch {...travelDateBounds(today())} suggestions={['Jaisalmer','Sam','Khuri','Camel',...all.map(t=>t.title)]} compact/>
     <div className="booking-mode-note">Compare the charging basis: per person, tent or vehicle. All prices are provisional. {bookingPaymentTerms} ₹99 is part of the total. {mode()==='demo'?'Demo checkout: no money or real reservation is taken.':mode()==='test'?'Gateway test checkout: no real charge or travel reservation.':'Review the confirmed departure and accepted terms before paying.'}</div>
     <TourCatalog tours={all}/><PackageGuide/>
     <nav className="search-context-links" aria-label="Jaisalmer planning guides"><h2>A little clarity before you choose.</h2>{guideLinks().map(link=><Link key={link.path} href={link.path}>{link.title}</Link>)}<Link href="/travel-guide">All Jaisalmer travel guides</Link></nav>

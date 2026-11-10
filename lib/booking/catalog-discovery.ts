@@ -14,7 +14,7 @@ export type Facet='category'|'style'|'place'|'stayType'|'transfer'|'tour'|'night
 export type CatalogRecord={tour:Tour;kind:string;stayType:string;places:string[];search:string;perPerson:number;total:number;travelers:number;transfer:string};
 export function catalogRecords(tours:Tour[]):CatalogRecord[]{return tours.map(t=>{
  const d=packageDetails(t),c=defaultChoices(t),q=quote(t.costs,t.nights,c,d.extras);
- return {tour:t,kind:d.kind,stayType:!t.nights?'none':d.stayTypeSpecified?d.stayType:'not-specified',places:[...new Set(d.attractions)],search:[t.title,t.subtitle,t.category,t.area,d.kind,d.stayType,...d.attractions,...t.styles].join(' ').toLowerCase(),perPerson:q.perPerson,total:q.total,travelers:c.travelers,transfer:d.defaultTransport?'allowance':'own'};
+ return {tour:t,kind:d.kind,stayType:!t.nights?'none':d.stayTypeSpecified?d.stayType:'not-specified',places:[...new Set(d.attractions)],search:[t.title,t.subtitle,t.category,t.area,d.location,d.kind,d.stayType,...d.attractions,...t.styles].join(' ').toLowerCase(),perPerson:q.perPerson,total:q.total,travelers:c.travelers,transfer:d.defaultTransport?'allowance':'own'};
 })}
 const array=(p:URLSearchParams,key:string)=>[...new Set((p.get(key)||'').split('|').filter(Boolean))];
 const number=(p:URLSearchParams,key:string)=>{const value=p.get(key);if(value===null||value.trim()==='')return undefined;const n=Number(value);return Number.isSafeInteger(n)&&n>=0?n:undefined};

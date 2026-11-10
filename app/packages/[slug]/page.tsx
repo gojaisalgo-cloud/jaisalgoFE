@@ -18,8 +18,8 @@ export default async function Details({params,searchParams}:{params:Promise<{slu
   <StructuredData data={breadcrumbSchema([{name:'Home',path:'/'},{name:'Jaisalmer packages',path:'/packages'},{name:t.title,path:`/packages/${slug}`}])}/>
   <StructuredData data={tripSchema(t)}/>
   <nav className="breadcrumbs" aria-label="Breadcrumb"><Link href="/">Home</Link> / <Link href="/packages">Packages</Link> / <span aria-current="page">{t.title}</span></nav>
-  <PackageInformationContent key={JSON.stringify({choices,date})} tour={t} standalone initialChoices={choices} initialDate={date} initialSection={query.section==='price'?'price':'overview'}/>
+  <PackageInformationContent key={JSON.stringify({choices,date})} tour={t} standalone dateBounds={bounds} initialChoices={choices} initialDate={date} initialSection={query.section==='price'?'price':'overview'}/>
   <nav className="search-context-links" aria-label="Plan around this package"><h2>Know the destination before you go.</h2>{guideLinks(t.area!=='City').map(link=><Link key={link.path} href={link.path}>{link.title}</Link>)}<Link href="/cancellation-policy">Cancellation and refund guidance</Link></nav>
-  {!!related.length&&<section className="related-packages"><h2>A few other ways to go.</h2><div className="tour-grid">{related.map(p=><TourCard key={p.slug} tour={p}/>)}</div></section>}
+  {!!related.length&&<section className="related-packages"><h2>A few other ways to go.</h2><div className="tour-grid">{related.map(p=><TourCard key={p.slug} tour={p} selection={query}/>)}</div></section>}
  </div>;
 }

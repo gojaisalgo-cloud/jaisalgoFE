@@ -54,3 +54,11 @@ test('compared group, room, transfer and add-on choices round-trip into checkout
  assert.equal(restored.travelers,5);assert.equal(restored.rooming,'single');assert.equal(restored.transport,false);
  assert.equal(quote(t.costs,t.nights,restored).total,quote(t.costs,t.nights,c).total);
 });
+
+test('destination search includes every Jaisalmer package and still respects collection filters',()=>{
+ assert.equal(filterDiscovery(records,filters('q=JAISALMER')).length,tours.length);
+ const camps=filterDiscovery(records,filters('q=Jaisalmer&kind=camp'));
+ assert.ok(camps.length>0);assert.ok(camps.every(r=>packageDetails(r.tour).kind==='camp'));
+ const exact=filterDiscovery(records,filters('q='+encodeURIComponent(tours[0].title)));
+ assert.ok(exact.some(r=>r.tour.slug===tours[0].slug));
+});
