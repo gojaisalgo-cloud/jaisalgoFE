@@ -9,7 +9,7 @@ import {cityGuideKeys} from '../data/city-guide-keys';
 import publicPaths from '../data/analytics-public-paths.json';
 import {pageType} from '../lib/analytics/posthog-schema';
 import {packageCollectionKeys} from '../data/package-collection-keys';
-import {ga4Configured,ga4PagePayload} from '../lib/analytics/ga4';
+import {ga4Configured,ga4PagePayload,googleCommandQueue} from '../lib/analytics/ga4';
 import {pageMetadata,destinationSchema,hasSelection} from '../lib/seo';
 const canonicalPaths=new Set([...publicStaticPaths,...Object.entries(collections).flatMap(([k,v])=>v.map(e=>`/${k}/${e.slug}`)),...seedTours().map(t=>'/packages/'+t.slug),...packageCollections.map(c=>'/packages/'+c.slug),...cityGuideKeys.map(c=>'/jaisalmer-travel-from/'+c)]);
 test('requested synonyms resolve to existing canonical content without chains or shadowing pages',()=>{
@@ -33,4 +33,11 @@ test('optional GA4 is disabled by default and strips query/referrer/private path
  assert.deepEqual(new Set(publicPaths),canonicalPaths);
  assert.deepEqual(ga4PagePayload('/experiences/camel-safari?phone=secret#key=private'),{page_path:'/experiences/camel-safari',page_location:'https://www.jaisalgo.com/experiences/camel-safari',page_referrer:''});
  for(const path of ['/book/golden-city-escape','/reservations/private','/verify/private','/api/booking','/admin','/my-bookings','/unknown-personal-value'])assert.equal(ga4PagePayload(path),undefined);
+});
+
+test('GA4 queues commands using the documented Google Arguments protocol',()=>{
+ const queue:unknown[]=[];const gtag=googleCommandQueue(queue);
+ gtag('config','G-EXAMPLE',{send_page_view:false});
+ assert.equal(Object.prototype.toString.call(queue[0]),'[object Arguments]');
+ assert.deepEqual(Array.from(queue[0] as IArguments),['config','G-EXAMPLE',{send_page_view:false}]);
 });

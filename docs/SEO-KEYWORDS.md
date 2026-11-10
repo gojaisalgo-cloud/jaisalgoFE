@@ -2,11 +2,19 @@
 
 This map uses the supplied target queries and actual catalogue/editorial content. It is a content strategy, not measured keyword demand. No search volumes, difficulty scores, ranks or traffic forecasts have been invented. Validate priorities with Search Console once real impressions exist.
 
+## Current complete inventory — 10 November 2026
+
+[SEO-PAGE-MAP.csv](SEO-PAGE-MAP.csv) maps all 89 current canonical pages to one primary intent, an intent class, title and description. [SEO-REDIRECTS.csv](SEO-REDIRECTS.csv) records all 13 alternate requested paths and their permanent canonical targets. Refresh both with `node --import tsx scripts/seo-keyword-map.ts` on Node 20.9+.
+
+The homepage owns broad **Jaisalmer tourism** discovery; `/packages` owns **Jaisalmer tour packages** comparison. The travel-guide hub is a topic directory; `/travel-guide/first-time-jaisalmer` answers the first-visit planning question. Audience collections compare multiple existing products, while each product page explains one named itinerary. A duration collection compares priced night splits, while the matching itinerary article explains a sightseeing sequence. Safari articles explain scope and booking questions; safari product pages carry the actual selected local estimate. These boundaries avoid publishing synonym copies or competing category pages.
+
+Seven audience/duration collections and five new experience/planning guides are published. Ten distinct origin guides cover Delhi, Mumbai, Jaipur, Ahmedabad, Surat, Vadodara, Bengaluru, Hyderabad, Chennai and Kolkata. Other cities remain research candidates. The CSV uses the seed catalogue; compare it with the deployed sitemap after operator catalogue changes.
+
 ## Hubs and editorial intent
 
 | Existing canonical path | Primary intent | Supporting queries / role |
 | --- | --- | --- |
-| `/` | JaisalGo / Jaisalmer travel planning | Brand discovery; introduce city, desert and booking options |
+| `/` | Jaisalmer tourism | Destination overview; supporting tour package discovery |
 | `/packages` | Jaisalmer tour packages | Jaisalmer packages, trip packages, holiday packages, travel packages, tour package price; compare genuine itineraries and estimates |
 | `/experiences` | Things to do in Jaisalmer | Heritage, food, cultural evenings and desert experiences |
 | `/places` | Places to visit in Jaisalmer | Destination discovery rather than another package catalogue |
@@ -62,6 +70,6 @@ All are existing catalogue entries. Descriptions continue to distinguish provisi
 - Preserve `/packages` and `/packages/[slug]`; do not also publish `/jaisalmer-tour-packages` copies. Existing indexed URLs and booking URLs remain stable.
 - Sorting, dates, traveller choices and category filters remain usable but noindex, with canonical links to the base route. Campaign parameters consolidate to the same canonical without making a public page noindex.
 - “Best packages” is a comparison query for the main catalogue, not a claim that every product is the best. Unverified luxury facilities, pool access, child tariffs and shared-seat prices are not SEO promises.
-- Family, couple, solo, private-group and accommodation questions belong to their genuine package and explanatory guide. Do not generate a page for every parameter combination.
+- Family, honeymoon, budget, solo, group, premium and three-day collections provide unique comparisons of real published packages. Individual product pages own their named itinerary; do not generate a page for every parameter combination.
 - Origin-city **product** pages require genuine departures, included transport and distinct inventory. Substantive origin **planning guides** may explain independent travel and link to real local experiences. The source-reviewed guides and candidate keyword map are documented in `PAN-INDIA-SEO.md` and `PAN-INDIA-KEYWORDS.csv`; no Delhi/Mumbai/Ahmedabad departure product is implied.
 - After a package is retired, decide whether a genuinely equivalent successor warrants a targeted permanent redirect. Otherwise keep the correct 404; do not redirect unrelated products to the homepage.

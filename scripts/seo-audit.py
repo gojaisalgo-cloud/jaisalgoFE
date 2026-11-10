@@ -19,6 +19,8 @@ class Document(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.title = []
         self.h1 = []
+        self.headings = []
+        self.languages = {}
         self.meta = {}
         self.canonicals = []
         self.links = []
@@ -36,6 +38,10 @@ class Document(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         a = dict(attrs)
+        if tag in ('h1','h2','h3','h4','h5','h6'):
+            self.headings.append(int(tag[1]))
+        if tag == 'link' and a.get('rel') == 'alternate' and a.get('hreflang'):
+            self.languages.setdefault(a['hreflang'], []).append(a.get('href',''))
         if a.get('id'):
             self.ids.add(a['id'])
         if tag == 'title':
@@ -214,6 +220,17 @@ def main():
             fail(path, f'Canonical mismatch: {doc.canonicals}; expected {expected}')
         if len(doc.h1) != 1 or not doc.h1[0].strip():
             fail(path, f'Expected one nonempty H1, found {len(doc.h1)}')
+        for previous, current in zip(doc.headings, doc.headings[1:]):
+            if current > previous + 1:
+                fail(path, f'Heading hierarchy skips from H{previous} to H{current}')
+        for language in ['en-IN','x-default']:
+            if len(doc.languages.get(language,[])) != 1 or not same_url(doc.languages[language][0],expected):
+                fail(path, f'Incorrect {language} language canonical')
+        for href in doc.links:
+            fragment = urllib.parse.urlsplit(href).fragment
+            target = local_path(href,path)
+            if fragment and target == path and urllib.parse.unquote(fragment) not in doc.ids:
+                fail(path, f'Missing in-page anchor: #{fragment}')
         noindex = 'noindex' in (' '.join(doc.meta.get('robots', [])) + headers.get('X-Robots-Tag', '')).lower()
         if noindex != args.preview:
             fail(path, 'Unexpected indexing directives for this environment')
