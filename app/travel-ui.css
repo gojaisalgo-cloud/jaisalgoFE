@@ -3669,11 +3669,7 @@ p { text-wrap:pretty; }
 @media(max-width:360px) { .confidence-grid { grid-template-columns:minmax(0,1fr); }.confidence-card { flex-direction:row; padding:16px; }.confidence-card h3 { font-size:14px; }.confidence-card p { font-size:12px; } }
 
 /* Jaisalmer discovery: editorial collections, stay settings and real catalogue picks. */
-.local-discovery-carousel { position:relative; padding-top:48px; }
-.local-rail-controls { position:absolute; top:0; right:0; display:flex; gap:6px; }
-.local-rail-controls button { width:36px; height:36px; min-height:36px; border:1px solid #e0e6e2; border-radius:50%; background:#fff; color:#294e40; }
-.local-rail-controls button:hover:enabled { background:#fff1e9; border-color:#e8c7b6; color:#a3422c; }
-.local-rail-controls button:disabled { opacity:.35; cursor:default; }
+.local-discovery-carousel { position:relative; }
 .local-discovery-rail { display:flex; gap:18px; overflow-x:auto; padding:4px 2px 14px; scroll-snap-type:x mandatory; scroll-padding-inline:2px; overscroll-behavior-inline:contain; scrollbar-width:thin; scrollbar-color:#cdd9d2 transparent; border-radius:16px; }
 .local-discovery-rail>a { flex:0 0 calc((100% - 54px)/4); min-width:0; scroll-snap-align:start; }
 .local-collection-card { position:relative; isolation:isolate; min-height:330px; display:flex; align-items:flex-end; border-radius:16px; overflow:hidden; color:white; background:#3e5649; }
@@ -3720,8 +3716,7 @@ p { text-wrap:pretty; }
 .local-pick-action { display:flex; align-items:center; justify-content:space-between; min-height:40px; border-top:1px solid #e9ede7; margin-top:12px; padding-top:12px; font-size:12px; font-weight:700; color:#a3422c; }
 @media(min-width:1100px) { .local-pick-card { flex-direction:row; gap:14px; }.local-pick-photo { flex:0 0 36%; height:auto; min-height:215px; }.local-pick-copy { padding:7px 3px; }.local-pick-copy h3 { font-size:17px; } }
 @media(max-width:1000px) { .local-discovery-rail>a { flex-basis:calc((100% - 36px)/3); }.local-stay-carousel .local-discovery-rail>a { flex-basis:calc((100% - 18px)/2); }.local-pick-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }.local-stay-section { padding:24px; } }
-@media(max-width:600px) {
- .local-discovery-carousel { padding-top:52px; }.local-rail-controls button { width:44px; height:44px; min-height:44px; }.local-discovery-rail { gap:14px; }.local-discovery-rail>a { flex-basis:76%; }.local-collection-card { min-height:310px; }.local-collection-card>div:last-child { padding:20px; }.local-collection-card h3 { font-size:24px; }.local-collection-card p { font-size:12px; }
+@media(max-width:600px) {.local-discovery-rail { gap:14px; }.local-discovery-rail>a { flex-basis:76%; }.local-collection-card { min-height:310px; }.local-collection-card>div:last-child { padding:20px; }.local-collection-card h3 { font-size:24px; }.local-collection-card p { font-size:12px; }
  .local-stay-section { margin-top:42px; padding:20px 16px; border-radius:16px; }.local-stay-section .premium-section-heading h2 { font-size:25px; }.local-stay-carousel .local-discovery-rail>a { flex-basis:88%; }.local-stay-photo { height:160px; }.local-stay-copy { padding:17px; }.local-stay-copy h3 { font-size:19px; }
  .local-pick-grid { grid-template-columns:minmax(0,1fr); gap:12px; }.local-pick-card { flex-direction:row; gap:12px; padding:10px; }.local-pick-photo { flex:0 0 32%; height:auto; min-height:190px; }.local-pick-copy { padding:5px 0; }.local-pick-copy h3 { font-size:16px; }.local-pick-copy>p { font-size:11px; margin-bottom:10px; }.local-pick-location { font-size:8px; }.local-pick-duration { font-size:10px; }.local-pick-action { font-size:11px; }.local-pick-filters>button { padding:8px 12px; font-size:11px; }.local-discovery-note { font-size:10px; }
 }

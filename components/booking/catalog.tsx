@@ -5,9 +5,9 @@ import {DirectionalIcon,IconButton} from '@/components/directional-control';
 import {Dropdown} from '@/components/dropdown';
 import {Modal} from '@/components/ui/modal';
 import Link from 'next/link';
-import {useEffect,useRef,useState} from 'react';
+import {useEffect,useState} from 'react';
 import {useSearchParams} from 'next/navigation';
-import {Search,Heart,Users,Tent,Compass,Sun,Info,SlidersHorizontal,X,ArrowLeft,ArrowRight,Map} from 'lucide-react';
+import {Search,Heart,Users,Tent,Compass,Sun,Info,SlidersHorizontal,X,Map} from 'lucide-react';
 import type {Tour} from '@/data/catalog';
 import {stayName} from '@/data/travel-options';
 import {catalogRecords,discoveryFilters,filterDiscovery,clearDiscovery,patchDiscovery,priceBands} from '@/lib/booking/catalog-discovery';
@@ -16,13 +16,12 @@ import {TourCard} from './tour-card';
 
 const categories=[{name:'All packages',icon:Sun,value:''},{name:'City & desert tours',icon:Map,value:'tour'},{name:'Safaris & activities',icon:Compass,value:'activity'},{name:'Desert stays',icon:Tent,value:'camp'},{name:'Cultural evenings',icon:Users,value:'cultural'},{name:'For two',icon:Heart,value:'couples'}];
 export function TourCatalog({tours,compact=false}:{tours:Tour[];compact?:boolean}){
- const params=useSearchParams(),[filtersOpen,setFiltersOpen]=useState(false),strip=useRef<HTMLDivElement>(null),[scroll,setScroll]=useState({previous:false,next:false});
+ const params=useSearchParams(),[filtersOpen,setFiltersOpen]=useState(false);
  const query=new URLSearchParams(params.toString()),records=catalogRecords(tours),f=discoveryFilters(query),list=filterDiscovery(records,f);
  const active=f.style.includes('Couples')?'couples':f.kind;
  function navigate(next:URLSearchParams,replace=false){const url=location.pathname+(next.size?'?'+next:'')+location.hash;if(replace)history.replaceState(null,'',url);else history.pushState(null,'',url)}
  function update(patch:Record<string,string>,replace=false){if(patch.sort)captureBehaviour('package_sort_changed',{sort_order:patch.sort as 'recommended'});else if(!('q' in patch)){const key=Object.keys(patch)[0];captureBehaviour('package_filter_changed',{filter_key:['kind','area','category','style','place','stayType','transfer','tour','priceBand','days','safari','desert','minNights','maxNights','minPrice','maxPrice'].includes(key)?key as 'kind':'other'})}navigate(patchDiscovery(new URLSearchParams(location.search),patch),replace)}
  function clear(){captureBehaviour('package_filter_changed',{filter_key:'clear'});navigate(clearDiscovery(new URLSearchParams(location.search)))}
- useEffect(()=>{const el=strip.current;if(!el)return;const measure=()=>setScroll({previous:el.scrollLeft>2,next:el.scrollLeft+el.clientWidth<el.scrollWidth-2});const observer=new ResizeObserver(measure);observer.observe(el);el.addEventListener('scroll',measure,{passive:true});measure();return()=>{observer.disconnect();el.removeEventListener('scroll',measure)}},[]);
  const queryKey=params.toString(),resultCount=list.length;
  useEffect(()=>{if(compact)return;const emit=()=>captureBehaviourOnce('search-results:'+queryKey,'search_results_viewed',{...searchProperties(new URLSearchParams(queryKey)),result_count:resultCount});const timer=setTimeout(emit,400);window.addEventListener('jaisalgo-consent-changed',emit);return()=>{clearTimeout(timer);window.removeEventListener('jaisalgo-consent-changed',emit)}},[queryKey,resultCount,compact]);
  const categoryBase={...f,kind:'',style:f.style.filter(s=>s!=='Couples')};
@@ -38,7 +37,7 @@ export function TourCatalog({tours,compact=false}:{tours:Tour[];compact?:boolean
  if(f.minNights!==undefined||f.maxNights!==undefined)chips.push({label:`Nights: ${f.minNights??0}–${f.maxNights??'any'}`,patch:{minNights:'',maxNights:''}});
  if(f.minPrice!==undefined||f.maxPrice!==undefined)chips.push({label:`Estimate: ₹${f.minPrice??0}–${f.maxPrice??'any'}`,patch:{minPrice:'',maxPrice:''}});
  const filterProps={records,filters:f,update,clear};
- const categoryStrip=<div className="discovery-collections"><IconButton className="collection-scroll" aria-label="Previous package categories" disabled={!scroll.previous} onClick={()=>strip.current?.scrollBy({left:-Math.max(180,strip.current.clientWidth*.7),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})}><ArrowLeft aria-hidden="true"/></IconButton><div ref={strip} className="escape-categories marketplace-categories" role="group" aria-label="Choose a package type">{categories.map(cat=>{const count=countCategory(cat.value);return <button type="button" key={cat.value} aria-pressed={active===cat.value} disabled={!count&&active!==cat.value} onClick={()=>update({kind:cat.value==='couples'?'':cat.value,style:cat.value==='couples'?'Couples':f.style.filter(s=>s!=='Couples').join('|'),desert:'',area:''})}><cat.icon size={18} aria-hidden="true"/><span>{cat.name}</span><small>{count}</small></button>})}</div><IconButton className="collection-scroll" aria-label="Next package categories" disabled={!scroll.next} onClick={()=>strip.current?.scrollBy({left:Math.max(180,strip.current.clientWidth*.7),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})}><ArrowRight aria-hidden="true"/></IconButton></div>;
+ const categoryStrip=<div className="discovery-collections"><div tabIndex={0} className="escape-categories marketplace-categories" role="group" aria-label="Choose a package type">{categories.map(cat=>{const count=countCategory(cat.value);return <button type="button" key={cat.value} aria-pressed={active===cat.value} disabled={!count&&active!==cat.value} onClick={()=>update({kind:cat.value==='couples'?'':cat.value,style:cat.value==='couples'?'Couples':f.style.filter(s=>s!=='Couples').join('|'),desert:'',area:''})}><cat.icon size={18} aria-hidden="true"/><span>{cat.name}</span><small>{count}</small></button>})}</div></div>;
  if(compact)return <>{categoryStrip}<div className="tour-grid">{list.slice(0,3).map(r=><TourCard key={r.tour.slug} tour={r.tour} selection={Object.fromEntries(query)}/>)}</div>{list.length>3&&<div className="catalog-continue"><span>Showing 3 of {list.length} matching escapes</span><Link className="underlink" href={'/packages'+(query.size?'?'+query:'')}>Explore all {list.length}<DirectionalIcon direction="right"/></Link></div>}{!list.length&&<div className="empty"><h3>A different path, perhaps?</h3><p>Try fewer filters to find your escape.</p><button className="button" onClick={clear}>Reset filters</button></div>}</>;
  return <section className="discovery-catalog" aria-label="Find your Jaisalmer package">
   {categoryStrip}

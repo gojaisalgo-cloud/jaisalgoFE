@@ -1,10 +1,9 @@
 'use client';
 import {captureBehaviour} from '@/lib/analytics/posthog-client';
-import {useEffect,useId,useRef,useState,type ReactNode} from 'react';
+import {useId,useState,type ReactNode} from 'react';
 import Link from 'next/link';
-import {ArrowLeft,ArrowRight,ArrowUpRight,MapPin,Clock,Hotel,Tent,Sun} from 'lucide-react';
+import {ArrowRight,ArrowUpRight,MapPin,Clock,Hotel,Tent,Sun} from 'lucide-react';
 import {Photo} from '@/components/photo';
-import {IconButton} from '@/components/directional-control';
 
 const collections=[
  {title:'Golden lanes & living heritage',tag:'FORT & HAVELIS',image:'fort-day',href:'/experiences/heritage-walk',note:'Fort lanes, carved facades and old-city stories.'},
@@ -15,10 +14,7 @@ const collections=[
  {title:'The rhythm of Rajasthan',tag:'CULTURAL EVENINGS',image:'sunset',href:'/packages?kind=cultural',note:'Compare the proposed folk programme and dinner plan.'},
 ];
 function DiscoveryRail({title,children,className=''}:{title:string;children:ReactNode;className?:string}){
- const rail=useRef<HTMLDivElement>(null),id=useId(),[edges,setEdges]=useState({previous:false,next:false});
- useEffect(()=>{const el=rail.current;if(!el)return;const measure=()=>setEdges({previous:el.scrollLeft>4,next:el.scrollLeft+el.clientWidth<el.scrollWidth-4});measure();el.addEventListener('scroll',measure,{passive:true});const observer=new ResizeObserver(measure);observer.observe(el);return()=>{el.removeEventListener('scroll',measure);observer.disconnect()}},[]);
- function move(direction:number){const el=rail.current;if(el)el.scrollBy({left:direction*el.clientWidth*.85,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})}
- return <div className={`local-discovery-carousel ${className}`}><div className="local-rail-controls"><IconButton aria-label={`Previous ${title}`} aria-controls={id} disabled={!edges.previous} onClick={()=>move(-1)}><ArrowLeft size={17}/></IconButton><IconButton aria-label={`Next ${title}`} aria-controls={id} disabled={!edges.next} onClick={()=>move(1)}><ArrowRight size={17}/></IconButton></div><div id={id} ref={rail} className="local-discovery-rail" role="region" aria-label={title} tabIndex={0}>{children}</div></div>
+ return <div className={`local-discovery-carousel ${className}`}><div className="local-discovery-rail" role="region" aria-label={title} tabIndex={0}>{children}</div></div>
 }
 export function JaisalmerCollections(){return <section className="home-section local-collections" id="discover" aria-labelledby="local-collections-title"><div className="premium-section-heading"><div><span className="overline">ONE GOLDEN CITY. YOUR KIND OF JOURNEY.</span><h2 id="local-collections-title">Jaisalmer, collected for you.</h2><p>Start with a feeling. Find the fort walk, desert night or family escape to match.</p></div><Link href="/experiences" className="underlink">All experiences <ArrowUpRight size={17}/></Link></div><DiscoveryRail title="Jaisalmer collections">{collections.map(c=><Link key={c.tag} href={c.href} data-analytics-collection={({'FORT & HAVELIS':'heritage','DESERT EXPERIENCES':'desert','DESERT STAYS':'camp','TRIPS FOR TWO':'couples','FAMILY TRAVEL':'family','CULTURAL EVENINGS':'cultural'} as Record<string,string>)[c.tag]} className="local-collection-card"><Photo id={c.image} sizes="(max-width:600px) 75vw, (max-width:1000px) 40vw, 25vw"/><span className="local-collection-shade"/><span className="local-collection-tag">{c.tag}</span><div><h3>{c.title}</h3><p>{c.note}</p><span>Explore collection <ArrowUpRight size={16}/></span></div></Link>)}</DiscoveryRail></section>}
 const stays=[
