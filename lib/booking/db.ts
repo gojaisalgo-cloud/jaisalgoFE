@@ -13,6 +13,8 @@ export async function db(){const settings=databaseSettings();try{if(!client){if(
  `CREATE TABLE IF NOT EXISTS bookings(id TEXT PRIMARY KEY,draft_id TEXT NOT NULL UNIQUE,payload TEXT NOT NULL,status TEXT NOT NULL)`,
  `CREATE TABLE IF NOT EXISTS ticket_verifications(token_hash TEXT PRIMARY KEY,draft_id TEXT NOT NULL UNIQUE)`,
  `CREATE TABLE IF NOT EXISTS events(id TEXT PRIMARY KEY,created INTEGER NOT NULL)`,
+ `CREATE TABLE IF NOT EXISTS booking_alerts(id TEXT PRIMARY KEY,booking_id TEXT NOT NULL,payment_id TEXT NOT NULL UNIQUE,target TEXT NOT NULL,message TEXT NOT NULL,state TEXT NOT NULL,created INTEGER NOT NULL,next_attempt INTEGER NOT NULL,attempts INTEGER NOT NULL DEFAULT 0,claim TEXT,lease_until INTEGER NOT NULL DEFAULT 0,provider_id TEXT NOT NULL DEFAULT '',last_error TEXT NOT NULL DEFAULT '')`,
+ `CREATE INDEX IF NOT EXISTS booking_alert_pending ON booking_alerts(state,next_attempt)`,
  `CREATE TABLE IF NOT EXISTS audits(id TEXT PRIMARY KEY,created INTEGER NOT NULL,action TEXT NOT NULL)`,
  `CREATE INDEX IF NOT EXISTS draft_departure_lookup ON drafts(json_extract(payload,'$.slug'),json_extract(payload,'$.date'),json_extract(payload,'$.mode'),state,expires)`,
  `CREATE INDEX IF NOT EXISTS booking_departure_lookup ON bookings(json_extract(payload,'$.slug'),json_extract(payload,'$.date'),json_extract(payload,'$.mode'),status)`,
