@@ -23,7 +23,7 @@ test('production origin stays on the canonical HTTPS host and rejects leaked or 
 test('tracking parameters consolidate to the canonical; actual catalogue and trip variants stay noindex',()=>{
   assert.equal(hasSelection({utm_source:'google',utm_campaign:'winter',gclid:'123',fbclid:'456'}),false);
   assert.equal(hasSelection({sort:'',days:undefined}),false);
-  for(const query of [{days:'3'},{sort:'price'},{q:'camel'},{section:'price'},{date:'2027-01-10'},{children:'1'},{rooming:'single'}])assert.equal(hasSelection(query),true);
+  for(const query of [{days:'3'},{sort:'price'},{q:'camel'},{section:'price'},{date:'2027-01-10'},{children:'1'},{rooming:'single'},{minNights:'0'},{maxNights:'2'},{minPrice:'5000'},{maxPrice:'10000'},{priceBand:'under-5000'},{place:'Khuri dunes & village'},{transfer:'own'}])assert.equal(hasSelection(query),true);
 });
 
 test('every public page has unique metadata, canonical and matching page-specific social previews',()=>{

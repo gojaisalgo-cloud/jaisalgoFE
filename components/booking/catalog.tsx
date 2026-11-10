@@ -1,24 +1,50 @@
 'use client';
-import {DirectionalIcon} from '@/components/directional-control';
+import {DirectionalIcon,IconButton} from '@/components/directional-control';
 import {Dropdown} from '@/components/dropdown';
+import {Modal} from '@/components/ui/modal';
 import Link from 'next/link';
-import {useMemo} from 'react';
+import {useEffect,useRef,useState} from 'react';
 import {useSearchParams} from 'next/navigation';
-import {Search,Heart,Users,Tent,Compass,Sun,Info} from 'lucide-react';
+import {Search,Heart,Users,Tent,Compass,Sun,Info,SlidersHorizontal,X,ArrowLeft,ArrowRight,Map} from 'lucide-react';
 import type {Tour} from '@/data/catalog';
+import {stayName} from '@/data/travel-options';
+import {catalogRecords,discoveryFilters,filterDiscovery,clearDiscovery,patchDiscovery,priceBands} from '@/lib/booking/catalog-discovery';
+import {CatalogFilters} from './catalog-filters';
 import {TourCard} from './tour-card';
-import {quote} from '@/lib/booking/pricing';
-import {defaultChoices} from '@/lib/booking/preferences';
-import {packageDetails} from '@/lib/booking/package-details';
-const categories=[{name:'All packages',icon:Sun,value:''},{name:'Safaris & activities',icon:Compass,value:'activity'},{name:'Desert stays',icon:Tent,value:'camp'},{name:'Cultural evenings',icon:Users,value:'cultural'},{name:'For two',icon:Heart,value:'couples'}];
+
+const categories=[{name:'All packages',icon:Sun,value:''},{name:'City & desert tours',icon:Map,value:'tour'},{name:'Safaris & activities',icon:Compass,value:'activity'},{name:'Desert stays',icon:Tent,value:'camp'},{name:'Cultural evenings',icon:Users,value:'cultural'},{name:'For two',icon:Heart,value:'couples'}];
 export function TourCatalog({tours,compact=false}:{tours:Tour[];compact?:boolean}){
- const params=useSearchParams(),search=params.get('q')||'',days=params.get('days')||'',sort=params.get('sort')||'recommended',kind=params.get('kind')||'',style=params.get('style')||'',budget=params.get('category')||'';
- const active=style==='Couples'?'couples':kind;
- function update(patch:Record<string,string>){const p=new URLSearchParams(location.search);for(const [k,v] of Object.entries(patch)){if(v)p.set(k,v);else p.delete(k)}history.replaceState(null,'',location.pathname+(p.size?'?'+p:''))}
- const list=useMemo(()=>tours.filter(t=>{
-  const d=packageDetails(t);
-  return (!kind||d.kind===kind)&&(!style||t.styles.some(s=>s===style))&&(!budget||t.category===budget)&&(!params.get('desert')||t.area!=='City')&&(!params.get('area')||t.area===params.get('area'))&&(!params.get('safari')||t.safari===params.get('safari'))&&(!params.get('tour')||t.tour===params.get('tour'))&&(!days||t.days===Number(days))&&[t.title,t.subtitle,t.category,t.area,d.kind,d.stayType,...d.attractions,...t.styles].join(' ').toLowerCase().includes(search.toLowerCase());
- }).sort((a,b)=>sort==='price'?quote(a.costs,a.nights,defaultChoices(a)).perPerson-quote(b.costs,b.nights,defaultChoices(b)).perPerson:sort==='duration'||sort==='duration-asc'?a.days-b.days:sort==='duration-desc'?b.days-a.days:sort==='name'?a.title.localeCompare(b.title):0),[tours,kind,search,days,sort,style,budget,params]);
- return <><div className="escape-categories marketplace-categories" role="group" aria-label="Choose a package type">{categories.map(cat=><button key={cat.value} aria-pressed={active===cat.value} onClick={()=>update({kind:cat.value==='couples'?'':cat.value,style:cat.value==='couples'?'Couples':'',desert:'',area:''})}><cat.icon size={18}/><span>{cat.name}</span></button>)}</div>{!compact&&<><div className="catalog-tools marketplace-tools"><label className="catalog-search"><Search size={18}/><input aria-label="Search packages" placeholder="Try camel, Khuri or a city escape…" value={search} onChange={e=>update({q:e.target.value})}/></label><label><Dropdown aria-label="Package duration" value={days} onValueChange={value=>update({days:value})}><option value="">Any duration</option>{[1,2,3,4,5].map(n=><option key={n} value={n}>{n===1?'Day trips & short activities':`${n-1} ${n===2?'night':'nights'} / ${n} days`}</option>)}</Dropdown></label><label><Dropdown aria-label="Package budget" value={budget} onValueChange={value=>update({category:value})}><option value="">Every budget</option><option>Budget</option><option>Comfort</option><option>Premium</option></Dropdown></label><label><Dropdown aria-label="Sort packages" value={sort} onValueChange={value=>update({sort:value})}><option value="recommended">Recommended</option><option value="price">Per-person estimate: low first</option><option value="duration">Shortest first</option></Dropdown></label></div><div className="marketplace-results"><span aria-live="polite">{list.length} {list.length===1?'experience':'experiences'}</span><p>Tap <strong><Info size={14} aria-hidden="true"/>Details</strong> for stays, venues, inclusions and the full estimate.</p>{params.size>0&&<button type="button" onClick={()=>history.replaceState(null,'',location.pathname)}>Clear filters</button>}</div></>}
- <div className="tour-grid">{(compact?list.slice(0,3):list).map(t=><TourCard key={t.slug} tour={t}/>)}</div>{compact&&list.length>3&&<div className="catalog-continue"><span>Showing 3 of {list.length} matching escapes</span><Link className="underlink" href={"/packages"+(params.size?"?"+params.toString():"")}>Explore all {list.length} <DirectionalIcon direction="right"/></Link></div>}{!list.length&&<div className="empty"><h3>A different path, perhaps?</h3><p>Try fewer filters to find your escape.</p><button className="button" onClick={()=>history.replaceState(null,'',location.pathname)}>Reset filters</button></div>}</>;
+ const params=useSearchParams(),[filtersOpen,setFiltersOpen]=useState(false),strip=useRef<HTMLDivElement>(null),[scroll,setScroll]=useState({previous:false,next:false});
+ const query=new URLSearchParams(params.toString()),records=catalogRecords(tours),f=discoveryFilters(query),list=filterDiscovery(records,f);
+ const active=f.style.includes('Couples')?'couples':f.kind;
+ function navigate(next:URLSearchParams,replace=false){const url=location.pathname+(next.size?'?'+next:'')+location.hash;if(replace)history.replaceState(null,'',url);else history.pushState(null,'',url)}
+ function update(patch:Record<string,string>,replace=false){navigate(patchDiscovery(new URLSearchParams(location.search),patch),replace)}
+ function clear(){navigate(clearDiscovery(new URLSearchParams(location.search)))}
+ useEffect(()=>{const el=strip.current;if(!el)return;const measure=()=>setScroll({previous:el.scrollLeft>2,next:el.scrollLeft+el.clientWidth<el.scrollWidth-2});const observer=new ResizeObserver(measure);observer.observe(el);el.addEventListener('scroll',measure,{passive:true});measure();return()=>{observer.disconnect();el.removeEventListener('scroll',measure)}},[]);
+ const categoryBase={...f,kind:'',style:f.style.filter(s=>s!=='Couples')};
+ const countCategory=(value:string)=>filterDiscovery(records,{...categoryBase,kind:value==='couples'?'':value,style:value==='couples'?['Couples']:categoryBase.style}).length;
+ const chips:{label:string;patch:Record<string,string>}[]=[];
+ if(f.q)chips.push({label:`Search: ${query.get('q')}`,patch:{q:''}});
+ if(f.kind)chips.push({label:categories.find(c=>c.value===f.kind)?.name||f.kind,patch:{kind:''}});
+ for(const key of ['category','style','place','stayType','transfer','tour','priceBand'] as const)for(const value of f[key]){
+  const label=key==='stayType'?(value==='not-specified'?'Stay not specified':stayName(value)):key==='transfer'?(value==='allowance'?'Transfer allowance':'Own arrival'):key==='priceBand'?priceBands.find(b=>b.value===value)?.label||value:value;
+  chips.push({label,patch:{[key]:f[key].filter(v=>v!==value).join('|')}});
+ }
+ for(const key of ['days','area','safari','desert'] as const)if(query.get(key))chips.push({label:key==='days'?`${query.get(key)} days`:key==='desert'?'Desert routes':`${key}: ${query.get(key)}`,patch:{[key]:''}});
+ if(f.minNights!==undefined||f.maxNights!==undefined)chips.push({label:`Nights: ${f.minNights??0}–${f.maxNights??'any'}`,patch:{minNights:'',maxNights:''}});
+ if(f.minPrice!==undefined||f.maxPrice!==undefined)chips.push({label:`Estimate: ₹${f.minPrice??0}–${f.maxPrice??'any'}`,patch:{minPrice:'',maxPrice:''}});
+ const filterProps={records,filters:f,update,clear};
+ const categoryStrip=<div className="discovery-collections"><IconButton className="collection-scroll" aria-label="Previous package categories" disabled={!scroll.previous} onClick={()=>strip.current?.scrollBy({left:-Math.max(180,strip.current.clientWidth*.7),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})}><ArrowLeft aria-hidden="true"/></IconButton><div ref={strip} className="escape-categories marketplace-categories" role="group" aria-label="Choose a package type">{categories.map(cat=>{const count=countCategory(cat.value);return <button type="button" key={cat.value} aria-pressed={active===cat.value} disabled={!count&&active!==cat.value} onClick={()=>update({kind:cat.value==='couples'?'':cat.value,style:cat.value==='couples'?'Couples':f.style.filter(s=>s!=='Couples').join('|'),desert:'',area:''})}><cat.icon size={18} aria-hidden="true"/><span>{cat.name}</span><small>{count}</small></button>})}</div><IconButton className="collection-scroll" aria-label="Next package categories" disabled={!scroll.next} onClick={()=>strip.current?.scrollBy({left:Math.max(180,strip.current.clientWidth*.7),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})}><ArrowRight aria-hidden="true"/></IconButton></div>;
+ if(compact)return <>{categoryStrip}<div className="tour-grid">{list.slice(0,3).map(r=><TourCard key={r.tour.slug} tour={r.tour}/>)}</div>{list.length>3&&<div className="catalog-continue"><span>Showing 3 of {list.length} matching escapes</span><Link className="underlink" href={'/packages'+(query.size?'?'+query:'')}>Explore all {list.length}<DirectionalIcon direction="right"/></Link></div>}{!list.length&&<div className="empty"><h3>A different path, perhaps?</h3><p>Try fewer filters to find your escape.</p><button className="button" onClick={clear}>Reset filters</button></div>}</>;
+ return <section className="discovery-catalog" aria-label="Find your Jaisalmer package">
+  {categoryStrip}
+  <div className="discovery-toolbar"><label className="discovery-search"><Search size={19} aria-hidden="true"/><input aria-label="Search packages" placeholder="Try camel, Khuri or a city escape…" value={query.get('q')||''} onChange={e=>update({q:e.target.value},true)}/>{query.get('q')&&<IconButton aria-label="Clear package search" onClick={()=>update({q:''})}><X aria-hidden="true"/></IconButton>}</label><button className="button secondary discovery-mobile-filter" type="button" aria-haspopup="dialog" aria-expanded={filtersOpen} onClick={()=>setFiltersOpen(true)}><SlidersHorizontal size={18} aria-hidden="true"/>Filters{chips.length>0&&<small>{chips.length}</small>}</button><label className="discovery-sort"><span>Sort by</span><Dropdown aria-label="Sort packages" value={f.sort} onValueChange={value=>update({sort:value})}><option value="recommended">Recommended</option><option value="price">Per-person estimate: low first</option><option value="price-desc">Per-person estimate: high first</option><option value="duration">Shortest first</option><option value="duration-desc">Longest first</option><option value="name">Package name</option></Dropdown></label></div>
+  <div className="discovery-layout"><aside className="discovery-sidebar" aria-label="Package filters"><CatalogFilters {...filterProps}/></aside><div className="discovery-results">
+   <div className="discovery-result-heading"><strong role="status">{list.length} {list.length===1?'package':'packages'} found</strong><span><Info size={15} aria-hidden="true"/>Details in one tap. Your choices, before payment.</span></div>
+   {!!chips.length&&<div className="discovery-active-filters" aria-label="Active package filters">{chips.map((chip,i)=><button key={chip.label+i} type="button" aria-label={`Remove filter: ${chip.label}`} onClick={()=>update(chip.patch)}>{chip.label}<X size={14} aria-hidden="true"/></button>)}<button type="button" className="discovery-clear" onClick={clear}>Clear all</button></div>}
+   <div className="tour-grid">{list.map(r=><TourCard key={r.tour.slug} tour={r.tour}/>)}</div>
+   {!list.length&&<div className="empty"><Search size={25} aria-hidden="true"/><h3>No packages match those choices.</h3><p>Remove a filter or reset to see every escape. Your booking details are unaffected.</p><button type="button" className="button" onClick={clear}>Reset filters</button><Link href="/plan-your-trip" className="text-button">Plan a custom trip<DirectionalIcon direction="right"/></Link></div>}
+  </div></div>
+  {filtersOpen&&<Modal title="Package filters" onClose={()=>setFiltersOpen(false)} className="discovery-filter-modal" footer={<button type="button" className="button" onClick={()=>setFiltersOpen(false)}>Show {list.length} {list.length===1?'package':'packages'}<DirectionalIcon direction="right"/></button>}><p className="discovery-filter-note">Results update as you choose. Selections stay when you close this panel.</p><CatalogFilters {...filterProps}/></Modal>}
+ </section>;
 }

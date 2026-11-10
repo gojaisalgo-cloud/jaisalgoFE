@@ -9,7 +9,7 @@ import {durationLabel,packageDetails} from '@/lib/booking/package-details';
 export const searchIndexable = () => !['preview','development'].includes(process.env.VERCEL_ENV || '');
 export const privateRobots = {index:false,follow:false,noarchive:true,nosnippet:true,noimageindex:true} as const;
 export type Query = Record<string,string|string[]|undefined>;
-const selectionParams = new Set(['q','days','sort','kind','style','category','desert','area','safari','tour','date','travelers','travellers','children','stay','rooming','travelMode','stayType','transport','jeep','guide','addons','section']);
+const selectionParams = new Set(['q','days','sort','kind','style','category','desert','area','safari','tour','date','travelers','travellers','children','stay','rooming','travelMode','stayType','transport','jeep','guide','addons','section','minNights','maxNights','minPrice','maxPrice','priceBand','place','transfer']);
 export function hasSelection(query:Query):boolean {
   return Object.keys(query).some(key => selectionParams.has(key) && query[key] !== undefined && query[key] !== '');
 }

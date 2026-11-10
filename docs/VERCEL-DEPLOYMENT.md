@@ -23,3 +23,5 @@ File URLs, memory databases, `/tmp`, insecure remote URLs and database URLs cont
 Public deployments now default to `BOOKING_MODE=live` and fail closed until configured. Use explicit `BOOKING_MODE=test` or `demo` only in a separate nonproduction environment while validating. Configure administrator credentials and the verified business/support details separately. Test actual persistence and transaction behavior against a hosted libSQL database in a non-live environment before enabling live payments. The existing live gates still require reviewed suppliers/taxes, confirmed venue where required, refund terms, gateway credentials/webhook, and real departure capacity.
 
 Sources: [Vercel filesystem support](https://vercel.com/docs/functions/runtimes#file-system-support), [Turso on Vercel](https://docs.turso.tech/integrations/vercel), [Turso libSQL quickstart](https://docs.turso.tech/quickstart).
+
+For the existing payment flow, Production secret names and the exact webhook URL/events are documented in [Razorpay setup](RAZORPAY-SETUP.md). Gateway credentials do not replace the shared database or approved inventory requirements above.

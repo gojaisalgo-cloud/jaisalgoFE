@@ -19,4 +19,4 @@ playwright-report/
 __pycache__/
 .cache/
 
-.next-booking-*/
+.next-*/
