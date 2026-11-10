@@ -3432,3 +3432,39 @@ p { text-wrap:pretty; }
 .destination-suggestions li[aria-selected=true] { background:#edf4ef; color:var(--accent); }
 .destination-no-match { margin:0; padding:12px; color:var(--muted); font-size:13px; line-height:1.65; }
 @media(max-width:600px) { .destination-suggestions li { font-size:14px; min-height:48px; } }
+
+/* Mobile search: five compact choices and a clear where / date / travellers hierarchy. */
+.search-label-short,.search-mobile-terms { display:none; }
+@media(max-width:600px) {
+  .travel-search { padding:0 14px; border-radius:20px; }
+  .travel-search .search-label-full,.travel-search .search-booking-note { display:none; }
+  .travel-search .search-label-short { display:inline; }
+  .travel-search .travel-search-types { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:4px; padding:10px 0; overflow:visible; }
+  .travel-search .travel-search-types>button { flex-direction:column; gap:5px; min-width:0; min-height:58px; padding:8px 2px; font-size:11px; line-height:1.3; border-radius:12px; }
+  .travel-search .travel-search-types>button>svg { width:20px; height:20px; }
+  .travel-search .travel-search-types>button[aria-pressed=true] { background:#edf4ef; border-color:#d4e2d8; box-shadow:none; }
+  .travel-search .travel-search-types .travel-collection-check { display:none; }
+  .travel-search-selection { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  .travel-search .travel-search-fields { grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px; margin:12px 0; }
+  .travel-search .travel-search-fields>label { min-width:0; padding:9px 11px; border:1px solid var(--line); border-radius:12px; background:#f8faf8; }
+  .travel-search .travel-search-fields>.travel-destination { grid-column:1/-1; }
+  .travel-search .travel-search-fields>label>span { gap:6px; margin:0 0 2px; color:var(--muted); font-size:11px; font-weight:550; line-height:1.5; }
+  .travel-search .travel-search-fields>label>span>svg { width:13px; height:13px; }
+  .travel-search .travel-search-fields>label>small { display:none; }
+  .travel-search .travel-search-fields :is(input,select) { min-height:32px; height:32px; padding:0; font-size:16px; font-weight:650; background:transparent; }
+  .travel-search .travel-search-fields input::placeholder { font-size:16px; font-weight:600; }
+  .travel-search .travel-date-trigger { min-height:32px; font-size:14px; gap:4px; font-weight:650; }
+  .travel-search .travel-date-trigger>svg { width:15px; height:15px; }
+  .travel-search .destination-toggle { width:26px; min-height:32px; }
+  .travel-search .destination-input-row { gap:4px; }
+  .travel-search .travel-search-fields .search-trips { grid-column:1/-1; width:100%; min-height:48px; margin:2px 0 0; padding:11px 16px; border-radius:999px; font-size:14px; box-shadow:0 3px 10px #a6533218; }
+  .travel-search .search-reassurance { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:8px; padding:2px 42px 4px 0; font-size:11px; line-height:1.5; }
+  .travel-search .search-reassurance strong { font-size:12px; }
+  .search-mobile-terms { display:block; margin:0; padding:0; border:0; }
+  .search-mobile-terms>summary { display:flex; align-items:center; justify-content:flex-end; gap:4px; min-height:44px; padding:0; list-style:none; color:var(--accent); font-size:11px; font-weight:600; }
+  .search-mobile-terms>summary::-webkit-details-marker { display:none; }
+  .search-mobile-terms[open] { grid-column:1/-1; }
+  .search-mobile-terms[open]>summary { justify-content:flex-start; }
+  .search-mobile-terms[open]>summary>svg { transform:rotate(180deg); }
+  .search-mobile-terms>p { margin:6px 0 0; font-size:12px; line-height:1.7; color:var(--text); }
+}
