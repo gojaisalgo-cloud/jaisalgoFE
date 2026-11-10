@@ -3091,3 +3091,7 @@ footer {
     margin-inline:0
   }
 }
+
+/* Keep footer privacy controls clear of the fixed booking-help launcher. */
+.footer-bottom { padding-bottom:104px; }
+.footer-bottom a,.footer-bottom button { scroll-margin-block:96px; }

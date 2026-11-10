@@ -53,3 +53,10 @@ References: [Rajasthan Tourism](https://www.tourism.rajasthan.gov.in/jaisalmer.h
 ## Ongoing measurement
 
 Google controls crawl scheduling, sitemap processing and index inclusion. After submission, review indexing reasons and actual queries in Search Console, then prioritize improvements from impressions and useful booking outcomes. Core Web Vitals require field data or a later laboratory run. The existing 30/60/90-day plan remains in [SEO-OPERATIONS.md](SEO-OPERATIONS.md).
+
+## Final production verification
+
+- Commit `ce408e5` deployed successfully through the production GitHub branch. Production build passed; the 104-test follow-up suite remains passing. The latest full deployed 89-page semantic/SEO audit has zero critical issues.
+- The GA4 script loads for a consenting public-page visit, does not load after Decline plus reload, and does not load on a direct My Bookings visit even with an existing allow choice. These are browser observations, not a claim that historical Analytics reports are populated.
+- A footer privacy-control overlap with the floating help launcher was observed at a desktop width. Added bottom clearance and scroll margins so pointer and keyboard activation remain usable.
+- Search Console reports the sitemap processed successfully and 89 discovered pages. Indexing/performance and field Core Web Vitals still require Google processing; no rankings or field pass are claimed.
