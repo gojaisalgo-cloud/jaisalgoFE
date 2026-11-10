@@ -4,7 +4,7 @@ import {PostHog,type EventMessage} from 'posthog-node';
 import {posthogHost,trafficSource,posthogIdentitySchema,approvedMarketing} from './posthog-schema';
 import type {AnalyticsEvent,Measurement} from './schema';
 
-const serverNames:Record<string,string>={reservation_payment_verified:'reservation_completed',booking_confirmed:'booking_confirmed',balance_payment_completed:'full_booking_paid',payment_failed:'payment_failed',refund_recorded:'refund_recorded',trip_completed:'trip_completed'};
+const serverNames:Record<string,string>={reservation_payment_verified:'reservation_completed',booking_confirmed:'booking_confirmed',balance_payment_completed:'full_booking_paid',payment_failed:'payment_failed',refund_recorded:'refund_recorded',trip_completed:'trip_completed',cancellation_requested:'cancellation_requested',booking_cancelled:'booking_cancelled'};
 export function posthogServerConfigured(){return !!process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN&&!!posthogHost(process.env.NEXT_PUBLIC_POSTHOG_HOST)&&process.env.ANALYTICS_ENABLED!=='false'&&process.env.NEXT_PUBLIC_POSTHOG_ENABLED!=='false'}
 export function stableEventUuid(id:string){const h=createHash('sha256').update('posthog:'+id).digest('hex');return `${h.slice(0,8)}-${h.slice(8,12)}-4${h.slice(13,16)}-a${h.slice(17,20)}-${h.slice(20,32)}`}
 /** Only trusted server ledger events can produce financial events. No order, booking ID, names or contact fields. */
@@ -45,3 +45,14 @@ export async function drainPosthogOutbox(c:Client,send?:(event:EventMessage)=>Pr
   }catch{/* No SDK or network failure escapes into the booking path. */}finally{await client?.shutdown(1000).catch(()=>{})}
   return result;
 }
+
+/** Verified authentication/enquiry milestones have a separate allowlist from browser events. */
+export function lifecyclePosthogEvent(event:AnalyticsEvent,measurement:Measurement,accountId?:string):EventMessage|undefined{
+ const identity=posthogIdentitySchema.safeParse(measurement.posthog);
+ if(event.origin!=='server'||!['signup_completed','login_completed','enquiry_accepted'].includes(event.name)||measurement.consent!==true||!event.session||!identity.success)return;
+ if(event.name!=='enquiry_accepted'&&(!accountId||!/^acct_[a-f0-9]{64}$/.test(accountId)))return;
+ const properties:Record<string,unknown>={event_source:'verified_backend',analytics_environment:process.env.NEXT_PUBLIC_POSTHOG_ENVIRONMENT||process.env.VERCEL_ENV||'development',$geoip_disable:true,$process_person_profile:false,...(identity.data.sessionId?{$session_id:identity.data.sessionId}:{}),...(accountId?{account_type:'google',sign_in_method:'google'}:{enquiry_mode:'delivery'}),traffic_source:trafficSource(identity.data.latestTouch)};
+ for(const [prefix,touch] of [['first_touch',identity.data.firstTouch],['latest_touch',identity.data.latestTouch]] as const)for(const [key,value] of Object.entries(approvedMarketing(touch,{campaigns:process.env.NEXT_PUBLIC_POSTHOG_ALLOWED_CAMPAIGNS||'',content:process.env.NEXT_PUBLIC_POSTHOG_ALLOWED_CONTENT||'',terms:process.env.NEXT_PUBLIC_POSTHOG_ALLOWED_TERMS||''})))properties[prefix+'_'+key]=value;
+ return {distinctId:accountId||identity.data.distinctId,event:event.name,uuid:stableEventUuid(event.id),timestamp:new Date(event.at),disableGeoip:true,properties};
+}
+export async function queuePosthogLifecycle(c:Client,event:AnalyticsEvent,measurement:Measurement,accountId?:string){if(!posthogServerConfigured())return;const payload=lifecyclePosthogEvent(event,measurement,accountId);if(payload)await c.execute({sql:"INSERT OR IGNORE INTO posthog_outbox(id,session,payload,state,attempts,next_at,lock_id) VALUES(?,?,?,'pending',0,0,NULL)",args:[event.id,event.session,JSON.stringify(payload)]})}

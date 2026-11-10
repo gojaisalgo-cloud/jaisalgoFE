@@ -1,11 +1,12 @@
 'use client';
+import {analyticsAllowed} from './consent';
 import publicPaths from '@/data/analytics-public-paths.json';
 const publicPages=new Set(publicPaths);
 const measurementId=process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID||'';
 export const ga4Configured=()=>process.env.NEXT_PUBLIC_GA4_ENABLED==='true'&&/^G-[A-Z0-9]{6,}$/.test(measurementId);
 /** No queries, fragments, private routes, raw referrers or customer/payment events. */
 export function ga4PagePayload(path:string){const clean=path.split(/[?#]/)[0].replace(/\/$/,'')||'/';return publicPages.has(clean)&&!/^\/(book|reservations|verify|admin|my-bookings|api)(\/|$)/.test(clean)?{page_path:clean,page_location:'https://www.jaisalgo.com'+(clean==='/'?'/':clean),page_referrer:''}:undefined}
-function allowed(){try{return localStorage.getItem('jaisalgo_measurement')==='allow'&&!navigator.doNotTrack?.includes('1')&&!(navigator as Navigator&{globalPrivacyControl?:boolean}).globalPrivacyControl}catch{return false}}
+const allowed=analyticsAllowed;
 type GaWindow=Window&{dataLayer?:unknown[];gtag?:(...args:unknown[])=>void};
 /** gtag consumes Arguments commands, not arbitrary array entries in dataLayer. */
 export function googleCommandQueue(queue:unknown[]):(...args:unknown[])=>void {

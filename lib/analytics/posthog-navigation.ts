@@ -9,3 +9,10 @@ export function pageLifecycle(){
     reset(){path='';active=false;revision++;landingSession=''},
   };
 }
+
+/** Count visible, recently active time; idle/background time is not engagement. */
+export function engagementClock(start=Date.now()){
+ let tick=start,lastInput=start,active=0,visible=true;
+ const advance=(now:number)=>{if(visible)active+=Math.max(0,Math.min(now,lastInput+60000)-tick);tick=now};
+ return {activity(now=Date.now()){advance(now);lastInput=now},visibility(shown:boolean,now=Date.now()){advance(now);visible=shown;if(shown)lastInput=now},snapshot(now=Date.now()){advance(now);return {active_seconds:Math.min(86400,Math.floor(active/1000)),elapsed_seconds:Math.max(0,Math.min(86400,Math.floor((now-start)/1000)))}}};
+}

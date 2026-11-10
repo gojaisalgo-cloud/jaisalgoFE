@@ -6,8 +6,11 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {analyticsPage,privateAnalyticsPage,marketingTouch,safeBehaviourProps,behaviourEvents,posthogHost} from '../lib/analytics/posthog-schema';
 import {sanitizeHeatmap,sanitizeReplayUrls} from '../lib/analytics/posthog-privacy';
-import {pageLifecycle} from '../lib/analytics/posthog-navigation';
-import {financialPosthogEvent,drainPosthogOutbox,stableEventUuid} from '../lib/analytics/posthog-server';
+import {analyticsConsentVersion,analyticsPreferencesKey,parseAnalyticsPreferences,analyticsAllowed,replayAllowed,locationAllowed} from '../lib/analytics/consent';
+import {customerAnalyticsId,recordCustomerAnalytics,recordAcceptedEnquiry} from '../lib/analytics/customer';
+import {searchProperties,searchIntent} from '../lib/analytics/posthog-schema';
+import {pageLifecycle,engagementClock} from '../lib/analytics/posthog-navigation';
+import {financialPosthogEvent,lifecyclePosthogEvent,drainPosthogOutbox,stableEventUuid} from '../lib/analytics/posthog-server';
 import {analyticsDb,recordFinancialMilestones,withdraw} from '../lib/analytics/server';
 import {db} from '../lib/booking/db';
 import {createDraft,settle,viewDraft,recordRefund} from '../lib/booking/service';
@@ -38,7 +41,7 @@ test('browser identity and first/latest entry attribution survive internal SPA n
   Object.defineProperty(globalThis,'document',{configurable:true,value:{referrer:'https://www.google.com/search?q=private'}});
   const browserLocation={href:'https://www.jaisalgo.com/jaisalmer-travel-from/delhi?utm_source=google&utm_medium=cpc',pathname:'/jaisalmer-travel-from/delhi'};
   Object.defineProperty(globalThis,'location',{configurable:true,value:browserLocation});
-  store.set('jaisalgo_measurement','allow');
+  store.set('jaisalgo_measurement','allow');store.set(analyticsPreferencesKey,JSON.stringify({version:analyticsConsentVersion,analytics:true,replay:false,location:false,at:1}));
   const {posthogMeasurement,resetPosthogIdentity}=await import('../lib/analytics/posthog-client');
   const first=posthogMeasurement()!;browserLocation.href='https://www.jaisalgo.com/packages/city-and-dunes';browserLocation.pathname='/packages/city-and-dunes';const next=posthogMeasurement()!;
   assert.equal(next.distinctId,first.distinctId);assert.deepEqual(next.firstTouch,first.firstTouch);assert.deepEqual(next.latestTouch,first.latestTouch);assert.equal(next.latestTouch.landing_page_path,'/jaisalmer-travel-from/delhi');assert.equal(next.latestTouch.utm_medium,'cpc');
@@ -53,7 +56,7 @@ test('navigation emits one view per visit, ignores stale SDK callbacks and dedup
 });
 test('browser privacy hook retains required project routing and anonymous identity while removing personal data',async()=>{
   let consent='allow';
-  Object.defineProperty(globalThis,'localStorage',{configurable:true,value:{getItem:(key:string)=>key==='jaisalgo_measurement'?consent:null,setItem:()=>{},removeItem:()=>{}}});
+  Object.defineProperty(globalThis,'localStorage',{configurable:true,value:{getItem:(key:string)=>key==='jaisalgo_measurement'?consent:key===analyticsPreferencesKey?JSON.stringify({version:analyticsConsentVersion,analytics:true,replay:false,location:false,at:1}):null,setItem:()=>{},removeItem:()=>{}}});
   Object.defineProperty(globalThis,'navigator',{configurable:true,value:{doNotTrack:'0'}});
   Object.defineProperty(globalThis,'document',{configurable:true,value:{referrer:''}});
   const browserLocation={origin:'https://www.jaisalgo.com',hostname:'www.jaisalgo.com',href:'https://www.jaisalgo.com/packages?email=private@example.com',pathname:'/packages'};
@@ -66,6 +69,8 @@ test('browser privacy hook retains required project routing and anonymous identi
   assert.equal(result.properties.distinct_id,event.properties.distinct_id);assert.equal(result.properties.$session_id,event.properties.$session_id);
   assert.equal(result.properties.$current_url,'https://www.jaisalgo.com/packages');
   for(const value of ['untrusted-project','private@example.com','9999999999','Private Traveler'])assert.ok(!JSON.stringify(result).includes(value));
+  const identified=sanitizePosthogEvent({...event,event:'$identify',properties:{...event.properties,distinct_id:customerAnalyticsId('fixture-customer'),$anon_distinct_id:event.properties.distinct_id,$set:{email:'private@example.com',name:'Private Traveler'}}})!;
+  assert.equal(identified.properties.$anon_distinct_id,event.properties.distinct_id);assert.deepEqual(identified.properties.$set,{account_type:'google',sign_in_method:'google',analytics_consent_version:analyticsConsentVersion});assert.ok(!JSON.stringify(identified).includes('private@example.com'));
   browserLocation.pathname='/reservations/private-booking';
   assert.equal(sanitizePosthogEvent({...event,event:'$pageview'})!.properties.$current_url,'https://www.jaisalgo.com/reservations/[id]');
   assert.equal(sanitizePosthogEvent({...event,event:'$autocapture'}),null);assert.equal(sanitizePosthogEvent({...event,event:'$snapshot'}),null);
@@ -98,4 +103,44 @@ test('actual verified demo settlement queues success once, survives delivery fai
   const original=rows.map(r=>JSON.parse(String(r.payload))),sent:EventMessage[]=[];await c.execute('UPDATE posthog_outbox SET next_at=0');const retry=await drainPosthogOutbox(c,async event=>{sent.push(event)});assert.equal(retry.sent,2);assert.deepEqual(sent.map(e=>e.uuid).sort(),original.map(e=>e.uuid).sort());assert.deepEqual(sent.map(e=>e.timestamp?.toISOString()).sort(),original.map(e=>e.timestamp).sort());
   assert.equal((await drainPosthogOutbox(c,async()=>{throw Error('should not send twice')})).sent,0);await recordFinancialMilestones(draft.id);assert.equal((await c.execute('SELECT COUNT(*) n FROM posthog_outbox')).rows[0].n,2);
   await recordRefund(payment.id,9900);rows=(await c.execute("SELECT * FROM posthog_outbox WHERE state='pending'")).rows;assert.equal(rows.length,1);assert.equal(JSON.parse(String(rows[0].payload)).event,'refund_recorded');await withdraw(m.sessionId);assert.equal((await c.execute('SELECT COUNT(*) n FROM posthog_outbox')).rows[0].n,0);await recordFinancialMilestones(draft.id);assert.equal((await c.execute('SELECT COUNT(*) n FROM posthog_outbox')).rows[0].n,0);
+});
+
+test('expanded consent requires a current explicit choice and respects separate purposes and browser privacy signals',()=>{
+ let raw=JSON.stringify({version:analyticsConsentVersion,analytics:true,replay:false,location:false,at:1});
+ const nav={doNotTrack:'0',globalPrivacyControl:false};
+ Object.defineProperty(globalThis,'navigator',{configurable:true,value:nav});
+ Object.defineProperty(globalThis,'localStorage',{configurable:true,value:{getItem:(key:string)=>key===analyticsPreferencesKey?raw:key==='jaisalgo_measurement'?'allow':null}});
+ assert.equal(analyticsAllowed(),true);assert.equal(replayAllowed(),false);assert.equal(locationAllowed(),false);
+ raw=JSON.stringify({version:analyticsConsentVersion,analytics:true,replay:true,location:true,at:1});assert.equal(replayAllowed(),true);assert.equal(locationAllowed(),true);
+ nav.doNotTrack='1';assert.equal(analyticsAllowed(),false);nav.doNotTrack='0';nav.globalPrivacyControl=true;assert.equal(replayAllowed(),false);
+ raw=JSON.stringify({version:'old',analytics:true,replay:true,location:true,at:1});nav.globalPrivacyControl=false;assert.equal(analyticsAllowed(),false);
+ assert.equal(parseAnalyticsPreferences('bad json'),undefined);assert.equal(parseAnalyticsPreferences(JSON.stringify({version:analyticsConsentVersion,analytics:false,replay:true,location:true,at:1}))?.replay,false);
+});
+test('searches retain finite intent, never free text, dates or arbitrary filter values',()=>{
+ const props=searchProperties(new URLSearchParams('q=private%40example.com&date=2027-01-15&kind=private-name&travellers=9999&sort=private'));
+ assert.equal(props.search_intent,'other');assert.ok(!JSON.stringify(props).includes('private'));assert.equal(searchIntent('camel safari'),'camel');
+ assert.equal(safeBehaviourProps({search_intent:'private-name'}),undefined);assert.equal(safeBehaviourProps({target_path:'/reservations/private-key'}),undefined);
+});
+test('engagement excludes background and idle time',()=>{
+ const clock=engagementClock(0);clock.activity(10000);clock.visibility(false,20000);clock.visibility(true,120000);clock.activity(130000);
+ assert.deepEqual(clock.snapshot(200000),{active_seconds:90000/1000,elapsed_seconds:200});
+ assert.deepEqual(clock.snapshot(300000),{active_seconds:90,elapsed_seconds:300});
+});
+test('verified lifecycle events use stable opaque account identity and strict properties',()=>{
+ const m=measurement(),id=customerAnalyticsId('internal-random-id');assert.match(id,/^acct_[a-f0-9]{64}$/);assert.equal(id,customerAnalyticsId('internal-random-id'));
+ const event:AnalyticsEvent={id:'verified-signup',name:'signup_completed',at:10000,mode:'live',origin:'server',session:m.sessionId,attempt:null,props:{email:'private@example.com',name:'Private'}};
+ const captured=lifecyclePosthogEvent(event,m,id)!;assert.equal(captured.distinctId,id);assert.equal(captured.disableGeoip,true);assert.equal(captured.uuid,lifecyclePosthogEvent(event,m,id)!.uuid);assert.ok(!JSON.stringify(captured).includes('private@example.com'));
+ assert.equal(lifecyclePosthogEvent({...event,origin:'client'},m,id),undefined);assert.equal(lifecyclePosthogEvent(event,m,'private@example.com'),undefined);assert.equal(lifecyclePosthogEvent(event,{...m,consent:false} as unknown as Measurement,id),undefined);
+ assert.equal(lifecyclePosthogEvent({...event,name:'enquiry_accepted'},m)?.distinctId,m.posthog!.distinctId);
+ for(const name of ['cancellation_requested','booking_cancelled'])assert.equal(financialPosthogEvent({...event,name},m)?.event,name);
+});
+
+test('server lifecycle outbox deduplicates retries and suppresses withdrawn or obsolete consent',async()=>{
+ const c=await analyticsDb(),m={...measurement(),consentVersion:analyticsConsentVersion},result={user:{id:randomUUID()},isNew:true,sessionToken:randomUUID()};
+ const count=async()=>Number((await c.execute('SELECT COUNT(*) n FROM posthog_outbox')).rows[0].n),before=await count();
+ await recordCustomerAnalytics(result,m);await recordCustomerAnalytics(result,m);assert.equal(await count(),before+2);
+ await recordAcceptedEnquiry(m,'not-valid');assert.equal(await count(),before+2);
+ const attempt=randomUUID();await recordAcceptedEnquiry(m,attempt);await recordAcceptedEnquiry(m,attempt);assert.equal(await count(),before+3);
+ await withdraw(m.sessionId);assert.equal(await count(),before);await recordCustomerAnalytics(result,m);assert.equal(await count(),before);
+ await recordCustomerAnalytics({...result,user:{id:randomUUID()}},{...m,sessionId:randomUUID(),consentVersion:undefined});assert.equal(await count(),before);
 });

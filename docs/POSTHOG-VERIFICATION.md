@@ -1,49 +1,44 @@
-# PostHog implementation verification — 4 November 2026
+# PostHog verification — 10–11 November 2026
 
-## Checks performed
+This supersedes the older activation notes. Project 332646 is configured and actual ingestion has been checked; configuration alone is not used as evidence of delivery.
 
-- `npm test`: **74 passed, 0 failed**. Includes eight new PostHog tests covering safe URLs/attribution, blocked-storage identity, route race/deduplication, typed PII rejection, replay/heatmap redaction, trusted financial payloads, real isolated demo settlement, duplicate settlement, delivery outage/retry, refunds and consent withdrawal.
-- `npm run typecheck`: passed.
-- `npm run build`: production build passed, existing public and private route structure retained.
-- `npm run test:admin`: isolated HTTP integration passed. Covers admin authentication/CSRF, catalogue edits, stale edits, departures, payment idempotency, early-balance blocking, approved offline receipts, cancellation/refunds, analytics authorization/PII protection, financial deduplication and consent withdrawal.
-- `npm run lint`: 13 existing errors and 9 existing warnings. New PostHog modules/tests have no lint diagnostics. The repository-wide check remains unsuccessful; no claim of a clean baseline.
-- `npm audit --omit=dev`: 0 known production dependency vulnerabilities at verification time. This is a registry audit, not a comprehensive security guarantee.
-- `git diff --check`: passed.
-- Existing HTTP SEO audit on the production preview: **73 indexable pages, 73 sitemap entries, 135 internal targets, 18 image assets, 0 critical issues**. Canonicals/JSON-LD/private noindex remain intact. No Google indexing or field Core Web Vitals claim.
+## Automated checks
 
-## Actual browser regression
+- Full regression suite: **125 tests passed, 0 failures**. Includes real isolated demo settlement, stable ledger UUIDs, retry/outage/withdrawal handling; strict search/URL/PII allowlists; renewed purpose-specific consent and DNT/GPC; masked identification payloads; active versus idle/background timing; stable pseudonymous account identity; auth/enquiry outbox deduplication and cancelled booking adapters.
+- TypeScript check: passed.
+- Configured Next.js production build: passed.
+- Targeted lint on analytics utilities, instrumented components and API routes: passed. The existing central consent effect was adjusted to initialize its storage-backed UI after the first frame, and its privacy link uses Next Link. This is not a claim that unrelated repository-wide lint findings have been fixed.
+- No new package/dependency added. `git diff --check` passed.
 
-Used the in-app browser against a completed production build on an isolated temporary database in **demo mode**, never the user's local booking database or live payments.
+## Actual browser and ingestion checks
 
-At **390 × 844**:
+Used the existing EU project with an isolated local production build, disposable file DB, `BOOKING_MODE=demo`, signup alerts disabled and `analytics_environment=development`. No real payment, Google sign-in or operational WhatsApp test was performed. The production dashboards explicitly exclude this development traffic.
 
-1. Home consent choice → Quick Jaisalmer Escape details.
-2. Opened itinerary and price tabs → Choose date.
-3. Changed date to 4 January 2027 and group from two to three travellers. Full estimate changed from ₹9,705 to ₹15,276; ₹99 remained part of the total.
-4. Entered fictional QA name/mobile, accepted the sandbox terms, submitted the demo booking.
-5. Instant ticket showed the same date/group, ₹99 simulated token payment and ₹15,177 balance.
-6. Download Ticket produced a PNG download and the success state.
-7. My Bookings recovered the saved demo ticket without login or email.
+1. Guest browsing and renewed consent worked. Replay and location checkboxes initially unchecked; both explicit choices were exercised, then consent withdrawn through Privacy preferences.
+2. Entered camel in homepage search and reached two matching packages. Opened a package and entered checkout; later exercised catalog search and sorting.
+3. Submitted a disposable demo booking and reached “Your ticket is ready”, clearly labelled demo with ₹99 simulated and the correct remaining package balance. Payment logic remained unchanged.
+4. Created a local trip brief; UI explicitly said no enquiry was sent. A real external enquiry provider is not configured, so server acceptance was covered with the isolated outbox regression rather than fabricated delivery.
+5. Inspected actual PostHog event records: `search_submitted`, `search_results_viewed`, `session_started`, `page_engagement`, `ticket_viewed`, `booking_confirmed`, `reservation_completed`. Backend financial events were labelled `verified_backend`, `development`, `demo`; success was not derived from a click.
+6. Inspected QA rows had no name/email/phone fields. Search was reduced to camel/finite intent; checkout and ticket paths were `/book/[slug]` and `/reservations/[id]` without access keys or record IDs.
+7. A sampled QA recording was ingested with zero console logs/errors and 30-day retention. Opened the actual recording and observed masked public-page text/attributes. Private checkout/ticket content is excluded by route, transition and transmission guards; form blocks remain enforced. This was a sample inspection, not an exhaustive audit of every recording.
+8. After the new ingestion transformation, inspected new QA rows retained a coarse country while latitude, longitude and postal code were null. Earlier project data is not retroactively changed by the transformation.
+9. Tested the privacy notice and consent panel at **390×844** and normal **1280×720** desktop size. No horizontal overflow; choices and action buttons fit on mobile. Temporary viewport override reset and QA tabs closed. No browser warnings/errors appeared in the exercised checkout/search flow.
 
-The ticket's document width matched 390px and 1365px desktop viewports, with no horizontal overflow. No email field was present; private-ticket exclusion markup was present. No browser warning/error logs were observed during this run. Temporary viewport override was reset and QA tab closed afterward.
+## PostHog project configuration
 
-Screenshot: `../jaisalgo-posthog-mobile-ticket.png` in the external delivery outputs folder shows the sample ticket, download/share controls and actual download success feedback. It contains disposable demo data only. These checks verify booking/UI regression with vendor tracking unconfigured; they do **not** demonstrate PostHog receiving events.
+Created and saved two dashboards containing **19 native insights**; executed all 19 queries without errors or warnings. These are operational chart definitions, not approved semantic-catalog metrics. The existing starter dashboard was preserved. Project timezone remains UTC.
 
-## Activation and remaining external requirements
+- Acquisition & engagement: https://eu.posthog.com/project/332646/dashboard/1102625
+- Journeys & conversions: https://eu.posthog.com/project/332646/dashboard/1102627
 
-No real `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` or `NEXT_PUBLIC_POSTHOG_HOST` was present. No PostHog management credentials or accessible signed-in project tab were available. Consequently live ingestion, recording inspection, dashboard creation, remote deletion and documented SQL execution remain unverified. The exact dashboard recipe and activation checklist are in [POSTHOG_ANALYTICS.md](POSTHOG_ANALYTICS.md).
+Saved query definitions and IDs: `POSTHOG-DASHBOARDS.json`. Every chart uses `analytics_environment=production`; finance additionally uses live payment mode on the relevant series/step. New signup, delivery, cancellation and conversion panels may correctly show zero/empty until genuine consenting activity occurs.
 
-Production financial analytics additionally depends on the existing hosted persistent database, verified payment setup and supplier launch gates. The integration preserves those gates. No live money was charged, historical conversion invented, geo-IP location collected, Google impression fabricated or customer email requested.
+Kept IP anonymization enabled; disabled project console/performance/automatic-exception capture; set recording sample rate 10% and retention 30 days. Added the standard property-filter transformation after GeoIP to null unwanted location/contact/profile fields. All these protections also have SDK allowlists/masking where applicable.
 
-Commit/push/deployment evidence is recorded separately in the delivery output after publication; this file describes the implementation checks and their limits.
+## Limits and operations
 
+Real Google account sign-in was previously declined by the user and was not performed. Authentication verification, opaque IDs and lifecycle deduplication are covered by isolated regressions; the first genuine consenting Google signup remains the live identity-merging smoke test. No live charge/refund/cancellation was created to populate a chart. Delivered enquiry success requires the existing endpoint to be configured and actually accept a request.
 
-## Activation follow-up — 4 November 2026
+Consent/blockers/sampling/private-page exclusions mean this is not a census of every visitor. PostHog product-event retention, processor/legal review and access/deletion handling remain operator responsibilities. Withdrawal stops future capture and suppresses current-session pending deliveries; already-ingested vendor data needs a separate deletion process. No demographic collection/inference, paid export, recurring report email or new outbound marketing was configured.
 
-The supplied EU project configuration was saved in local configuration and Vercel Production configuration. No project token was added to tracked source.
-
-A real browser smoke test revealed that the `before_send` privacy hook omitted the SDK's required public `token` property. The installed SDK drops such events before transport. The hook now retains the configured project token while still removing arbitrary personal fields and private URL identifiers. A regression test covers trusted project routing, anonymous identity, query redaction, private-screen exclusions and declined consent.
-
-Validation: **83 automated tests passed**, targeted analytics lint passed, and the configured production build passed. Through the actual consent and package-details UI on an isolated local demo build, PostHog project 332646 displayed real page-view, package-view, click and scroll-depth event rows from the local test origin. These are development interactions, not production conversions. No booking was submitted or payment attempted.
-
-Production deployment and live-domain receipt are recorded separately in the external delivery evidence after publication. Existing payment, persistent database and supplier launch prerequisites remain independent of analytics activation.
+See `POSTHOG_ANALYTICS.md` for event definitions, identity/consent behavior, funnel windows and outbox recovery. GitHub/Vercel publication evidence is recorded in the external delivery summary after deployment.

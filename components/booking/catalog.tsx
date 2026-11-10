@@ -1,4 +1,6 @@
 'use client';
+import {captureBehaviour,captureBehaviourOnce} from '@/lib/analytics/posthog-client';
+import {searchProperties} from '@/lib/analytics/posthog-schema';
 import {DirectionalIcon,IconButton} from '@/components/directional-control';
 import {Dropdown} from '@/components/dropdown';
 import {Modal} from '@/components/ui/modal';
@@ -18,9 +20,11 @@ export function TourCatalog({tours,compact=false}:{tours:Tour[];compact?:boolean
  const query=new URLSearchParams(params.toString()),records=catalogRecords(tours),f=discoveryFilters(query),list=filterDiscovery(records,f);
  const active=f.style.includes('Couples')?'couples':f.kind;
  function navigate(next:URLSearchParams,replace=false){const url=location.pathname+(next.size?'?'+next:'')+location.hash;if(replace)history.replaceState(null,'',url);else history.pushState(null,'',url)}
- function update(patch:Record<string,string>,replace=false){navigate(patchDiscovery(new URLSearchParams(location.search),patch),replace)}
- function clear(){navigate(clearDiscovery(new URLSearchParams(location.search)))}
+ function update(patch:Record<string,string>,replace=false){if(patch.sort)captureBehaviour('package_sort_changed',{sort_order:patch.sort as 'recommended'});else if(!('q' in patch)){const key=Object.keys(patch)[0];captureBehaviour('package_filter_changed',{filter_key:['kind','area','category','style','place','stayType','transfer','tour','priceBand','days','safari','desert','minNights','maxNights','minPrice','maxPrice'].includes(key)?key as 'kind':'other'})}navigate(patchDiscovery(new URLSearchParams(location.search),patch),replace)}
+ function clear(){captureBehaviour('package_filter_changed',{filter_key:'clear'});navigate(clearDiscovery(new URLSearchParams(location.search)))}
  useEffect(()=>{const el=strip.current;if(!el)return;const measure=()=>setScroll({previous:el.scrollLeft>2,next:el.scrollLeft+el.clientWidth<el.scrollWidth-2});const observer=new ResizeObserver(measure);observer.observe(el);el.addEventListener('scroll',measure,{passive:true});measure();return()=>{observer.disconnect();el.removeEventListener('scroll',measure)}},[]);
+ const queryKey=params.toString(),resultCount=list.length;
+ useEffect(()=>{if(compact)return;const emit=()=>captureBehaviourOnce('search-results:'+queryKey,'search_results_viewed',{...searchProperties(new URLSearchParams(queryKey)),result_count:resultCount});const timer=setTimeout(emit,400);window.addEventListener('jaisalgo-consent-changed',emit);return()=>{clearTimeout(timer);window.removeEventListener('jaisalgo-consent-changed',emit)}},[queryKey,resultCount,compact]);
  const categoryBase={...f,kind:'',style:f.style.filter(s=>s!=='Couples')};
  const countCategory=(value:string)=>filterDiscovery(records,{...categoryBase,kind:value==='couples'?'':value,style:value==='couples'?['Couples']:categoryBase.style}).length;
  const chips:{label:string;patch:Record<string,string>}[]=[];

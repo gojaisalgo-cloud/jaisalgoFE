@@ -1,0 +1,800 @@
+{
+  "version": "2026-11-10",
+  "project": 332646,
+  "timezone": "UTC",
+  "dashboards": [
+    {
+      "id": 1102625,
+      "url": "https://eu.posthog.com/project/332646/dashboard/1102625"
+    },
+    {
+      "id": 1102627,
+      "url": "https://eu.posthog.com/project/332646/dashboard/1102627"
+    }
+  ],
+  "insights": [
+    {
+      "name": "Daily active visitors · production",
+      "dashboard": 1102625,
+      "id": 7260587,
+      "short_id": "oMosF4O5",
+      "query": {
+        "kind": "TrendsQuery",
+        "series": [
+          {
+            "kind": "EventsNode",
+            "event": "$pageview",
+            "math": "dau"
+          }
+        ],
+        "dateRange": {
+          "date_from": "-30d"
+        },
+        "interval": "day",
+        "properties": [
+          {
+            "key": "analytics_environment",
+            "type": "event",
+            "operator": "exact",
+            "value": "production"
+          }
+        ],
+        "trendsFilter": {
+          "display": "ActionsLineGraph",
+          "showLegend": true
+        }
+      }
+    },
+    {
+      "name": "First-touch acquisition sources",
+      "dashboard": 1102625,
+      "id": 7260588,
+      "short_id": "gQqbFpO6",
+      "query": {
+        "kind": "TrendsQuery",
+        "series": [
+          {
+            "kind": "EventsNode",
+            "event": "$pageview",
+            "math": "dau"
+          }
+        ],
+        "dateRange": {
+          "date_from": "-30d"
+        },
+        "interval": "day",
+        "properties": [
+          {
+            "key": "analytics_environment",
+            "type": "event",
+            "operator": "exact",
+            "value": "production"
+          }
+        ],
+        "trendsFilter": {
+          "display": "ActionsBarValue",
+          "showLegend": true
+        },
+        "breakdownFilter": {
+          "breakdowns": [
+            {
+              "property": "first_touch_traffic_source",
+              "type": "event"
+            }
+          ],
+          "breakdown_limit": 12
+        }
+      }
+    },
+    {
+      "name": "Latest-touch acquisition sources",
+      "dashboard": 1102625,
+      "id": 7260589,
+      "short_id": "JkjFS4Jh",
+      "query": {
+        "kind": "TrendsQuery",
+        "series": [
+          {
+            "kind": "EventsNode",
+            "event": "$pageview",
+            "math": "dau"
+          }
+        ],
+        "dateRange": {
+          "date_from": "-30d"
+        },
+        "interval": "day",
+        "properties": [
+          {
+            "key": "analytics_environment",
+            "type": "event",
+            "operator": "exact",
+            "value": "production"
+          }
+        ],
+        "trendsFilter": {
+          "display": "ActionsBarValue",
+          "showLegend": true
+        },
+        "breakdownFilter": {
+          "breakdowns": [
+            {
+              "property": "latest_touch_traffic_source",
+              "type": "event"
+            }
+          ],
+          "breakdown_limit": 12
+        }
+      }
+    },
+    {
+      "name": "Devices, browsers & operating systems",
+      "dashboard": 1102625,
+      "id": 7260592,
+      "short_id": "bSZPjBG0",
+      "query": {
+        "kind": "TrendsQuery",
+        "series": [
+          {
+            "kind": "EventsNode",
+            "event": "$pageview",
+            "math": "dau"
+          }
+        ],
+        "dateRange": {
+          "date_from": "-30d"
+        },
+        "interval": "day",
+        "properties": [
+          {
+            "key": "analytics_environment",
+            "type": "event",
+            "operator": "exact",
+            "value": "production"
+          }
+        ],
+        "trendsFilter": {
+          "display": "ActionsTable",
+          "showLegend": true
+        },
+        "breakdownFilter": {
+          "breakdowns": [
+            {
+              "property": "device_category",
+              "type": "event"
+            },
+            {
+              "property": "$browser",
+              "type": "event"
+            },
+            {
+              "property": "$os",
+              "type": "event"
+            }
+          ],
+          "breakdown_limit": 25
+        }
+      }
+    },
+    {
+      "name": "Weekly active visitors · production",
+      "dashboard": 1102625,
+      "id": 7260621,
+      "short_id": "iGtcKMKy",
+      "query": {
+        "kind": "TrendsQuery",
+        "series": [
+          {
+            "kind": "EventsNode",
+            "event": "$pageview",
+            "math": "dau"
+          }
+        ],
+        "dateRange": {
+          "date_from": "-30d"
+        },
+        "interval": "week",
+        "properties": [
+          {
+            "key": "analytics_environment",
+            "type": "event",
+            "operator": "exact",
+            "value": "production"
+          }
+        ],
+        "trendsFilter": {
+          "display": "ActionsLineGraph",
+          "showLegend": true
+        }
+      }
+    },
+    {
+      "name": "Weekly return-visit retention",
+      "dashboard": 1102625,
+      "id": 7260622,
+      "short_id": "frd1OD33",
+      "query": {
+        "kind": "RetentionQuery",
+        "dateRange": {
+          "date_from": "-30d"
+        },
+        "properties": [
+          {
+            "key": "analytics_environment",
+            "type": "event",
+            "operator": "exact",
+            "value": "production"
+          }
+        ],
+        "retentionFilter": {
+          "targetEntity": {
+            "id": "$pageview",
+            "type": "events"
+          },
+          "returningEntity": {
+            "id": "$pageview",
+            "type": "events"
+          },
+          "period": "Week",
+          "totalIntervals": 5,
+          "retentionType": "retention_first_time",
+          "display": "ActionsLineGraph"
+        }
+      }
+    },
+    {
+      "name": "Navigation paths & exits",
+      "dashboard": 1102625,
+      "id": 7260654,
+      "short_id": "NDMuHtJH",
+      "query": {
+        "kind": "PathsQuery",
+        "dateRange": {
+          "date_from": "-30d"
+        },
+        "properties": [
+          {
+            "key": "analytics_environment",
+            "type": "event",
+            "operator": "exact",
+            "value": "production"
+          }
+        ],
+        "pathsFilter": {
+          "includeEventTypes": [
+            "$pageview"
+          ],
+          "stepLimit": 5,
+          "edgeLimit": 30
+        }
+      }
+    },
+    {
+      "name": "Active versus elapsed page time",
+      "dashboard": 1102625,
+      "id": 7260655,
+      "short_id": "NXyf2O9f",
+      "query": {
+        "kind": "TrendsQuery",
+        "series": [
+          {
+            "kind": "EventsNode",
+            "event": "page_engagement",
+            "math": "avg",
+            "math_property": "active_seconds",
+            "custom_name": "active_seconds"
+          },
+          {
+            "kind": "EventsNode",
+            "event": "page_engagement",
+            "math": "avg",
+            "math_property": "elapsed_seconds",
+            "custom_name": "elapsed_seconds"
+          }
+        ],
+        "dateRange": {
+          "date_from": "-30d"
+        },
+        "interval": "day",
+        "properties": [
+          {
+            "key": "analytics_environment",
+            "type": "event",
+            "operator": "exact",
+            "value": "production"
+          }
+        ],
+        "trendsFilter": {
+          "display": "ActionsLineGraph",
+          "aggregationAxisFormat": "duration",
+          "showLegend": true
+        }
+      }
+    },
+    {
+      "name": "Approximate city, state & country · optional consent",
+      "dashboard": 1102625,
+      "id": 7260707,
+      "short_id": "u4qwysWx",
+      "query": {
+        "kind": "TrendsQuery",
+        "series": [
+          {
+            "kind": "EventsNode",
+            "event": "$pageview",
+            "math": "dau"
+          }
+        ],
+        "dateRange": {
+          "date_from": "-30d"
+        },
+        "interval": "day",
+        "properties": [
+          {
+            "key": "analytics_environment",
+            "type": "event",
+            "operator": "exact",
+            "value": "production"
+          }
+        ],
+        "trendsFilter": {
+          "display": "ActionsTable",
+          "showLegend": true
+        },
+        "breakdownFilter": {
+          "breakdowns": [
+            {
+              "property": "$geoip_country_name",
+              "type": "event"
+            },
+            {
+              "property": "$geoip_subdivision_1_name",
+              "type": "event"
+            },
+            {
+              "property": "$geoip_city_name",
+              "type": "event"
+            }
+          ],
+          "breakdown_limit": 25
+        }
+      }
+    },
+    {
+      "name": "Search → exploration → booking start",
+      "dashboard": 1102627,
+      "id": 7260716,
+      "short_id": "XT0MVzWy",
+      "query": {
+        "kind": "FunnelsQuery",
+        "dateRange": {
+          "date_from": "-30d"
+        },
+        "properties": [
+          {
+            "key": "analytics_environment",
+            "type": "event",
+            "operator": "exact",
+            "value": "production"
+          }
+        ],
+        "series": [
+          {
+            "kind": "EventsNode",
+            "event": "search_submitted"
+          },
+          {
+            "kind": "EventsNode",
+            "event": "search_results_viewed"
+          },
+          {
+            "kind": "EventsNode",
+            "event": "package_viewed"
+          },
+          {
+            "kind": "EventsNode",
+            "event": "booking_started"
+          }
+        ],
+        "funnelsFilter": {
+          "funnelOrderType": "ordered",
+          "funnelWindowInterval": 7,
+          "funnelWindowIntervalUnit": "day",
+          "funnelVizType": "steps"
+        }
+      }
+    },
+    {
+      "name": "Checkout → verified ₹99 reservation · live only",
+      "dashboard": 1102627,
+      "id": 7260751,
+      "short_id": "yc5Wg3BS",
+      "query": {
+        "kind": "FunnelsQuery",
+        "dateRange": {
+          "date_from": "-30d"
+        },
+        "properties": [
+          {
+            "key": "analytics_environment",
+            "type": "event",
+            "operator": "exact",
+            "value": "production"
+          }
+        ],
+        "series": [
+          {
+            "kind": "EventsNode",
+            "event": "booking_started"
+          },
+          {
+            "kind": "EventsNode",
+            "event": "traveller_details_completed"
+          },
+          {
+            "kind": "EventsNode",
+            "event": "payment_initiated"
+          },
+          {
+            "kind": "EventsNode",
+            "event": "reservation_completed",
+            "properties": [
+              {
+                "key": "payment_environment",
+                "type": "event",
+                "operator": "exact",
+                "value": "live"
+              }
+            ]
+          }
+        ],
+        "funnelsFilter": {
+          "funnelOrderType": "ordered",
+          "funnelWindowInterval": 1,
+          "funnelWindowIntervalUnit": "day",
+          "funnelVizType": "steps"
+        }
+      }
+    },
+    {
+      "name": "Package interest",
+      "dashboard": 1102627,
+      "id": 7260752,
+      "short_id": "2tuvXdrQ",
+      "query": {
+        "kind": "TrendsQuery",
+        "series": [
+          {
+            "kind": "EventsNode",
+            "event": "package_viewed",
+            "math": "dau"
+          }
+        ],
+        "dateRange": {
+          "date_from": "-30d"
+        },
+        "interval": "day",
+        "properties": [
+          {
+            "key": "analytics_environment",
+            "type": "event",
+            "operator": "exact",
+            "value": "production"
+          }
+        ],
+        "trendsFilter": {
+          "display": "ActionsBarValue",
+          "showLegend": true
+        },
+        "breakdownFilter": {
+          "breakdowns": [
+            {
+              "property": "package_slug",
+              "type": "event"
+            }
+          ],
+          "breakdown_limit": 12
+        }
+      }
+    },
+    {
+      "name": "Booking validation & payment attempts",
+      "dashboard": 1102627,
+      "id": 7260753,
+      "short_id": "XfaWqpbz",
+      "query": {
+        "kind": "TrendsQuery",
+        "series": [
+          {
+            "kind": "EventsNode",
+            "event": "booking_validation_failed",
+            "math": "dau"
+          },
+          {
+            "kind": "EventsNode",
+            "event": "booking_error",
+            "math": "dau"
+          },
+          {
+            "kind": "EventsNode",
+            "event": "payment_attempt_failed",
+            "math": "dau"
+          }
+        ],
+        "dateRange": {
+          "date_from": "-30d"
+        },
+        "interval": "day",
+        "properties": [
+          {
+            "key": "analytics_environment",
+            "type": "event",
+            "operator": "exact",
+            "value": "production"
+          }
+        ],
+        "trendsFilter": {
+          "display": "ActionsLineGraph",
+          "showLegend": true
+        }
+      }
+    },
+    {
+      "name": "New Google account signup funnel",
+      "dashboard": 1102627,
+      "id": 7260794,
+      "short_id": "H2mcZIqk",
+      "query": {
+        "kind": "FunnelsQuery",
+        "dateRange": {
+          "date_from": "-30d"
+        },
+        "properties": [
+          {
+            "key": "analytics_environment",
+            "type": "event",
+            "operator": "exact",
+            "value": "production"
+          }
+        ],
+        "series": [
+          {
+            "kind": "EventsNode",
+            "event": "auth_prompt_viewed"
+          },
+          {
+            "kind": "EventsNode",
+            "event": "login_started"
+          },
+          {
+            "kind": "EventsNode",
+            "event": "signup_completed"
+          }
+        ],
+        "funnelsFilter": {
+          "funnelOrderType": "ordered",
+          "funnelWindowInterval": 1,
+          "funnelWindowIntervalUnit": "day",
+          "funnelVizType": "steps"
+        }
+      }
+    },
+    {
+      "name": "Google sign-in outcomes",
+      "dashboard": 1102627,
+      "id": 7260796,
+      "short_id": "fVU5bAM9",
+      "query": {
+        "kind": "TrendsQuery",
+        "series": [
+          {
+            "kind": "EventsNode",
+            "event": "login_started",
+            "math": "dau"
+          },
+          {
+            "kind": "EventsNode",
+            "event": "login_completed",
+            "math": "dau"
+          },
+          {
+            "kind": "EventsNode",
+            "event": "login_failed",
+            "math": "dau"
+          }
+        ],
+        "dateRange": {
+          "date_from": "-30d"
+        },
+        "interval": "day",
+        "properties": [
+          {
+            "key": "analytics_environment",
+            "type": "event",
+            "operator": "exact",
+            "value": "production"
+          }
+        ],
+        "trendsFilter": {
+          "display": "ActionsLineGraph",
+          "showLegend": true
+        }
+      }
+    },
+    {
+      "name": "Trip brief creation funnel",
+      "dashboard": 1102627,
+      "id": 7260797,
+      "short_id": "3hF2Jrj4",
+      "query": {
+        "kind": "FunnelsQuery",
+        "dateRange": {
+          "date_from": "-30d"
+        },
+        "properties": [
+          {
+            "key": "analytics_environment",
+            "type": "event",
+            "operator": "exact",
+            "value": "production"
+          }
+        ],
+        "series": [
+          {
+            "kind": "EventsNode",
+            "event": "enquiry_started"
+          },
+          {
+            "kind": "EventsNode",
+            "event": "trip_brief_created"
+          }
+        ],
+        "funnelsFilter": {
+          "funnelOrderType": "ordered",
+          "funnelWindowInterval": 1,
+          "funnelWindowIntervalUnit": "day",
+          "funnelVizType": "steps"
+        }
+      }
+    },
+    {
+      "name": "Delivered enquiry funnel",
+      "dashboard": 1102627,
+      "id": 7260800,
+      "short_id": "gQXryGPD",
+      "query": {
+        "kind": "FunnelsQuery",
+        "dateRange": {
+          "date_from": "-30d"
+        },
+        "properties": [
+          {
+            "key": "analytics_environment",
+            "type": "event",
+            "operator": "exact",
+            "value": "production"
+          }
+        ],
+        "series": [
+          {
+            "kind": "EventsNode",
+            "event": "enquiry_started"
+          },
+          {
+            "kind": "EventsNode",
+            "event": "enquiry_submitted"
+          },
+          {
+            "kind": "EventsNode",
+            "event": "enquiry_accepted"
+          }
+        ],
+        "funnelsFilter": {
+          "funnelOrderType": "ordered",
+          "funnelWindowInterval": 1,
+          "funnelWindowIntervalUnit": "day",
+          "funnelVizType": "steps"
+        }
+      }
+    },
+    {
+      "name": "Cancellations, refunds & fully paid bookings",
+      "dashboard": 1102627,
+      "id": 7260805,
+      "short_id": "JEzsKHED",
+      "query": {
+        "kind": "TrendsQuery",
+        "series": [
+          {
+            "kind": "EventsNode",
+            "event": "cancellation_requested",
+            "math": "total"
+          },
+          {
+            "kind": "EventsNode",
+            "event": "booking_cancelled",
+            "math": "total"
+          },
+          {
+            "kind": "EventsNode",
+            "event": "refund_recorded",
+            "math": "total"
+          },
+          {
+            "kind": "EventsNode",
+            "event": "full_booking_paid",
+            "math": "total"
+          }
+        ],
+        "dateRange": {
+          "date_from": "-30d"
+        },
+        "interval": "day",
+        "properties": [
+          {
+            "key": "analytics_environment",
+            "type": "event",
+            "operator": "exact",
+            "value": "production"
+          },
+          {
+            "key": "payment_environment",
+            "type": "event",
+            "operator": "exact",
+            "value": "live"
+          }
+        ],
+        "trendsFilter": {
+          "display": "ActionsLineGraph",
+          "showLegend": true
+        }
+      }
+    },
+    {
+      "name": "Sessions by new/returning and guest/account",
+      "dashboard": 1102625,
+      "id": 7260845,
+      "short_id": "gJhtcXAv",
+      "query": {
+        "kind": "TrendsQuery",
+        "series": [
+          {
+            "kind": "EventsNode",
+            "event": "session_started",
+            "math": "unique_session"
+          }
+        ],
+        "dateRange": {
+          "date_from": "-30d"
+        },
+        "interval": "day",
+        "properties": [
+          {
+            "key": "analytics_environment",
+            "type": "event",
+            "operator": "exact",
+            "value": "production"
+          }
+        ],
+        "trendsFilter": {
+          "display": "ActionsTable",
+          "showLegend": true
+        },
+        "breakdownFilter": {
+          "breakdowns": [
+            {
+              "property": "visitor_type",
+              "type": "event"
+            },
+            {
+              "property": "account_type",
+              "type": "event"
+            }
+          ],
+          "breakdown_limit": 8
+        }
+      }
+    }
+  ],
+  "dataMinimizationTransformation": "01a1c6b0-3d51-0000-d5e5-353c2b5cfdec"
+}
