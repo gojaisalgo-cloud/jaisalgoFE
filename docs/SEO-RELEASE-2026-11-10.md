@@ -33,9 +33,9 @@ Refresh the seed-catalogue inventory with `node --import tsx scripts/seo-keyword
 
 ## Google account setup
 
-Search Console verification is being configured for the operator-selected `gojaisalgo@gmail.com`, using the genuine URL-prefix verification token stored in Vercel Production rather than in source control. The sitemap must show a submitted state in that account before this is called complete.
+Search Console URL-prefix ownership for `https://www.jaisalgo.com/` was verified for the operator-selected `gojaisalgo@gmail.com`. The genuine HTML verification token is stored in Vercel Production and is present in the deployed metadata. Google reports **Sitemap processed successfully**, last read 10 November 2026, with **89 discovered pages**. An initial fetch status cleared during processing; the successful detail report is authoritative. Index inclusion and performance reports are still processing.
 
-That Google account currently has no Analytics account. The adapter remains disabled until the operator authorizes account creation/terms, a web stream exists, and automatic/Enhanced Measurement is disabled. Public-page analytics require visitor opt-in; checkout, ticket and customer screens remain excluded.
+The operator authorized creation of the JaisalGo Analytics account/property and accepted Google's service/data-processing terms. The account is JaisalGo (415623793), property JaisalGo Website (563452998), with India reporting time and INR. The production web stream (16311185615) uses measurement ID `G-JT5K61C1BL`. Enhanced Measurement is off, optional account data sharing is off, and there are no connected site tags. `NEXT_PUBLIC_GA4_MEASUREMENT_ID` and `NEXT_PUBLIC_GA4_ENABLED=true` are stored in Vercel Production. The adapter suppresses automatic pageviews with `send_page_view:false`; only sanitized, consented public-page views are sent. The production consent behavior is checked through the existing Privacy preferences controls after deployment. Google reporting may take time to show new activity.
 
 ## Files changed
 

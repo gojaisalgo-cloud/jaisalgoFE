@@ -1,3 +1,9 @@
+# Current setup status — 10 November 2026
+
+The URL-prefix property `https://www.jaisalgo.com/` is verified under the operator-selected Google account. The genuine verification token is saved as `GOOGLE_SITE_VERIFICATION` in Vercel Production; keep it configured. The sitemap was submitted and processed successfully, with 89 discovered pages. This does not mean all pages are indexed. A separate Domain-property DNS verification is optional and has not been performed. See [the current release report](SEO-RELEASE-2026-11-10.md) for current GA4 settings and validation.
+
+The instructions below are retained for future ownership recovery and monitoring; do not re-create an already verified property or submit the sitemap repeatedly.
+
 # SEO setup, measurement and 30/60/90-day plan
 
 ## Production and Google Search Console
