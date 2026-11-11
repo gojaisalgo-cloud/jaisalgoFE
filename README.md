@@ -25,7 +25,7 @@ Open http://127.0.0.1:3001. Scripts pin child tools to npm’s Node runtime and 
 - Twenty-four seeded tours, camp-only stays, cultural evenings and short activities. Search, type/budget/duration filters, per-person estimate sorting and shareable filter URLs.
 - Visible information button on every card: overview, itinerary, stay/venue details, price and extras in a mobile sheet. Preferences carry into checkout; direct package URLs remain available.
 - Integer-paise cost model with room/vehicle occupancy, supplier-tax and gateway allowances, at least 10% configured target net margin, explicit person/tent/vehicle card basis and exact full-group checkout total.
-- One-page date/options/name/mobile checkout, persisted 15-minute holds, server quote snapshots, explicit demo payment states and instant private digital tickets. No email collection.
+- One-page date/options/name/mobile checkout, persisted 15-minute holds, server quote snapshots, verified live payment states and instant private digital tickets. No email collection.
 - Downloadable PNG tickets, native share/copy-link fallback, private QR links and a My Bookings section. Tickets saved on this device need no customer login.
 - Razorpay server order creation, checkout signature/captured-payment verification and raw-body signed webhooks. No real payment credentials are included.
 - Separate balance payment on the travel date, authenticated approved-offline receipt recording, duplicate prevention, cancellations, refund tracking and late/unknown-payment reconciliation states.
@@ -34,7 +34,7 @@ Open http://127.0.0.1:3001. Scripts pin child tools to npm’s Node runtime and 
 
 ## Demo and live boundaries
 
-Default mode is **demo**. No real money or travel reservation is made. Prices are researched provisional models, not verified supplier rates or live availability. ₹99 is part of the total, not a fee on top.
+Customer checkout is **live only**. Demo and test modes are restricted to the isolated automated Node test runner; the public API has no simulated-payment action. Bookings and tickets are created only after server-side verification of a captured payment with the expected order, amount and currency. Prices are researched provisional models, not verified supplier rates or live availability. ₹99 is part of the total, not a fee on top.
 
 Admin sign-in has no default password. Run `npm run admin:setup`, choose a password and restart the server. Open `/admin`. `.env.local` and `.data/` are private and excluded from source packages.
 
@@ -91,4 +91,4 @@ Fifty-six source-reviewed origin guides live under `/jaisalmer-travel-from`, wit
 
 ### Real bookings and assistance
 
-Public deployments default to live mode and require real credentials, shared storage, reviewed suppliers and date capacity. Demo mode must be selected explicitly for isolated testing. Book now uses ₹99 towards the total; the balance is due at check-in or on the visit date. Call assistance: 8824548099. See [real booking activation and verification](docs/BOOKING-LAUNCH.md).
+Public deployments default to live mode and require real credentials, shared storage, reviewed suppliers and date capacity. Simulated payment fixtures run only in the isolated automated Node test runner. Book now uses ₹99 towards the total; the balance is due at check-in or on the visit date. Call assistance: 8824548099. See [real booking activation and verification](docs/BOOKING-LAUNCH.md).
