@@ -1,0 +1,60 @@
+/* Keep every navigation row inside one consistently sized glass surface. */
+header.site-header,
+header.site-header.header-home,
+header.site-header.is-scrolled,
+header.site-header.menu-open {
+ position:sticky;inset:0 0 auto;z-index:40;
+ height:auto;min-height:0;padding:0;margin:0;box-sizing:border-box;
+ background:rgb(255 255 255 / 65%);color:var(--ink);
+ border-bottom:1px solid rgb(255 255 255 / 55%);
+ -webkit-backdrop-filter:blur(24px) saturate(150%);
+ backdrop-filter:blur(24px) saturate(150%);
+ box-shadow:0 4px 24px rgb(28 47 40 / 6%);
+ transition:background-color .25s ease,box-shadow .25s ease;
+}
+header.site-header.is-scrolled {background:rgb(255 255 255 / 72%);box-shadow:0 5px 24px rgb(28 47 40 / 10%);}
+header.site-header .nav-utility {height:32px;background:rgb(255 250 241 / 28%);border-bottom:1px solid rgb(75 97 84 / 8%);}
+header.site-header .nav {height:80px;min-height:80px;display:flex;align-items:center;justify-content:space-between;gap:24px;padding-block:0;}
+header.site-header .logo {flex-shrink:0;line-height:1;align-items:center;}
+header.site-header .logo i {line-height:1.4;margin-top:5px;}
+header.site-header .nav>nav {display:flex;align-items:center;gap:20px;min-width:0;height:100%;}
+header.site-header .navlinks {align-items:center;gap:14px;}
+header.site-header .navlinks>a,
+header.site-header .nav-account,
+header.site-header .explore-navigation-trigger {white-space:nowrap;min-height:44px;border-radius:12px;}
+header.site-header .navlinks>a[aria-current=page] {box-shadow:none;background:rgb(36 77 64 / 8%);border-radius:12px;}
+header.site-header .nav-cta,
+header.site-header.header-home .nav-cta,
+header.site-header.header-home:not(.is-scrolled):not(.menu-open) .nav-cta,
+header.site-header .navlinks>.nav-plan-link {background:rgb(255 255 255 / 45%);border:1px solid rgb(61 91 75 / 15%);border-radius:14px;color:#244d40;box-shadow:inset 0 1px 0 rgb(255 255 255 / 60%);}
+header.site-header .nav-cta:hover,
+header.site-header .navlinks>.nav-plan-link:hover {background:rgb(255 255 255 / 80%);border-color:rgb(61 91 75 / 28%);}
+header.site-header .menu-toggle {display:none;}
+@media(max-width:1100px) and (min-width:1001px) {
+ header.site-header .nav {gap:16px;}
+ header.site-header .nav>nav {gap:12px;}
+ header.site-header .navlinks {gap:8px;}
+ header.site-header .navlinks>a {font-size:12px;}
+}
+@media(max-width:1000px) {
+ header.site-header .nav-utility {display:none;}
+ header.site-header .nav {height:74px;min-height:74px;gap:12px;}
+ header.site-header .nav>nav {gap:8px;}
+ header.site-header .menu-toggle {display:inline-flex;}
+ header.site-header .navlinks {
+  display:none;position:absolute;inset:100% 0 auto;align-items:stretch;
+  flex-direction:column;gap:4px;padding:16px 24px;max-height:calc(100dvh - 74px);overflow:auto;
+  -webkit-backdrop-filter:blur(24px) saturate(150%);backdrop-filter:blur(24px) saturate(150%);
+  background:rgb(250 252 249 / 96%);border-bottom:1px solid rgb(61 91 75 / 12%);
+  box-shadow:0 16px 28px rgb(28 47 40 / 12%);
+ }
+ header.site-header .navlinks.is-open {display:flex;}
+ header.site-header .navlinks>a,
+ header.site-header .nav-account,
+ header.site-header .explore-navigation-trigger {display:flex;width:100%;justify-content:flex-start;padding:12px;min-height:48px;font-size:14px;}
+ header.site-header .navlinks>a>svg {display:block;}
+ header.site-header .navlinks>.nav-plan-link {display:flex;}
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))) {
+ header.site-header,header.site-header.header-home,header.site-header.is-scrolled,header.site-header.menu-open {background:rgb(255 255 255 / 96%);}
+}
