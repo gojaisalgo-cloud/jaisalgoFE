@@ -22,3 +22,28 @@ button.discovery-help-launcher>.help-mascot {width:58px;height:65px;margin-top:-
 @media(max-width:700px){.confidence-card .confidence-card-icon {width:48px;height:48px;flex-basis:48px;}.confidence-card .confidence-card-icon>.dimensional-icon {width:46px;height:46px;}button.discovery-help-launcher {width:62px;height:62px;padding:4px;}.travel-promises>span>.dimensional-icon,.travel-promises>a>.dimensional-icon {width:36px;height:36px;}}
 @media(prefers-reduced-motion:reduce){.help-mascot-wave,.help-mascot-head,.help-mascot-eyes {animation:none;}.dimensional-icon {transition:none;}.confidence-card:hover .dimensional-icon,button.discovery-help-launcher:hover .help-mascot {transform:none;}}
 .jaisalgo-support .support-intro>span.help-mascot {display:inline-flex;margin:0 auto 4px;width:88px;height:99px;}
+/* Keep the mobile guide inside its floating island; never let the global
+   launcher span-hiding rule hide the mascot itself. */
+button.discovery-help-launcher>span.help-mascot {
+ display:inline-flex;visibility:visible;opacity:1;
+ width:58px;height:65px;flex:0 0 58px;
+ margin:0;position:relative;overflow:visible;
+}
+button.discovery-help-launcher {
+ overflow:visible;isolation:isolate;
+}
+@media(max-width:700px) {
+ button.discovery-help-launcher {
+  left:14px;right:auto;bottom:calc(14px + env(safe-area-inset-bottom,0px));
+  width:78px;height:78px;min-height:78px;padding:5px;
+  border-radius:26px;z-index:35;
+  background:rgb(255 255 255 / 88%);
+  border:1px solid rgb(196 216 204 / 85%);
+  box-shadow:0 8px 26px rgb(24 61 45 / 18%),inset 0 1px 0 white;
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+ }
+ button.discovery-help-launcher>span.help-mascot {
+  display:inline-flex;width:64px;height:72px;flex-basis:64px;margin:0;
+ }
+ button.discovery-help-launcher>span.help-mascot>svg {display:block;width:100%;height:100%;}
+}
