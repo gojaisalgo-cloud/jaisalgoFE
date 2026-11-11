@@ -14,3 +14,32 @@
  .golden-hero p {margin-bottom:10px;line-height:1.55;}
  .premium-home .home-search {margin-top:-56px;}
 }
+/* Balanced reassurance cards: equal columns, one consistent gutter. */
+@media(max-width:700px) {
+ .premium-home .travel-promises {
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  align-items:stretch;justify-content:stretch;gap:10px;width:100%;
+ }
+ .premium-home .travel-promises>span,
+ .premium-home .travel-promises>a {
+  width:100%;max-width:none;min-width:0;margin:0;box-sizing:border-box;
+  justify-self:stretch;align-self:stretch;border-radius:16px;padding:12px;
+  display:flex;align-items:center;gap:8px;
+ }
+ .premium-home .travel-promises>span {min-height:88px;}
+ .premium-home .travel-promises>a {grid-column:1/-1;min-height:72px;}
+ .premium-home .travel-promises>span>.dimensional-icon,
+ .premium-home .travel-promises>a>.dimensional-icon {flex:0 0 36px;width:36px;height:36px;}
+}
+/* Desktop search: one clear label and value per field, without repeated guidance. */
+@media(min-width:1001px) {
+ .travel-search .travel-search-selection {padding:12px 0 0;align-items:center;}
+ .travel-search .travel-search-selection strong {font-size:12px;font-weight:600;line-height:1.4;}
+ .travel-search .travel-search-selection p,
+ .travel-search .travel-search-fields>label>small {display:none;}
+ .travel-search .travel-search-selection>svg {width:14px;height:14px;margin:0;}
+ .travel-search .travel-search-fields {padding-block:16px;align-items:center;}
+ .travel-search .travel-destination>span>.search-label-full {display:none;}
+ .travel-search .travel-destination>span>.search-label-short {display:inline;}
+ .travel-search .travel-search-fields>label>span {font-size:12px;line-height:1.4;margin-bottom:6px;}
+}

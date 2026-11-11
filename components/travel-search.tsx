@@ -31,17 +31,18 @@ function SearchForm({minDate,maxDate,suggestions,compact,query}:Props&{query:str
 
 /** Editable suggestions retain free-text search and keep keyboard focus on the input. */
 function DestinationInput({id,initialValue,suggestions}:{id:string;initialValue:string;suggestions:string[]}){
- const [value,setValue]=useState(initialValue),[open,setOpen]=useState(false),[active,setActive]=useState(-1);
+ const [value,setValue]=useState(initialValue),[open,setOpen]=useState(false),[active,setActive]=useState(-1),[selectOnly,setSelectOnly]=useState(false);
  const input=useRef<HTMLInputElement>(null),list=useRef<HTMLUListElement>(null);
- const matches=[...new Set(suggestions)].filter(option=>option.toLowerCase().includes(value.trim().toLowerCase()));
+ useEffect(()=>{const media=window.matchMedia('(max-width: 700px), (pointer: coarse)');const update=()=>setSelectOnly(media.matches);update();media.addEventListener('change',update);return()=>media.removeEventListener('change',update)},[]);
+ const matches=[...new Set(suggestions)].filter(option=>selectOnly||option.toLowerCase().includes(value.trim().toLowerCase()));
  const listId=`${id}-destinations`;
  useEffect(()=>{if(open&&active>=0)list.current?.children[active]?.scrollIntoView({block:'nearest'})},[open,active]);
  function choose(option:string){setValue(option);setOpen(false);setActive(-1)}
  function move(next:number){setOpen(true);setActive(next)}
  return <div className="destination-combobox">
   <div className="destination-input-row">
-   <input ref={input} name="q" value={value} role="combobox" aria-label="Destination or package" aria-autocomplete="list" aria-expanded={open} aria-controls={open?listId:undefined} aria-activedescendant={open&&active>=0?`${listId}-${active}`:undefined} placeholder="Jaisalmer, Sam, Khuri…" autoComplete="off"
-    onFocus={()=>{setOpen(true);setActive(-1)}} onBlur={()=>setOpen(false)}
+   <input ref={input} name="q" value={value} readOnly={selectOnly} inputMode={selectOnly?'none':'text'} role="combobox" aria-label="Destination or package" aria-autocomplete={selectOnly?'none':'list'} aria-expanded={open} aria-controls={open?listId:undefined} aria-activedescendant={open&&active>=0?`${listId}-${active}`:undefined} placeholder="Jaisalmer, Sam, Khuri…" autoComplete="off"
+    onClick={()=>{setOpen(true);setActive(-1)}} onFocus={()=>{setOpen(true);setActive(-1)}} onBlur={()=>setOpen(false)}
     onChange={event=>{setValue(event.target.value);setOpen(true);setActive(-1)}}
     onKeyDown={event=>{
      if(event.key==='ArrowDown'&&matches.length){event.preventDefault();move(active<0?0:(active+1)%matches.length)}
