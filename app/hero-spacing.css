@@ -1,0 +1,16 @@
+/* Let the mobile hero follow its contents instead of reserving empty video space. */
+@media(max-width:1000px) {
+ section.golden-hero {height:auto;min-height:0;}
+ .golden-hero .golden-hero-content {padding-top:12px;padding-bottom:94px;}
+ .golden-hero .heritage-welcome {height:156px;margin:0 0 2px;}
+ .golden-hero h1 {margin-bottom:12px;}
+ .golden-hero p {margin-bottom:12px;line-height:1.6;}
+ .premium-home .home-search {margin-top:-64px;}
+}
+@media(max-width:700px) {
+ .golden-hero .golden-hero-content {padding-top:6px;padding-bottom:80px;}
+ .golden-hero .heritage-welcome {height:148px;margin:0 0 0;}
+ .golden-hero h1 {margin-bottom:10px;}
+ .golden-hero p {margin-bottom:10px;line-height:1.55;}
+ .premium-home .home-search {margin-top:-56px;}
+}
