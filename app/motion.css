@@ -72,9 +72,6 @@
 .heritage-welcome-fallback img { width:100px;height:116px; }
 .heritage-welcome-fallback small { display:block;font-size:18px;margin-top:10px; }
 .heritage-welcome[data-ready=true] .heritage-welcome-fallback { opacity:0;visibility:hidden; }
-.heritage-welcome-pause { position:absolute;right:10px;bottom:8px;min-height:44px;padding:8px 12px;border:1px solid #ffffff70;border-radius:24px;background:#fff0;color:#fff;font-size:11px;font-weight:650;text-shadow:0 1px 3px #172820; }
-.heritage-welcome-pause:hover { background:#ffffff24; }
-.heritage-welcome:not([data-ready=true]) .heritage-welcome-pause { display:none; }
 @media(min-width:1001px) and (max-width:1250px){
  .heritage-welcome { width:33%;top:165px;right:24px;height:210px; }
  .golden-hero h1,.golden-hero-content>p { max-width:60%; }
@@ -86,7 +83,6 @@
 @media(max-width:700px){
  .heritage-welcome { width:340px;height:172px;margin:-20px 0 10px; }
  .heritage-welcome-fallback { font-size:22px; }
- .heritage-welcome-pause { right:6px;bottom:4px;min-height:44px;padding:8px 10px;font-size:10px; }
  .golden-hero { height:567px; }
 }
 @media(prefers-reduced-motion:no-preference){
@@ -108,7 +104,6 @@
 @media(prefers-reduced-motion:reduce){
  .heritage-welcome canvas { display:none; }
  .heritage-welcome .heritage-welcome-fallback { opacity:1;visibility:visible; }
- .heritage-welcome-pause { display:none; }
 }
 
 /* The welcome artwork floats directly over the desert, without a separate panel. */

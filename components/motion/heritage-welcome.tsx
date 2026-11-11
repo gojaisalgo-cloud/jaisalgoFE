@@ -1,5 +1,5 @@
 'use client';
-import {useEffect,useRef,useState} from 'react';
+import {useEffect,useRef} from 'react';
 import Image from 'next/image';
 import {artWidth,artHeight,renderColorCount,colorSteps,culturalTargets,type ParticlePoint} from '@/lib/motion/heritage-particles';
 
@@ -7,8 +7,7 @@ const durations=[2800,2000,3300,3300,3300,4800,2500];
 const names=['mustache','namaste','woman','namaste-man','rajasthani-elder','ram-bow','arrival'];
 const ease=(n:number)=>{const t=Math.max(0,Math.min(1,n));return t*t*(3-2*t)};
 export function HeritageWelcome(){
- const canvas=useRef<HTMLCanvasElement>(null),container=useRef<HTMLDivElement>(null),paused=useRef(false),resume=useRef<()=>void>(()=>{});
- const [isPaused,setPaused]=useState(false);
+ const canvas=useRef<HTMLCanvasElement>(null),container=useRef<HTMLDivElement>(null);
  useEffect(()=>{
   const el=canvas.current,box=container.current;if(!el||!box)return;
   const ctx=el.getContext('2d');if(!ctx)return;
@@ -44,23 +43,21 @@ export function HeritageWelcome(){
    ctx.globalAlpha=1;if(el.dataset.stage!==names[stage])el.dataset.stage=names[stage];
   }
   function tick(now:number){
-   frame=0;if(disposed||!ready||!visible||covered||document.hidden||media.matches||paused.current)return;
+   frame=0;if(disposed||!ready||!visible||covered||document.hidden||media.matches)return;
    const delta=last?now-last:0;if(last)elapsed+=Math.min(delta,90);last=now;
    // Sustain the full shape on slower hardware by drawing a stable subset.
    if(delta>28&&delta<150)slowFrames++;else slowFrames=Math.max(0,slowFrames-1);
    if(slowFrames>80)stride=2;
    draw(elapsed);frame=requestAnimationFrame(tick);
   }
-  function sync(){cancelAnimationFrame(frame);frame=0;last=0;covered=Boolean(document.querySelector('dialog[open]'));if(!ready||media.matches||paused.current)return;if(visible&&!covered&&!document.hidden&&!disposed)frame=requestAnimationFrame(tick)}
-  resume.current=sync;
+  function sync(){cancelAnimationFrame(frame);frame=0;last=0;covered=Boolean(document.querySelector('dialog[open]'));if(!ready||media.matches)return;if(visible&&!covered&&!document.hidden&&!disposed)frame=requestAnimationFrame(tick)}
   const observer=new IntersectionObserver(entries=>{visible=entries[0]?.isIntersecting===true;sync()},{threshold:.08});observer.observe(box);
   const dialogs=new MutationObserver(sync);dialogs.observe(document.body,{subtree:true,attributes:true,attributeFilter:['open']});
   const move=(e:PointerEvent)=>{if(e.pointerType!=='mouse')return;const r=el.getBoundingClientRect();pointer.x=(e.clientX-r.left)/r.width*artWidth;pointer.y=(e.clientY-r.top)/r.height*artHeight};
   const leave=()=>{pointer.x=-1000;pointer.y=-1000};
   box.addEventListener('pointermove',move);box.addEventListener('pointerleave',leave);document.addEventListener('visibilitychange',sync);media.addEventListener('change',sync);
   culturalTargets(count).then(data=>{if(disposed)return;targets=data.targets;dust=data.dust;ready=true;elapsed=350;draw(elapsed);box.dataset.ready='true';sync()}).catch(()=>{/* Keep the accessible, original static artwork visible on failure. */});
-  return()=>{disposed=true;cancelAnimationFrame(frame);observer.disconnect();dialogs.disconnect();resume.current=()=>{};box.removeAttribute('data-ready');box.removeEventListener('pointermove',move);box.removeEventListener('pointerleave',leave);document.removeEventListener('visibilitychange',sync);media.removeEventListener('change',sync)};
+  return()=>{disposed=true;cancelAnimationFrame(frame);observer.disconnect();dialogs.disconnect();box.removeAttribute('data-ready');box.removeEventListener('pointermove',move);box.removeEventListener('pointerleave',leave);document.removeEventListener('visibilitychange',sync);media.removeEventListener('change',sync)};
  },[]);
- function toggle(){paused.current=!paused.current;setPaused(paused.current);resume.current()}
- return <div ref={container} className="heritage-welcome" role="group" aria-label="Indian cultural welcome"><span className="heritage-welcome-fallback"><Image src="/art/heritage/namaste-man.svg" width={100} height={116} alt="" unoptimized/><span>नमस्ते<small>खम्मा घणी सा</small></span></span><canvas ref={canvas} role="img" aria-label="Colourful particles form a Rajasthani mustache, नमस्ते, a woman and two Rajasthani men with folded hands, खम्मा घणी सा, and Lord Ram with his bow."/><button type="button" className="heritage-welcome-pause" onClick={toggle} aria-label={isPaused?'Play welcome animation':'Pause welcome animation'} aria-pressed={isPaused}>{isPaused?'Play':'Pause'}</button></div>;
+ return <div ref={container} className="heritage-welcome" role="group" aria-label="Indian cultural welcome"><span className="heritage-welcome-fallback"><Image src="/art/heritage/namaste-man.svg" width={100} height={116} alt="" unoptimized/><span>नमस्ते<small>खम्मा घणी सा</small></span></span><canvas ref={canvas} role="img" aria-label="Colourful particles form a Rajasthani mustache, नमस्ते, a woman and two Rajasthani men with folded hands, खम्मा घणी सा, and Lord Ram with his bow."/></div>;
 }
