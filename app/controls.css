@@ -166,3 +166,20 @@ a.booking-detail:has(>.direction-icon) { width:auto;min-width:0;padding:10px 14p
 :is(.prose,.source-note,.fine,.consent,.customer-legal,.customer-offer-terms,.checkout-consent,.measurement-consent) a:hover {
  background:#eaf1ec;color:#234f3d;
 }
+
+/* Footer planning CTA: a single, prominent action with comfortable spacing. */
+.footer-top>div>a.button.footer-cta {
+ display:inline-flex !important;align-items:center;justify-content:center;
+ min-height:50px;width:fit-content;max-width:100%;margin-top:6px;
+ padding:13px 20px;border:1px solid #a74c30;border-radius:12px;
+ background:#a74c30;color:#fff !important;font-size:14px;font-weight:700;
+ line-height:1.5;text-align:center;letter-spacing:0;
+ box-shadow:0 4px 12px #a74c301a;
+ transition:background-color .16s,border-color .16s,box-shadow .16s;
+}
+.footer-top>div>a.button.footer-cta:hover {
+ background:#8e3e26;border-color:#8e3e26;color:#fff !important;
+ box-shadow:0 5px 14px #a74c3026;
+}
+.footer-top>div>a.button.footer-cta:active { background:#7d341f;box-shadow:none; }
+@media(max-width:700px){.footer-top>div>a.button.footer-cta { width:100%;max-width:340px; }}
