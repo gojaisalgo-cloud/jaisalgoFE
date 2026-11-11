@@ -28,6 +28,7 @@ import './customer-entry.css';
 import './controls.css';
 import './motion.css';
 import './header.css';
+import './mascots.css';
 const display=localFont({src:[{path:'../public/fonts/cormorant.woff2',weight:'300 700',style:'normal'},{path:'../public/fonts/cormorant-italic.woff2',weight:'300 700',style:'italic'}],variable:'--font-display',display:'swap',fallback:['Georgia'],adjustFontFallback:'Times New Roman'});
 const body=localFont({src:'../public/fonts/manrope.woff2',weight:'200 800',variable:'--font-body',display:'swap',fallback:['Arial'],adjustFontFallback:'Arial'});
 export const metadata:Metadata={metadataBase:new URL(config.url),title:{default:'JaisalGo · Jaisalmer Travel',template:'%s | JaisalGo'},description:'Thoughtful Jaisalmer travel planning, package information and destination guides.',robots:{index:searchIndexable(),follow:true},verification:{...(process.env.GOOGLE_SITE_VERIFICATION?{google:process.env.GOOGLE_SITE_VERIFICATION}:{}),...(process.env.BING_SITE_VERIFICATION?{other:{'msvalidate.01':process.env.BING_SITE_VERIFICATION}}:{})}};

@@ -1,4 +1,5 @@
 'use client';
+import {TripMascot,type TripMascotKind} from '@/components/trip-mascot';
 import {captureBehaviour,captureBehaviourOnce} from '@/lib/analytics/posthog-client';
 import {searchProperties} from '@/lib/analytics/posthog-schema';
 import {DirectionalIcon,IconButton} from '@/components/directional-control';
@@ -7,14 +8,14 @@ import {Modal} from '@/components/ui/modal';
 import Link from 'next/link';
 import {useEffect,useState} from 'react';
 import {useSearchParams} from 'next/navigation';
-import {Search,Heart,Users,Tent,Compass,Sun,Info,SlidersHorizontal,X,Map} from 'lucide-react';
+import {Search,Info,SlidersHorizontal,X} from 'lucide-react';
 import type {Tour} from '@/data/catalog';
 import {stayName} from '@/data/travel-options';
 import {catalogRecords,discoveryFilters,filterDiscovery,clearDiscovery,patchDiscovery,priceBands} from '@/lib/booking/catalog-discovery';
 import {CatalogFilters} from './catalog-filters';
 import {TourCard} from './tour-card';
 
-const categories=[{name:'All packages',icon:Sun,value:''},{name:'City & desert tours',icon:Map,value:'tour'},{name:'Safaris & activities',icon:Compass,value:'activity'},{name:'Desert stays',icon:Tent,value:'camp'},{name:'Cultural evenings',icon:Users,value:'cultural'},{name:'For two',icon:Heart,value:'couples'}];
+const categories=[{name:'All packages',mascot:'all',value:''},{name:'City & desert tours',mascot:'tour',value:'tour'},{name:'Safaris & activities',mascot:'activity',value:'activity'},{name:'Desert stays',mascot:'camp',value:'camp'},{name:'Cultural evenings',mascot:'cultural',value:'cultural'},{name:'For two',mascot:'couples',value:'couples'}];
 export function TourCatalog({tours,compact=false}:{tours:Tour[];compact?:boolean}){
  const params=useSearchParams(),[filtersOpen,setFiltersOpen]=useState(false);
  const query=new URLSearchParams(params.toString()),records=catalogRecords(tours),f=discoveryFilters(query),list=filterDiscovery(records,f);
@@ -37,7 +38,7 @@ export function TourCatalog({tours,compact=false}:{tours:Tour[];compact?:boolean
  if(f.minNights!==undefined||f.maxNights!==undefined)chips.push({label:`Nights: ${f.minNights??0}–${f.maxNights??'any'}`,patch:{minNights:'',maxNights:''}});
  if(f.minPrice!==undefined||f.maxPrice!==undefined)chips.push({label:`Estimate: ₹${f.minPrice??0}–${f.maxPrice??'any'}`,patch:{minPrice:'',maxPrice:''}});
  const filterProps={records,filters:f,update,clear};
- const categoryStrip=<div className="discovery-collections"><div tabIndex={0} className="escape-categories marketplace-categories" role="group" aria-label="Choose a package type">{categories.map(cat=>{const count=countCategory(cat.value);return <button type="button" key={cat.value} aria-pressed={active===cat.value} disabled={!count&&active!==cat.value} onClick={()=>update({kind:cat.value==='couples'?'':cat.value,style:cat.value==='couples'?'Couples':f.style.filter(s=>s!=='Couples').join('|'),desert:'',area:''})}><cat.icon size={18} aria-hidden="true"/><span>{cat.name}</span><small>{count}</small></button>})}</div></div>;
+ const categoryStrip=<div className="discovery-collections"><div tabIndex={0} className="escape-categories marketplace-categories" role="group" aria-label="Choose a package type">{categories.map(cat=>{const count=countCategory(cat.value);return <button type="button" key={cat.value} aria-pressed={active===cat.value} disabled={!count&&active!==cat.value} onClick={()=>update({kind:cat.value==='couples'?'':cat.value,style:cat.value==='couples'?'Couples':f.style.filter(s=>s!=='Couples').join('|'),desert:'',area:''})}><TripMascot kind={cat.mascot as TripMascotKind}/><span>{cat.name}</span><small>{count}</small></button>})}</div></div>;
  if(compact)return <>{categoryStrip}<div className="tour-grid">{list.slice(0,3).map(r=><TourCard key={r.tour.slug} tour={r.tour} selection={Object.fromEntries(query)}/>)}</div>{list.length>3&&<div className="catalog-continue"><span>Showing 3 of {list.length} matching escapes</span><Link className="underlink" href={'/packages'+(query.size?'?'+query:'')}>Explore all {list.length}<DirectionalIcon direction="right"/></Link></div>}{!list.length&&<div className="empty"><h3>A different path, perhaps?</h3><p>Try fewer filters to find your escape.</p><button className="button" onClick={clear}>Reset filters</button></div>}</>;
  return <section className="discovery-catalog" aria-label="Find your Jaisalmer package">
   {categoryStrip}
