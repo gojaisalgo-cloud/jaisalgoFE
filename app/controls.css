@@ -183,3 +183,14 @@ a.booking-detail:has(>.direction-icon) { width:auto;min-width:0;padding:10px 14p
 }
 .footer-top>div>a.button.footer-cta:active { background:#7d341f;box-shadow:none; }
 @media(max-width:700px){.footer-top>div>a.button.footer-cta { width:100%;max-width:340px; }}
+
+/* Photo actions keep a complete label instead of inheriting the old icon badge size. */
+.tour-card-photo>.tour-photo-arrow {
+ inset:auto 14px 14px auto;display:inline-flex;align-items:center;justify-content:center;
+ width:max-content;min-width:92px;max-width:calc(100% - 28px);height:44px;min-height:44px;
+ padding:10px 16px;white-space:nowrap;flex-shrink:0;line-height:1.2;
+ border-radius:12px;background:#ffffffed;border:1px solid #ffffffb3;
+ color:#244d40;box-shadow:0 3px 12px #15271c14;
+}
+.tour-card-photo:hover>.tour-photo-arrow,
+.tour-card-photo:focus-visible>.tour-photo-arrow { background:#fff;border-color:#fff; }
