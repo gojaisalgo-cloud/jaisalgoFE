@@ -65,15 +65,15 @@
 
 /* The self-hosted font keeps Devanagari shaping consistent across devices. */
 @font-face { font-family:'JaisalGo Devanagari';src:url('/fonts/noto-devanagari-600.ttf') format('truetype');font-style:normal;font-weight:600;font-display:swap; }
-.heritage-welcome { position:absolute;right:18px;top:42px;width:min(41%,520px);height:306px;contain:layout paint;isolation:isolate;background:#162c27df;border:1px solid #ffe1aa24;border-radius:18px; }
+.heritage-welcome { position:absolute;right:18px;top:30px;width:min(41%,520px);height:306px;contain:layout paint;isolation:isolate; }
 .golden-hero-content { position:relative; }
-.heritage-welcome canvas { display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 2px #facc1518); }
+.heritage-welcome canvas { display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 1px 1px #17282080); }
 .heritage-welcome-fallback { position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:16px;color:#ffe1aa;font-family:'JaisalGo Devanagari',sans-serif;font-size:27px; }
 .heritage-welcome-fallback img { width:100px;height:116px; }
 .heritage-welcome-fallback small { display:block;font-size:18px;margin-top:10px; }
 .heritage-welcome[data-ready=true] .heritage-welcome-fallback { opacity:0;visibility:hidden; }
-.heritage-welcome-pause { position:absolute;right:10px;bottom:8px;min-height:44px;padding:8px 12px;border:1px solid #ffffff40;border-radius:9px;background:#142b25;color:#fff;font-size:11px;font-weight:650; }
-.heritage-welcome-pause:hover { background:#294b3c; }
+.heritage-welcome-pause { position:absolute;right:10px;bottom:8px;min-height:44px;padding:8px 12px;border:1px solid #ffffff70;border-radius:24px;background:#fff0;color:#fff;font-size:11px;font-weight:650;text-shadow:0 1px 3px #172820; }
+.heritage-welcome-pause:hover { background:#ffffff24; }
 .heritage-welcome:not([data-ready=true]) .heritage-welcome-pause { display:none; }
 @media(min-width:1001px) and (max-width:1250px){
  .heritage-welcome { width:33%;top:165px;right:24px;height:210px; }
@@ -81,18 +81,17 @@
 }
 @media(max-width:1000px){
  .heritage-welcome { position:relative;top:auto;right:auto;width:340px;max-width:100%;height:172px;margin:-20px 0 12px; }
- .golden-hero { height:692px; }
+ .golden-hero { height:642px; }
 }
 @media(max-width:700px){
  .heritage-welcome { width:340px;height:172px;margin:-20px 0 10px; }
  .heritage-welcome-fallback { font-size:22px; }
  .heritage-welcome-pause { right:6px;bottom:4px;min-height:44px;padding:8px 10px;font-size:10px; }
- .golden-hero { height:617px; }
+ .golden-hero { height:567px; }
 }
 @media(prefers-reduced-motion:no-preference){
  .reveal-ready { opacity:.65;transform:translate3d(0,16px,0);transition:opacity .6s var(--ease),transform .6s var(--ease); }
  .reveal-ready.is-revealed { opacity:1;transform:none; }
- .golden-hero .hero-eyebrow { animation:golden-fade .65s var(--ease) both; }
  .golden-hero h1 { animation:golden-fade .75s var(--ease) .08s both; }
  .golden-hero-content>p { animation:golden-fade .75s var(--ease) .16s both; }
  .button { transition:background-color .2s,border-color .2s,box-shadow .2s,scale .15s; }
@@ -112,7 +111,17 @@
  .heritage-welcome-pause { display:none; }
 }
 
-@media(prefers-reduced-motion:no-preference){
- .golden-hero>.photo img { animation:heritage-photo 1.6s var(--ease) both; }
+/* The welcome artwork floats directly over the desert, without a separate panel. */
+.golden-hero { background:#ae8757 url('/videos/jaisalmer-camel-desert-poster.webp') 50% 68%/cover no-repeat; }
+.golden-hero-video { position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;object-position:50% 68%;pointer-events:none; }
+.golden-hero-video-toggle { position:absolute;z-index:2;right:max(32px,calc((100vw - 1240px)/2));bottom:122px;display:none;align-items:center;gap:7px;min-height:44px;padding:9px 14px;border:1px solid #ffffff85;border-radius:24px;background:#fff0;color:white;font-size:12px;font-weight:650;text-shadow:0 1px 3px #172820; }
+.golden-hero-video[data-ready=true][data-motion-allowed=true]~.golden-hero-video-toggle { display:inline-flex; }
+.golden-hero-video-toggle:hover { background:#ffffff24; }
+@media(max-width:1000px){
+ .golden-hero { background-position:56% 65%; }
+ .golden-hero-video { object-position:56% 65%; }
+ .golden-hero-video-toggle { right:24px;bottom:110px; }
 }
-@keyframes heritage-photo { from { transform:scale(1.035); } to { transform:scale(1); } }
+@media(max-width:700px){
+ .golden-hero-video-toggle { right:20px;bottom:83px;font-size:11px; }
+}

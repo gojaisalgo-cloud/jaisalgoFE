@@ -1,0 +1,8 @@
+# Jaisalmer hero footage
+
+- Author: Ex Route Adventures.
+- Source: [Experience the Majestic Jaisalmer Sand Dunes](https://www.pexels.com/video/experience-the-majestic-jaisalmer-sand-dunes-33911366/).
+- Licence: [Pexels License](https://www.pexels.com/license/), reviewed 11 November 2026. Website use and adaptations are permitted; no endorsement is implied.
+- Adaptation: first eight seconds, 1280 × 720 H.264, silent, with a 0.6-second loop transition. The WebP poster is extracted from the adapted video.
+- Credit is also displayed on `/photo-credits`.
+- The clip illustrates Jaisalmer's desert setting; it does not document a particular supplied booking.

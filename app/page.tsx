@@ -1,4 +1,5 @@
 import {HeritageWelcome} from '@/components/motion/heritage-welcome';
+import {DesertHeroVideo} from '@/components/motion/desert-hero-video';
 import {ScrollExperience} from '@/components/scroll-experience';
 import {JaisalmerCollections,JaisalmerStays,JaisalmerExperiencePicks,type LocalExperiencePick} from '@/components/jaisalmer-discovery';
 import {packageDetails,durationLabel} from '@/lib/booking/package-details';
@@ -14,8 +15,7 @@ import {CityDiscovery} from '@/components/city-discovery';
 import {publishedCityGuides} from '@/lib/city-travel';
 import {DirectionalIcon} from '@/components/directional-control';
 import Link from 'next/link';
-import {Phone,IndianRupee,MapPin,Compass,Sun,ArrowUpRight,ShieldCheck,SlidersHorizontal} from 'lucide-react';
-import {Photo} from '@/components/photo';
+import {Phone,IndianRupee,Compass,ArrowUpRight,ShieldCheck,SlidersHorizontal} from 'lucide-react';
 import {TourCatalog} from '@/components/booking/catalog';
 import {tours} from '@/lib/booking/db';
 import {mode} from '@/lib/booking/payments';
@@ -30,7 +30,7 @@ export default async function Home(){
  const pickSlugs=['sunset-desert-safari','jeep-dune-safari','desert-cultural-evening',...all.filter(t=>t.area==='City').slice(0,2).map(t=>t.slug),'short-camel-ride'];
  const picks:LocalExperiencePick[]=pickSlugs.flatMap(slug=>{const t=all.find(item=>item.slug===slug);if(!t)return [];const kind=packageDetails(t).kind;return [{slug:t.slug,title:t.title,description:t.subtitle,image:t.image,duration:durationLabel(t),category:kind==='cultural'?'Culture' as const:t.area==='City'?'City' as const:'Desert' as const}]});
  return <><ScrollExperience/><StructuredData data={websiteSchema()}/><StructuredData data={webPageSchema(searchPages['/'].title,searchPages['/'].description,'/')}/><StructuredData data={destinationSchema()}/>
- <section className="golden-hero"><Photo id="khuri" priority sizes="100vw"/><div className="golden-hero-shade"/><div className="wrap golden-hero-content"><HeritageWelcome/><span className="hero-eyebrow"><Sun size={17}/>JAISALMER. A GOLDEN STATE OF MIND.</span><h1>Jaisalmer tourism <br/><span>&amp; tour packages.</span></h1><p>Desert nights. Living heritage. Unforgettable days.<br/>Discover Jaisalmer at your own pace.</p><Link href="#discover" className="hero-discover">A place for every kind of explorer <ArrowUpRight size={19}/></Link></div><span className="hero-location"><MapPin size={15}/>Khuri dunes · The Thar Desert</span></section>
+ <section className="golden-hero"><DesertHeroVideo/><div className="golden-hero-shade"/><div className="wrap golden-hero-content"><HeritageWelcome/><h1>Jaisalmer tourism <br/><span>&amp; tour packages.</span></h1><p>Desert nights. Living heritage. Unforgettable days.<br/>Discover Jaisalmer at your own pace.</p><Link href="#discover" className="hero-discover">A place for every kind of explorer <ArrowUpRight size={19}/></Link></div></section>
  <div className="wrap premium-home"><div className="home-search"><TravelSearch {...bounds} suggestions={['Jaisalmer','Sam','Khuri','Camel','City',...all.map(t=>t.title)]}/></div>
  <div className="travel-promises"><span><IndianRupee/><span className="promise-full"><strong>A little now. More adventure later.</strong>Reserve with ₹99, deducted from your total.</span><span className="promise-compact" aria-hidden="true"><strong>₹99 to reserve</strong>Deducted from your total.</span></span><span><SlidersHorizontal/><span className="promise-full"><strong>Your trip, your choices.</strong>Compare stays, transfers and experiences.</span><span className="promise-compact" aria-hidden="true"><strong>Your choices</strong>Stays, transfers &amp; experiences.</span></span><a href={config.phoneHref}><Phone/><span><strong>A real person, a little local help.</strong><small>{config.phone} · booking assistance</small></span><DirectionalIcon direction="up-right"/></a></div>
  <JaisalmerCollections/>
