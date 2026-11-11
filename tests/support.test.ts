@@ -1,0 +1,16 @@
+import test,{after,beforeEach} from 'node:test';
+import assert from 'node:assert/strict';
+import {createClient} from '@libsql/client';
+import {randomUUID} from 'node:crypto';
+import {sendSupportRequest,supportSchema} from '../lib/customer/support';
+const client=createClient({url:'file::memory:'}),previous={...process.env},original=global.fetch;
+let sends=0,unknown=false;
+Object.assign(process.env,{WHATSAPP_API_URL:'https://7107.api.greenapi.com',WHATSAPP_INSTANCE_ID:'7107000000',WHATSAPP_API_TOKEN:'fixture_sender_token',WHATSAPP_GROUP_ID:'120363000000000000@g.us',WHATSAPP_GROUP_INVITE_URL:'https://chat.whatsapp.com/FixtureGroupInvite12345'});
+global.fetch=async(_url,options)=>{sends++;const body=JSON.parse(String(options?.body));assert.match(body.message,/Name: Test Traveller/);assert.match(body.message,/Phone: 9876543210/);assert.match(body.message,/Query: Help with a desert camp/);if(unknown)throw Error('timeout');return Response.json({idMessage:'test_receipt'})};
+const input=()=>({requestId:randomUUID(),name:'Test Traveller',phone:'9876543210',query:'Help with a desert camp',consent:true as const});
+beforeEach(async()=>{await client.execute('DROP TABLE IF EXISTS support_deliveries');sends=0;unknown=false});
+after(()=>{global.fetch=original;client.close();for(const k of Object.keys(process.env))if(!(k in previous))delete process.env[k];Object.assign(process.env,previous)});
+test('callback validation requires consent, bounded query, name and valid phone',()=>{assert.equal(supportSchema.safeParse(input()).success,true);for(const changes of [{consent:false},{phone:'123'},{name:'x'},{query:'short'},{query:'x'.repeat(1201)}])assert.equal(supportSchema.safeParse({...input(),...changes}).success,false)});
+test('provider acceptance is idempotent and stores no submitted contact data',async()=>{const data=input();assert.deepEqual(await sendSupportRequest('u1',data,client),{accepted:true});assert.deepEqual(await sendSupportRequest('u1',data,client),{accepted:true});assert.equal(sends,1);const rows=(await client.execute('SELECT * FROM support_deliveries')).rows;assert.equal(rows[0].state,'sent');assert.doesNotMatch(JSON.stringify(rows),/9876543210|Test Traveller|desert camp/)});
+test('unknown delivery never reports success or posts a duplicate on retry',async()=>{unknown=true;const data=input();await assert.rejects(sendSupportRequest('u1',data,client),/could not confirm/);await assert.rejects(sendSupportRequest('u1',data,client),/already been submitted/);assert.equal(sends,1)});
+test('durable per-account rate limit blocks a fourth request',async()=>{for(let n=0;n<3;n++)await sendSupportRequest('u1',input(),client);await assert.rejects(sendSupportRequest('u1',input(),client),/request limit/);assert.equal(sends,3)});
