@@ -1,9 +1,10 @@
 'use client';
+import {HelpMascot} from '@/components/help-mascot';
 import {SupportPanel} from '@/components/support-panel';
 import {useState} from 'react';
 import {usePathname} from 'next/navigation';
 import Link from 'next/link';
-import {HelpCircle,Compass,Tent,Heart,Users,Map,ChevronDown,BookOpen} from 'lucide-react';
+import {Compass,Tent,Heart,Users,Map,ChevronDown,BookOpen} from 'lucide-react';
 import {Modal} from '@/components/ui/modal';
 import {DirectionalIcon} from '@/components/directional-control';
 
@@ -22,5 +23,5 @@ export function ExploreNavigation({onNavigate}:{onNavigate:()=>void}){
 export function DiscoveryAssistance({phone,phoneHref}:{phone:string;phoneHref:string;whatsapp?:string}){
  const path=usePathname(),[open,setOpen]=useState(false);
  if(/^\/(book|reservations|my-bookings|verify|admin)(\/|$)/.test(path))return null;
- return <><button type="button" className="discovery-help-launcher" aria-label="Booking help" aria-haspopup="dialog" aria-expanded={open} onClick={()=>setOpen(true)}><HelpCircle size={21} aria-hidden="true"/><span>Need a hand?</span></button>{open&&<SupportPanel phone={phone} phoneHref={phoneHref} onClose={()=>setOpen(false)}/>}</>;
+ return <><button type="button" className="discovery-help-launcher" aria-label="Booking help" aria-haspopup="dialog" aria-expanded={open} onClick={()=>setOpen(true)}><HelpMascot/><span>Need a hand?</span></button>{open&&<SupportPanel phone={phone} phoneHref={phoneHref} onClose={()=>setOpen(false)}/>}</>;
 }

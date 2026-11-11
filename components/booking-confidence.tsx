@@ -1,5 +1,6 @@
+import {IndianRupee,ShieldCheck,TicketCheck,SlidersHorizontal,Phone,FileText} from '@/components/dimensional-icon';
 import Link from 'next/link';
-import {IndianRupee,ShieldCheck,TicketCheck,SlidersHorizontal,Phone,FileText,ArrowUpRight,Check} from 'lucide-react';
+import {ArrowUpRight,Check} from 'lucide-react';
 import {config} from '@/lib/config';
 
 const reasons=[

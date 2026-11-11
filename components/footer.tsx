@@ -1,5 +1,6 @@
+import {Phone} from '@/components/dimensional-icon';
 import {AnalyticsPreferences} from '@/components/analytics-provider';
-import {Facebook,Instagram,Phone,Sun,Youtube} from 'lucide-react';
+import {Facebook,Instagram,Sun,Youtube} from 'lucide-react';
 import Link from 'next/link';
 import {config} from '@/lib/config';
 import {footerGroups,footerSocialLinks,footerStories} from '@/data/footer';

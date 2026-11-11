@@ -1,3 +1,4 @@
+import {IndianRupee,SlidersHorizontal,Phone} from '@/components/dimensional-icon';
 import {HeritageWelcome} from '@/components/motion/heritage-welcome';
 import {DesertHeroVideo} from '@/components/motion/desert-hero-video';
 import {ScrollExperience} from '@/components/scroll-experience';
@@ -15,7 +16,7 @@ import {CityDiscovery} from '@/components/city-discovery';
 import {publishedCityGuides} from '@/lib/city-travel';
 import {DirectionalIcon} from '@/components/directional-control';
 import Link from 'next/link';
-import {Phone,IndianRupee,Compass,ArrowUpRight,ShieldCheck,SlidersHorizontal} from 'lucide-react';
+import {Compass,ArrowUpRight,ShieldCheck} from 'lucide-react';
 import {TourCatalog} from '@/components/booking/catalog';
 import {tours} from '@/lib/booking/db';
 import {mode} from '@/lib/booking/payments';

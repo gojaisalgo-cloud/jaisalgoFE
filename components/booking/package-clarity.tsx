@@ -1,4 +1,5 @@
-import {BedDouble,Car,Utensils,Compass,Users,Ticket,Hotel,Tent,ChevronDown,IndianRupee,Music2} from 'lucide-react';
+import {BedDouble,Car,Utensils,Compass,Users,Ticket,Hotel,Tent,IndianRupee,Music2} from '@/components/dimensional-icon';
+import {ChevronDown} from 'lucide-react';
 import type {Tour} from '@/data/catalog';
 import type {PackageClarity,ClarityGroup} from '@/lib/booking/package-clarity';
 import {inclusionLabel,packageClarity} from '@/lib/booking/package-clarity';
