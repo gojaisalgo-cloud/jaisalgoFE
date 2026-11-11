@@ -1,7 +1,7 @@
 'use client';
 import {useEffect,useRef,useState} from 'react';
 import Image from 'next/image';
-import {artWidth,artHeight,colorSteps,culturalTargets,type ParticlePoint} from '@/lib/motion/heritage-particles';
+import {artWidth,artHeight,renderColorCount,colorSteps,culturalTargets,type ParticlePoint} from '@/lib/motion/heritage-particles';
 
 const durations=[2800,2000,3300,3300,3300,4800,2500];
 const names=['mustache','namaste','woman','namaste-man','rajasthani-elder','ram-bow','arrival'];
@@ -29,17 +29,17 @@ export function HeritageWelcome(){
     const a=from[i],b=to[i],t=ease((local-(i%23)*7)/span);
     let x=a.x+(b.x-a.x)*t,y=a.y+(b.y-a.y)*t;
     const drift=Math.sin(time/1050+i*.13)*.45;
-    y+=drift*(1-t*.7);
+    y+=drift*(stage===5?1-t:1-t*.7);
     if(gathering||dispersing){const swirl=Math.sin(t*Math.PI)*(gathering?9:6);x+=Math.cos(i*.07+time/1600)*swirl;y+=Math.sin(i*.07+time/1600)*swirl;}
     if(stage===0&&b.y<210)y-=Math.max(0,Math.abs(b.x-320)-115)/90*Math.sin(time/650)*1.5*t;
     if((stage===3||stage===4)&&b.color===5&&b.y>128&&b.y<170)y-=Math.sin(time/700)*.65*t;
     if(stage>=2&&stage<=4&&b.y<278){const bow=Math.sin(Math.max(0,local-1200)/1400)*.8*t;y+=bow;}
     // Keep the reference bowstring alive without distorting the pose.
-    if(stage===5&&b.x>345&&b.y<200)x+=Math.sin(time/140)*.45*t;
-    const dx=x-pointer.x,dy=y-pointer.y,d=Math.hypot(dx,dy);if(d<65&&d>1){const push=(1-d/65)*2.5;x+=dx/d*push;y+=dy/d*push;}
-    ctx.globalAlpha=(.9+Math.sin(i*.31+time/1900)*.08)*(time<500?Math.min(1,time/500):1);
-    ctx.fillStyle=colorSteps[a.color*7+b.color][Math.round(t*16)];
-    ctx.beginPath();ctx.arc(x,y,b.y>285?1.7:lean?1.65:1.45,0,Math.PI*2);ctx.fill();
+    if(stage===5&&b.color===12){const stringX=b.y<110?391-b.y*.513:334.8+(b.y-110)*1.02;if(Math.abs(b.x-stringX)<2)x+=Math.sin(time/180)*.25*t;}
+    const dx=x-pointer.x,dy=y-pointer.y,d=Math.hypot(dx,dy);if(stage!==5&&d<65&&d>1){const push=(1-d/65)*2.5;x+=dx/d*push;y+=dy/d*push;}
+    ctx.globalAlpha=(stage===5?.98:.9+Math.sin(i*.31+time/1900)*.08)*(time<500?Math.min(1,time/500):1);
+    ctx.fillStyle=colorSteps[a.color*renderColorCount+b.color][Math.round(t*16)];
+    ctx.beginPath();ctx.arc(x,y,b.y>300?1.7:stage===5?1.65:lean?1.65:1.45,0,Math.PI*2);ctx.fill();
    }
    ctx.globalAlpha=1;if(el.dataset.stage!==names[stage])el.dataset.stage=names[stage];
   }
