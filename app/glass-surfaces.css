@@ -33,3 +33,9 @@
  .customer-entry,.discovery-modal[open] {border-radius:24px;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);}
  .tour-card.compact-tour-card,.travel-search {border-radius:20px;}
 }
+/* Search controls need a solid surface over the moving hero video. */
+.travel-search.travel-search {
+ background:#fff;
+ -webkit-backdrop-filter:none;
+ backdrop-filter:none;
+}
