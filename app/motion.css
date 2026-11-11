@@ -109,14 +109,7 @@
 /* The welcome artwork floats directly over the desert, without a separate panel. */
 .golden-hero { background:#ae8757 url('/videos/jaisalmer-camel-desert-poster.webp') 50% 68%/cover no-repeat; }
 .golden-hero-video { position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;object-position:50% 68%;pointer-events:none; }
-.golden-hero-video-toggle { position:absolute;z-index:2;right:max(32px,calc((100vw - 1240px)/2));bottom:122px;display:none;align-items:center;gap:7px;min-height:44px;padding:9px 14px;border:1px solid #ffffff85;border-radius:24px;background:#fff0;color:white;font-size:12px;font-weight:650;text-shadow:0 1px 3px #172820; }
-.golden-hero-video[data-ready=true][data-motion-allowed=true]~.golden-hero-video-toggle { display:inline-flex; }
-.golden-hero-video-toggle:hover { background:#ffffff24; }
 @media(max-width:1000px){
  .golden-hero { background-position:56% 65%; }
  .golden-hero-video { object-position:56% 65%; }
- .golden-hero-video-toggle { right:24px;bottom:110px; }
-}
-@media(max-width:700px){
- .golden-hero-video-toggle { right:20px;bottom:83px;font-size:11px; }
 }
