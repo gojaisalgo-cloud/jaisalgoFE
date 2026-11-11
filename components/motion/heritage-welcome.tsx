@@ -3,8 +3,9 @@ import {useEffect,useRef} from 'react';
 import Image from 'next/image';
 import {artWidth,artHeight,renderColorCount,colorSteps,culturalTargets,type ParticlePoint} from '@/lib/motion/heritage-particles';
 
-const durations=[2800,2000,3300,3300,3300,4800,2500];
-const names=['mustache','namaste','woman','namaste-man','rajasthani-elder','ram-bow','arrival'];
+const durations=[2800,2000,3300,3300,4800,2500];
+const names=['mustache','namaste','namaste-man','rajasthani-elder','ram-bow','arrival'];
+const loopDuration=durations.reduce((total,duration)=>total+duration,0);
 const ease=(n:number)=>{const t=Math.max(0,Math.min(1,n));return t*t*(3-2*t)};
 export function HeritageWelcome(){
  const canvas=useRef<HTMLCanvasElement>(null),container=useRef<HTMLDivElement>(null);
@@ -20,25 +21,26 @@ export function HeritageWelcome(){
   const pointer={x:-1000,y:-1000};
   function draw(time:number){
    if(!ctx||!ready||!el)return;
-   let local=time%22000,stage=0;while(local>=durations[stage]){local-=durations[stage];stage++}
-   const to=stage===6?dust:targets[stage],from=stage===0?dust:targets[stage-1];
-   const gathering=stage===0,dispersing=stage===6,span=gathering?1550:dispersing?1600:1050;
+   let local=time%loopDuration,stage=0;while(local>=durations[stage]){local-=durations[stage];stage++}
+   const scene=names[stage],gathering=stage===0,dispersing=scene==='arrival',isRam=scene==='ram-bow',isWelcomeMan=scene==='namaste-man'||scene==='rajasthani-elder';
+   const to=dispersing?dust:targets[stage],from=gathering?dust:targets[stage-1];
+   const span=gathering?1550:dispersing?1600:1050;
    ctx.clearRect(0,0,artWidth,artHeight);
    for(let i=0;i<count;i+=stride){
     const a=from[i],b=to[i],t=ease((local-(i%23)*7)/span);
     let x=a.x+(b.x-a.x)*t,y=a.y+(b.y-a.y)*t;
     const drift=Math.sin(time/1050+i*.13)*.45;
-    y+=drift*(stage===5?1-t:1-t*.7);
+    y+=drift*(isRam?1-t:1-t*.7);
     if(gathering||dispersing){const swirl=Math.sin(t*Math.PI)*(gathering?9:6);x+=Math.cos(i*.07+time/1600)*swirl;y+=Math.sin(i*.07+time/1600)*swirl;}
     if(stage===0&&b.y<210)y-=Math.max(0,Math.abs(b.x-320)-115)/90*Math.sin(time/650)*1.5*t;
-    if((stage===3||stage===4)&&b.color===5&&b.y>128&&b.y<170)y-=Math.sin(time/700)*.65*t;
-    if(stage>=2&&stage<=4&&b.y<278){const bow=Math.sin(Math.max(0,local-1200)/1400)*.8*t;y+=bow;}
+    if(isWelcomeMan&&b.color===5&&b.y>128&&b.y<170)y-=Math.sin(time/700)*.65*t;
+    if(isWelcomeMan&&b.y<278){const bow=Math.sin(Math.max(0,local-1200)/1400)*.8*t;y+=bow;}
     // Keep the reference bowstring alive without distorting the pose.
-    if(stage===5&&b.color===12){const stringX=b.y<110?391-b.y*.513:334.8+(b.y-110)*1.02;if(Math.abs(b.x-stringX)<2)x+=Math.sin(time/180)*.25*t;}
-    const dx=x-pointer.x,dy=y-pointer.y,d=Math.hypot(dx,dy);if(stage!==5&&d<65&&d>1){const push=(1-d/65)*2.5;x+=dx/d*push;y+=dy/d*push;}
-    ctx.globalAlpha=(stage===5?.98:.9+Math.sin(i*.31+time/1900)*.08)*(time<500?Math.min(1,time/500):1);
+    if(isRam&&b.color===12){const stringX=b.y<110?391-b.y*.513:334.8+(b.y-110)*1.02;if(Math.abs(b.x-stringX)<2)x+=Math.sin(time/180)*.25*t;}
+    const dx=x-pointer.x,dy=y-pointer.y,d=Math.hypot(dx,dy);if(!isRam&&d<65&&d>1){const push=(1-d/65)*2.5;x+=dx/d*push;y+=dy/d*push;}
+    ctx.globalAlpha=(isRam?.98:.9+Math.sin(i*.31+time/1900)*.08)*(time<500?Math.min(1,time/500):1);
     ctx.fillStyle=colorSteps[a.color*renderColorCount+b.color][Math.round(t*16)];
-    ctx.beginPath();ctx.arc(x,y,b.y>300?1.7:stage===5?1.65:lean?1.65:1.45,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(x,y,b.y>300?1.7:isRam?1.65:lean?1.65:1.45,0,Math.PI*2);ctx.fill();
    }
    ctx.globalAlpha=1;if(el.dataset.stage!==names[stage])el.dataset.stage=names[stage];
   }
@@ -59,5 +61,5 @@ export function HeritageWelcome(){
   culturalTargets(count).then(data=>{if(disposed)return;targets=data.targets;dust=data.dust;ready=true;elapsed=350;draw(elapsed);box.dataset.ready='true';sync()}).catch(()=>{/* Keep the accessible, original static artwork visible on failure. */});
   return()=>{disposed=true;cancelAnimationFrame(frame);observer.disconnect();dialogs.disconnect();box.removeAttribute('data-ready');box.removeEventListener('pointermove',move);box.removeEventListener('pointerleave',leave);document.removeEventListener('visibilitychange',sync);media.removeEventListener('change',sync)};
  },[]);
- return <div ref={container} className="heritage-welcome" role="group" aria-label="Indian cultural welcome"><span className="heritage-welcome-fallback"><Image src="/art/heritage/namaste-man.svg" width={100} height={116} alt="" unoptimized/><span>नमस्ते<small>खम्मा घणी सा</small></span></span><canvas ref={canvas} role="img" aria-label="Colourful particles form a Rajasthani mustache, नमस्ते, a woman and two Rajasthani men with folded hands, खम्मा घणी सा, and Lord Ram with his bow."/></div>;
+ return <div ref={container} className="heritage-welcome" role="group" aria-label="Indian cultural welcome"><span className="heritage-welcome-fallback"><Image src="/art/heritage/namaste-man.svg" width={100} height={116} alt="" unoptimized/><span>नमस्ते<small>खम्मा घणी सा</small></span></span><canvas ref={canvas} role="img" aria-label="Colourful particles form a Rajasthani mustache, नमस्ते, two Rajasthani men with folded hands, खम्मा घणी सा, and Lord Ram with his bow."/></div>;
 }
