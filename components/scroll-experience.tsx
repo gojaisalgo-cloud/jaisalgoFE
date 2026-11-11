@@ -5,7 +5,7 @@ export function ScrollExperience(){
   const path=usePathname();
   useEffect(()=>{
     const media=matchMedia('(prefers-reduced-motion: reduce)');
-    const elements=Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
+    const elements=Array.from(document.querySelectorAll<HTMLElement>('[data-reveal],.premium-home>.home-section,.local-stay-section,.custom-trip-banner,.booking-steps'));
     const hero=document.querySelector<HTMLElement>('.cinematic-hero');
     let observer:IntersectionObserver|undefined;
     let frame=0;
