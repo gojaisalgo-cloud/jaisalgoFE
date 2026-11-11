@@ -1,6 +1,8 @@
 import {checkSignature} from './security';
 export type Mode='demo'|'test'|'live';
-export function mode():Mode{return process.env.BOOKING_MODE==='demo'?'demo':process.env.BOOKING_MODE==='test'?'test':'live'}
-export function paymentReady(){const configured=process.env.BOOKING_MODE;if(configured&&!['demo','test','live'].includes(configured))return false;const m=mode(),key=process.env.RAZORPAY_KEY_ID||'';return m==='demo'||Boolean(process.env.RAZORPAY_KEY_SECRET&&process.env.RAZORPAY_WEBHOOK_SECRET&&(m==='live'?key.startsWith('rzp_live_'):key.startsWith('rzp_test_')))}
+// Non-live payment fixtures are restricted to Node's isolated automated test runner.
+function fixturesAllowed(){return !!process.env.NODE_TEST_CONTEXT&&process.env.NODE_ENV!=='production'&&!process.env.VERCEL}
+export function mode():Mode{if(!fixturesAllowed())return 'live';return process.env.BOOKING_MODE==='demo'?'demo':process.env.BOOKING_MODE==='test'?'test':'live'}
+export function paymentReady(){const configured=process.env.BOOKING_MODE;if(configured&&!['demo','test','live'].includes(configured))return false;if(configured&&configured!=='live'&&!fixturesAllowed())return false;const m=mode(),key=process.env.RAZORPAY_KEY_ID||'';return m==='demo'||Boolean(process.env.RAZORPAY_KEY_SECRET&&process.env.RAZORPAY_WEBHOOK_SECRET&&(m==='live'?key.startsWith('rzp_live_'):key.startsWith('rzp_test_')))}
 export async function provider(path:string,data?:unknown){if(!paymentReady()||mode()==='demo')throw Error('Payment gateway is not configured.');const response=await fetch('https://api.razorpay.com/v1/'+path,{method:data?'POST':'GET',headers:{Authorization:'Basic '+Buffer.from(process.env.RAZORPAY_KEY_ID+':'+process.env.RAZORPAY_KEY_SECRET).toString('base64'),'Content-Type':'application/json'},body:data?JSON.stringify(data):undefined,cache:'no-store',signal:AbortSignal.timeout(12000)});if(!response.ok)throw Error('Payment provider is unavailable. Do not retry an unknown payment; check reservation status first.');return response.json()}
 export function verifyCheckout(order:string,payment:string,sig:string){return checkSignature(order+'|'+payment,sig,process.env.RAZORPAY_KEY_SECRET||'')}
