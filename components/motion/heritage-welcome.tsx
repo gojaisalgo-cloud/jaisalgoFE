@@ -1,75 +1,66 @@
 'use client';
-import {useEffect,useRef} from 'react';
+import {useEffect,useRef,useState} from 'react';
+import Image from 'next/image';
+import {artWidth,artHeight,colorSteps,culturalTargets,type ParticlePoint} from '@/lib/motion/heritage-particles';
 
-const palette=['#FF9933','#4169E1','#22C55E','#EC4899','#FACC15','#8B5CF6','#06B6D4'];
-type Point={x:number;y:number};
-const width=600,height=168;
+const durations=[2800,2000,3300,3300,3300,4800,2500];
+const names=['mustache','namaste','woman','namaste-man','rajasthani-elder','ram-bow','arrival'];
 const ease=(n:number)=>{const t=Math.max(0,Math.min(1,n));return t*t*(3-2*t)};
-
-/** Rasterize each silhouette once; animation only interpolates the cached points. */
-function silhouette(kind:'hands'|'namaste'|'greeting'|'mustache',count:number):Point[]{
- const mask=document.createElement('canvas');mask.width=width;mask.height=height;
- const ctx=mask.getContext('2d',{willReadFrequently:true});if(!ctx)return [];
- ctx.fillStyle='#fff';ctx.strokeStyle='#fff';ctx.lineCap='round';ctx.lineJoin='round';
- if(kind==='namaste'||kind==='greeting'){
-  ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=kind==='namaste'?'600 79px Georgia, serif':'600 59px Georgia, serif';
-  ctx.fillText(kind==='namaste'?'Namaste':'Khamma Ghani Sa',width/2,height/2,width-28);
- }else if(kind==='hands'){
-  ctx.lineWidth=5;
-  // Two palms meet at the fingertips, with fingers and angled sleeve cuffs.
-  const palm=new Path2D('M 296 22 C 291 15 286 23 285 36 L 278 74 L 265 98 C 259 108 261 118 267 125 L 285 137 L 299 114 L 300 31 C 300 24 298 21 296 22 M 286 40 L 285 87 M 279 58 L 279 91 M 273 77 L 272 97 M 265 97 L 267 106 M 300 65 L 290 94 L 288 111');
-  ctx.stroke(palm);ctx.save();ctx.translate(width,0);ctx.scale(-1,1);ctx.stroke(palm);ctx.restore();
-  ctx.fill(new Path2D('M 261 119 L 289 137 L 275 159 L 244 143 Z M 339 119 L 311 137 L 325 159 L 356 143 Z'));
- }else{
-  ctx.fill(new Path2D('M 300 86 C 280 57 259 60 240 78 C 217 102 184 105 171 83 C 159 61 184 45 196 60 C 200 66 196 72 190 72 C 197 60 179 58 177 69 C 172 93 205 82 220 66 C 243 39 272 45 300 67 C 328 45 357 39 380 66 C 395 82 428 93 423 69 C 421 58 403 60 410 72 C 404 72 400 66 404 60 C 416 45 441 61 429 83 C 416 105 383 102 360 78 C 341 60 320 57 300 86 Z'));
- }
- const pixels=ctx.getImageData(0,0,width,height).data,candidates:Point[]=[];
- for(let y=5;y<height-5;y+=2)for(let x=8;x<width-8;x+=2)if(pixels[(y*width+x)*4+3]>100)candidates.push({x,y});
- if(!candidates.length)return [];
- return Array.from({length:count},(_,i)=>candidates[Math.floor(i*candidates.length/count)]);
-}
 export function HeritageWelcome(){
- const canvas=useRef<HTMLCanvasElement>(null),container=useRef<HTMLDivElement>(null);
+ const canvas=useRef<HTMLCanvasElement>(null),container=useRef<HTMLDivElement>(null),paused=useRef(false),resume=useRef<()=>void>(()=>{});
+ const [isPaused,setPaused]=useState(false);
  useEffect(()=>{
   const el=canvas.current,box=container.current;if(!el||!box)return;
   const ctx=el.getContext('2d');if(!ctx)return;
-  const media=matchMedia('(prefers-reduced-motion: reduce)'),small=matchMedia('(max-width:700px)').matches;
-  const hardware=navigator as Navigator&{deviceMemory?:number};
-  const lean=small||(hardware.hardwareConcurrency||4)<4||(hardware.deviceMemory||4)<4;
-  const count=lean?800:1200,shapes=(['hands','namaste','greeting','mustache'] as const).map(kind=>silhouette(kind,count));
-  if(shapes.some(shape=>!shape.length))return;
-  const seeds=Array.from({length:count},(_,i)=>{const angle=i*2.399963,cluster=i%7;return {x:width/2+Math.cos(cluster*Math.PI*2/7)*24+Math.cos(angle)*Math.sqrt(i/count)*240,y:height/2+Math.sin(cluster*Math.PI*2/7)*18+Math.sin(angle)*Math.sqrt(i/count)*70}});
-  let frame=0,last=0,elapsed=0,drawn=0,visible=false,covered=false,disposed=false;
-  const scale=Math.min(devicePixelRatio||1,lean?1.5:2);el.width=width*scale;el.height=height*scale;ctx.scale(scale,scale);
+  const media=matchMedia('(prefers-reduced-motion: reduce)'),hardware=navigator as Navigator&{deviceMemory?:number};
+  const lean=matchMedia('(max-width:700px)').matches||(hardware.hardwareConcurrency||4)<4||(hardware.deviceMemory||4)<4;
+  const count=lean?2600:4600,scale=Math.min(devicePixelRatio||1,lean?1.5:2);
+  el.width=artWidth*scale;el.height=artHeight*scale;ctx.scale(scale,scale);
+  let frame=0,last=0,elapsed=0,visible=false,covered=false,disposed=false,ready=false,slowFrames=0,stride=1;
+  let targets:ParticlePoint[][]=[],dust:ParticlePoint[]=[];
+  const pointer={x:-1000,y:-1000};
   function draw(time:number){
-   if(!ctx||!el)return;ctx.clearRect(0,0,width,height);
-   const stage=time<3000?0:time<5000?1:time<7500?2:3;
-   const stageStart=[0,3000,5000,7500][stage],duration=stage===0?1500:stage===3?1100:650;
-   for(let i=0;i<count;i++){
-    const progress=media.matches?1:ease((time-stageStart-(i%19)*9)/duration),from=stage===0?seeds[i]:shapes[stage-1][i],to=shapes[stage][i];
-    const settle=time>=9000,breath=settle?Math.sin(time/2100+i*.027)*.35:Math.sin(time/630+i*.31)*.6*(1-progress);
-    let x=from.x+(to.x-from.x)*progress,y=from.y+(to.y-from.y)*progress+breath;
-    if(stage===3){const tip=Math.max(0,(Math.abs(to.x-width/2)-70)/70);const idlePhase=(time-9000)%18000;const curl=media.matches?0:time<9000?Math.sin(Math.min(1,(time-7500)/1500)*Math.PI)*2.2:idlePhase<1200?Math.sin(idlePhase/1200*Math.PI)*.8:0; y-=tip*curl;}
-    if(time<1500&&!media.matches){const cluster=i%7,blend=ease(time/1000);x=(width/2+Math.cos(cluster*Math.PI*2/7)*58)*(1-blend)+x*blend;y=(height/2+Math.sin(cluster*Math.PI*2/7)*25)*(1-blend)+y*blend;}
-    ctx.globalAlpha=media.matches?.95:Math.min(1,time/500)*(.84+Math.sin(i*.7+time/1600)*.12);
-    ctx.fillStyle=palette[i%7];ctx.beginPath();const radius=stage===0&&time<1000?3-ease(time/1000)*1.5:stage===1||stage===2?2:stage===3?1.55:1.5;ctx.arc(x,y,radius,0,Math.PI*2);ctx.fill();
+   if(!ctx||!ready||!el)return;
+   let local=time%22000,stage=0;while(local>=durations[stage]){local-=durations[stage];stage++}
+   const to=stage===6?dust:targets[stage],from=stage===0?dust:targets[stage-1];
+   const gathering=stage===0,dispersing=stage===6,span=gathering?1550:dispersing?1600:1050;
+   ctx.clearRect(0,0,artWidth,artHeight);
+   for(let i=0;i<count;i+=stride){
+    const a=from[i],b=to[i],t=ease((local-(i%23)*7)/span);
+    let x=a.x+(b.x-a.x)*t,y=a.y+(b.y-a.y)*t;
+    const drift=Math.sin(time/1050+i*.13)*.45;
+    y+=drift*(1-t*.7);
+    if(gathering||dispersing){const swirl=Math.sin(t*Math.PI)*(gathering?9:6);x+=Math.cos(i*.07+time/1600)*swirl;y+=Math.sin(i*.07+time/1600)*swirl;}
+    if(stage===0&&b.y<210)y-=Math.max(0,Math.abs(b.x-320)-115)/90*Math.sin(time/650)*1.5*t;
+    if((stage===3||stage===4)&&b.color===5&&b.y>128&&b.y<170)y-=Math.sin(time/700)*.65*t;
+    if(stage>=2&&stage<=4&&b.y<278){const bow=Math.sin(Math.max(0,local-1200)/1400)*.8*t;y+=bow;}
+    // Keep the reference bowstring alive without distorting the pose.
+    if(stage===5&&b.x>345&&b.y<200)x+=Math.sin(time/140)*.45*t;
+    const dx=x-pointer.x,dy=y-pointer.y,d=Math.hypot(dx,dy);if(d<65&&d>1){const push=(1-d/65)*2.5;x+=dx/d*push;y+=dy/d*push;}
+    ctx.globalAlpha=(.9+Math.sin(i*.31+time/1900)*.08)*(time<500?Math.min(1,time/500):1);
+    ctx.fillStyle=colorSteps[a.color*7+b.color][Math.round(t*16)];
+    ctx.beginPath();ctx.arc(x,y,b.y>285?1.7:lean?1.65:1.45,0,Math.PI*2);ctx.fill();
    }
-   ctx.globalAlpha=1;el.dataset.stage=['hands','namaste','greeting','mustache'][stage];
+   ctx.globalAlpha=1;if(el.dataset.stage!==names[stage])el.dataset.stage=names[stage];
   }
   function tick(now:number){
-   frame=0;if(disposed||!visible||covered||document.hidden||media.matches)return;
-   if(last)elapsed+=Math.min(now-last,80);last=now;
-   // The settled visual barely moves: cap its redraw rate at 12 FPS.
-   if(elapsed<9000||now-drawn>83){draw(elapsed);drawn=now}
-   frame=requestAnimationFrame(tick);
+   frame=0;if(disposed||!ready||!visible||covered||document.hidden||media.matches||paused.current)return;
+   const delta=last?now-last:0;if(last)elapsed+=Math.min(delta,90);last=now;
+   // Sustain the full shape on slower hardware by drawing a stable subset.
+   if(delta>28&&delta<150)slowFrames++;else slowFrames=Math.max(0,slowFrames-1);
+   if(slowFrames>80)stride=2;
+   draw(elapsed);frame=requestAnimationFrame(tick);
   }
-  function sync(){cancelAnimationFrame(frame);frame=0;last=0;covered=Boolean(document.querySelector('dialog[open]'));if(media.matches){elapsed=9000;draw(9000);return}if(visible&&!covered&&!document.hidden&&!disposed)frame=requestAnimationFrame(tick)}
+  function sync(){cancelAnimationFrame(frame);frame=0;last=0;covered=Boolean(document.querySelector('dialog[open]'));if(!ready||media.matches||paused.current)return;if(visible&&!covered&&!document.hidden&&!disposed)frame=requestAnimationFrame(tick)}
+  resume.current=sync;
   const observer=new IntersectionObserver(entries=>{visible=entries[0]?.isIntersecting===true;sync()},{threshold:.08});observer.observe(box);
-  const resize=new ResizeObserver(()=>{if(el.clientWidth)box.dataset.ready='true'});resize.observe(el);
   const dialogs=new MutationObserver(sync);dialogs.observe(document.body,{subtree:true,attributes:true,attributeFilter:['open']});
-  document.addEventListener('visibilitychange',sync);media.addEventListener('change',sync);
-  draw(media.matches?9000:0);
-  return()=>{disposed=true;cancelAnimationFrame(frame);observer.disconnect();resize.disconnect();dialogs.disconnect();document.removeEventListener('visibilitychange',sync);media.removeEventListener('change',sync)};
+  const move=(e:PointerEvent)=>{if(e.pointerType!=='mouse')return;const r=el.getBoundingClientRect();pointer.x=(e.clientX-r.left)/r.width*artWidth;pointer.y=(e.clientY-r.top)/r.height*artHeight};
+  const leave=()=>{pointer.x=-1000;pointer.y=-1000};
+  box.addEventListener('pointermove',move);box.addEventListener('pointerleave',leave);document.addEventListener('visibilitychange',sync);media.addEventListener('change',sync);
+  culturalTargets(count).then(data=>{if(disposed)return;targets=data.targets;dust=data.dust;ready=true;elapsed=350;draw(elapsed);box.dataset.ready='true';sync()}).catch(()=>{/* Keep the accessible, original static artwork visible on failure. */});
+  return()=>{disposed=true;cancelAnimationFrame(frame);observer.disconnect();dialogs.disconnect();resume.current=()=>{};box.removeAttribute('data-ready');box.removeEventListener('pointermove',move);box.removeEventListener('pointerleave',leave);document.removeEventListener('visibilitychange',sync);media.removeEventListener('change',sync)};
  },[]);
- return <div ref={container} className="heritage-welcome" role="img" aria-label="Namaste. Khamma Ghani Sa. A warm Rajasthani welcome."><span className="heritage-welcome-fallback">Namaste · Khamma Ghani Sa</span><canvas ref={canvas} aria-hidden="true"/></div>;
+ function toggle(){paused.current=!paused.current;setPaused(paused.current);resume.current()}
+ return <div ref={container} className="heritage-welcome" role="group" aria-label="Indian cultural welcome"><span className="heritage-welcome-fallback"><Image src="/art/heritage/namaste-man.svg" width={100} height={116} alt="" unoptimized/><span>नमस्ते<small>खम्मा घणी सा</small></span></span><canvas ref={canvas} role="img" aria-label="Colourful particles form a Rajasthani mustache, नमस्ते, a woman and two Rajasthani men with folded hands, खम्मा घणी सा, and Lord Ram with his bow."/><button type="button" className="heritage-welcome-pause" onClick={toggle} aria-label={isPaused?'Play welcome animation':'Pause welcome animation'} aria-pressed={isPaused}>{isPaused?'Play':'Pause'}</button></div>;
 }

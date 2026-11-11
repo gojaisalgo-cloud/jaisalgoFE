@@ -63,21 +63,31 @@
   .booking-card,.postcard-stack>div,.deck-arrow{translate:none!important;rotate:none!important}
 }
 
-/* A contained seven-colour greeting; the rest of the brand palette stays intact. */
-.heritage-welcome { position:absolute;right:0;top:115px;width:min(43%,540px);height:160px;pointer-events:none;contain:layout paint;isolation:isolate;background:#162c27b8;border:1px solid #ffe1aa24;border-radius:18px; }
+/* The self-hosted font keeps Devanagari shaping consistent across devices. */
+@font-face { font-family:'JaisalGo Devanagari';src:url('/fonts/noto-devanagari-600.ttf') format('truetype');font-style:normal;font-weight:600;font-display:swap; }
+.heritage-welcome { position:absolute;right:18px;top:42px;width:min(41%,520px);height:306px;contain:layout paint;isolation:isolate;background:#162c27df;border:1px solid #ffe1aa24;border-radius:18px; }
 .golden-hero-content { position:relative; }
-.heritage-welcome canvas { display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 3px #facc1524); }
-.heritage-welcome-fallback { position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#ffe1aa;font-family:Georgia,serif;font-size:24px; }
-.heritage-welcome[data-ready=true] .heritage-welcome-fallback { opacity:0; }
-@media(min-width:1001px) and (max-width:1250px){.heritage-welcome { width:36%;top:230px;right:24px;height:110px; }}
+.heritage-welcome canvas { display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 2px #facc1518); }
+.heritage-welcome-fallback { position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:16px;color:#ffe1aa;font-family:'JaisalGo Devanagari',sans-serif;font-size:27px; }
+.heritage-welcome-fallback img { width:100px;height:116px; }
+.heritage-welcome-fallback small { display:block;font-size:18px;margin-top:10px; }
+.heritage-welcome[data-ready=true] .heritage-welcome-fallback { opacity:0;visibility:hidden; }
+.heritage-welcome-pause { position:absolute;right:10px;bottom:8px;min-height:44px;padding:8px 12px;border:1px solid #ffffff40;border-radius:9px;background:#142b25;color:#fff;font-size:11px;font-weight:650; }
+.heritage-welcome-pause:hover { background:#294b3c; }
+.heritage-welcome:not([data-ready=true]) .heritage-welcome-pause { display:none; }
+@media(min-width:1001px) and (max-width:1250px){
+ .heritage-welcome { width:33%;top:165px;right:24px;height:210px; }
+ .golden-hero h1,.golden-hero-content>p { max-width:60%; }
+}
 @media(max-width:1000px){
- .heritage-welcome { position:relative;top:auto;right:auto;width:310px;max-width:100%;height:66px;margin:-20px 0 12px; }
- .golden-hero { height:586px; }
+ .heritage-welcome { position:relative;top:auto;right:auto;width:340px;max-width:100%;height:172px;margin:-20px 0 12px; }
+ .golden-hero { height:692px; }
 }
 @media(max-width:700px){
- .heritage-welcome { width:310px;height:66px;margin:-20px 0 10px; }
- .heritage-welcome-fallback { font-size:20px; }
- .golden-hero { height:511px; }
+ .heritage-welcome { width:340px;height:172px;margin:-20px 0 10px; }
+ .heritage-welcome-fallback { font-size:22px; }
+ .heritage-welcome-pause { right:6px;bottom:4px;min-height:44px;padding:8px 10px;font-size:10px; }
+ .golden-hero { height:617px; }
 }
 @media(prefers-reduced-motion:no-preference){
  .reveal-ready { opacity:.65;transform:translate3d(0,16px,0);transition:opacity .6s var(--ease),transform .6s var(--ease); }
@@ -98,7 +108,8 @@
 
 @media(prefers-reduced-motion:reduce){
  .heritage-welcome canvas { display:none; }
- .heritage-welcome .heritage-welcome-fallback { opacity:1; }
+ .heritage-welcome .heritage-welcome-fallback { opacity:1;visibility:visible; }
+ .heritage-welcome-pause { display:none; }
 }
 
 @media(prefers-reduced-motion:no-preference){
