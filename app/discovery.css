@@ -125,3 +125,14 @@
 /* Comparison starts at the choices; destination photos remain in the other detail views. */
 .compact-price .info-heading{padding:20px 24px 14px}.compact-price .info-heading h2{font-size:28px;line-height:1.2;margin:5px 0 8px}.compact-price .info-heading>p{margin:0 0 10px;font-size:13px}.compact-price .info-heading .info-status{margin-top:10px}.compact-price .info-section{padding-top:20px}
 @media(max-width:700px){.compact-price .info-heading{padding:18px 18px 12px}.compact-price .info-heading h2{font-size:25px}.compact-price .info-heading>p{font-size:12px}.compact-price .info-meta{gap:10px;flex-wrap:wrap}}
+
+/* Explicit night counts replace ambiguous, disconnected range sliders. */
+.discovery-night-selector { margin-top:16px;padding:14px 12px;background:#f7f9f7;border:1px solid #e1e8e2;border-radius:12px; }
+.discovery-night-heading { display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 12px;font-size:12px;color:var(--muted); }
+.discovery-night-heading strong { color:var(--accent);font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums; }
+.discovery-night-fields { display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:end;gap:8px; }
+.discovery-night-fields .discovery-field { margin:0;gap:6px;font-size:12px; }
+.discovery-night-fields .jg-dropdown-field { min-width:0;width:100%; }
+.discovery-night-fields .jg-dropdown-trigger { min-height:46px;padding:10px;font-size:16px;font-weight:700;background:#fff; }
+.discovery-night-separator { align-self:end;display:flex;align-items:center;min-height:46px;color:var(--muted);font-size:12px; }
+.discovery-night-help { margin:10px 0 0;color:var(--muted);font-size:11px;line-height:1.6; }

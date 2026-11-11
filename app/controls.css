@@ -131,7 +131,7 @@ a:hover :is(.local-stay-copy>span,.saved-ticket-open,.collection-trip-action,.ed
 a.booking-detail:has(>.direction-icon) { width:auto;min-width:0;padding:10px 14px;font-size:12px; }
 .tour-card-photo>.tour-photo-arrow {
  position:absolute;right:14px;bottom:14px;display:inline-flex;align-items:center;
- min-height:40px;padding:9px 14px;border:1px solid #fff9;border-radius:11px;
+ width:auto;height:auto;min-width:0;min-height:40px;padding:9px 14px;border:1px solid #fff9;border-radius:11px;
  background:#fff;color:#244d40;font-size:12px;font-weight:700;box-shadow:0 2px 10px #15271c12;
 }
 .editorial-card-action { margin-top:16px; }
